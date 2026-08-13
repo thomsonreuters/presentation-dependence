@@ -1,0 +1,40 @@
+id: example-passage-matched-variance-b1
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  revision: 1cfa9a7208912126459214e8b04321603b3df60c
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs: {enable_thinking: false}
+  device: auto
+  dtype: bfloat16
+  scoring_mode: setwise_grade_prompt
+  score_output: probability
+  continuous_readout: true
+  instruction: Given a web search query, retrieve relevant passages that answer the query
+  max_length: 4096
+  max_doc_chars: 1200
+  docs_per_score_forward: 1
+  batch_size: 1
+
+data:
+  dataloader_class: FixtureLoader
+  run_path: data/dl19-passage/fixture.jsonl
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10]
+
+matched_variance_control:
+  seeds: [0, 1, 2]
+  request_batch_size: 32
+  pool_size: 100
+  k_cutoff_for_ndcg: 10
+  qid_shard_count: 1
+  qid_shard_index: 0
+  required_unique_positions: 2
+  required_unique_compositions: 2
+
+logging: {level: INFO}

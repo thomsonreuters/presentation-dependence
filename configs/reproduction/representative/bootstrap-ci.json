@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "family": "bootstrap-ci",
+  "evidence_level": "embedded-frozen-historical-summary",
+  "source": {
+    "provenance": "embedded-frozen-historical-summary",
+    "raw_artifact_type": "aggregate contrast values",
+    "note": "Self-contained frozen historical summary retained after removal of the broader log-control artifact."
+  },
+  "payload": {
+    "per_dataset": {
+      "dl19": [-0.12453829509565943],
+      "dl20": [-0.10022123822201341]
+    },
+    "samples": 20000,
+    "seed": 4401
+  }
+}

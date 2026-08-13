@@ -1,0 +1,118 @@
+###############################################################################
+# Granite 4.1 8B K=1-label OC-SFT (SupCon); lambda=0.5 with warmup.
+#
+# Granite dense 8B anchor slice: K=1 self-silver from 8B K=10 BSC teacher.
+#   - Supervised anchor: granite41 K=1 (8B anchor) seed-0 labels
+#   - Consistency term: two independently permuted B=20 views, aligned by doc_id
+#   - Lambda warmup: linear 0.0 -> 0.5 over first 500 optimizer steps
+#   - Matched to granite41-3b-k1-supcon-warmup / gemma4-e2b-k1-supcon-warmup family and plain 8B K=1 SFT recipe
+################################################################################
+
+id: granite-41-8b-k1-supervised-consistency-lambda050-warmup500-msmarco-30k
+
+reranker:
+  class: Granite41GradeReranker
+  model_name: ibm-granite/granite-4.1-8b
+  revision: null
+  device: cuda
+  dtype: bfloat16
+  trust_remote_code: false
+  continuous_readout: true
+  scoring_method: continuous_grade
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 20
+  max_doc_chars: 1200
+  grade_prefix_mode: cumulative
+
+student:
+  base_model: ibm-granite/granite-4.1-8b
+  reranker_class: Granite41GradeReranker
+  silver_labels_path: silver_labels_granite41_k1_seed0_train_29500.jsonl
+  eval_silver_labels_path: silver_labels_granite41_k1_seed0_heldout_500.jsonl
+  fixture_path: fixture.jsonl
+  qrels_path: qrels.txt
+  output_dir: runs/self-distill/granite-41-8b-k1-supervised-consistency-lambda050-warmup500-msmarco-30k/student
+  device: cuda
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+  max_length: 4096
+  max_doc_chars: 1200
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  objective:
+    type: supervised_consistency
+    loss: mse
+    lambda: 0.5
+    view_seeds: [0, 1]
+    lambda_warmup:
+      steps: 500
+      init: 0.0
+      schedule: linear
+  data:
+    chunk_size: 20
+    candidate_set_id: msmarco_seed42_bm25_top100
+    include_doc_ids_in_prompt: false
+    view: supervised_consistency
+    preserve_group_metadata: true
+    token_cache:
+      enabled: true
+      max_entries: 100000
+      cache_prefix_strings: true
+      cache_token_ids: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    epochs: 1
+    lr: 0.0002
+    batch_size_per_device: 1
+    grad_accumulation_steps: 8
+    slot_forward_batch_size: 8
+    gradient_checkpointing: true
+    ddp_no_sync_during_grad_accum: false
+    warmup_ratio: 0.10
+    lr_scheduler: cosine
+    weight_decay: 0.01
+    adam_beta1: 0.9
+    adam_beta2: 0.95
+    seed: 42
+    max_steps: null
+    single_forward_readout: true
+    log_every_n_steps: 10
+    heartbeat_every_s: 60
+    progress_jsonl: true
+  evaluation:
+    max_queries: 100
+    every_n_steps: 200
+    at_start: true
+    at_end: true
+    psi:
+      enabled: true
+      max_queries: 25
+      seeds: [0, 1, 2]
+  observability:
+    tensorboard:
+      enabled: true
+  checkpoint:
+    enabled: true
+    save_every_n_steps: 200
+    keep_last_n: 4
+    keep_every_n_steps: 400
+    keep_n_best: 3
+    keep_n_best_metric: qrels_ndcg_cut_10
+    keep_n_best_mode: max
+    resume_from_checkpoint: null
+
+eval:
+  measures: [ndcg_cut_10]
+  strict_qrels_filter: false
+
+execution:
+  fixture_channel: msmarco-train-selfdistill-seed42
+  distributed: ddp
+
+logging:
+  level: INFO

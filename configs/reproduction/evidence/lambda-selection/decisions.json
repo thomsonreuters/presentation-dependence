@@ -1,0 +1,2233 @@
+[
+  {
+    "family": "Qwen3-4B-Instruct",
+    "k": "K=1",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.466103012548462,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.466103012548462,
+    "within_epsilon_set": [
+      4.0
+    ],
+    "tie_invoked": false,
+    "boundary": true,
+    "missing_lambdas": [],
+    "pick_partial": false,
+    "any_partial": false,
+    "provisional": false,
+    "per_lambda": {
+      "1.0": {
+        "step": 800,
+        "ndcg": 0.45423923667506944,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.4539565322734786,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.46158877689623273,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.466103012548462,
+        "complete": true
+      }
+    },
+    "probe_lambda5": {
+      "step": 1000,
+      "ndcg": 0.4539926052093506,
+      "verdict": "confirms interior optimum (λ=5 held-out below argmax)"
+    }
+  },
+  {
+    "family": "Qwen3-4B-Instruct",
+    "k": "K=10",
+    "lambda_star": 2.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.48114665673974716,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.48114665673974716,
+    "within_epsilon_set": [
+      2.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "missing_lambdas": [],
+    "pick_partial": false,
+    "any_partial": false,
+    "provisional": false,
+    "per_lambda": {
+      "1.0": {
+        "step": 1400,
+        "ndcg": 0.45902516675431315,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.48114665673974716,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.46275856105129964,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2000,
+        "ndcg": 0.45149577973647304,
+        "complete": true
+      }
+    },
+    "probe_lambda5": {
+      "step": 1000,
+      "ndcg": 0.4522186517715454,
+      "verdict": "confirms interior optimum (λ=5 held-out below argmax)"
+    }
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=1",
+    "lambda_star": 1.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.47803111242008833,
+    "argmax_lambda": 1.0,
+    "argmax_ndcg": 0.47803111242008833,
+    "within_epsilon_set": [
+      1.0
+    ],
+    "tie_invoked": false,
+    "boundary": true,
+    "missing_lambdas": [
+      4.0
+    ],
+    "pick_partial": false,
+    "any_partial": false,
+    "provisional": false,
+    "recheck_note": "RECHECK (all runs Completed, eval to step 2305): λ=3.0 now complete, best 0.4693 @1600 (was partial 0.46929 @1600 — unchanged). λ*=1.0 (0.478) HOLDS as the lower-boundary pick; λ=3 does not beat it. No collapse (min stdev 0.43). λ=4.0 still untrained.",
+    "per_lambda": {
+      "1.0": {
+        "step": 1400,
+        "ndcg": 0.47803111242008833,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1400,
+        "ndcg": 0.46241063635323415,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1600,
+        "ndcg": 0.4693,
+        "complete": true
+      }
+    },
+    "probe_lambda5": null,
+    "provenance": "legacy (note/source null); source data differs from fetched gpt54 runs"
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=10",
+    "lambda_star": 3.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.48172181844711304,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.48172181844711304,
+    "within_epsilon_set": [
+      3.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "missing_lambdas": [
+      4.0
+    ],
+    "pick_partial": false,
+    "any_partial": false,
+    "provisional": true,
+    "per_lambda": {
+      "1.0": {
+        "step": 2305,
+        "ndcg": 0.4699536719956045,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2000,
+        "ndcg": 0.44935466970089194,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1400,
+        "ndcg": 0.48172181844711304,
+        "complete": true
+      }
+    },
+    "probe_lambda5": null
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 2.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.4796,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.4796,
+    "lambda_star_step_note": "CONVERGED-AUDIT: canonical checkpoint moved 600 -> 2200. λ=2's step-600 0.5042 is an isolated early-warmup spike (neighbors 400:0.469, 800:0.473); converged (steps>=1000) best is step 2200 (0.4796). λ* UNCHANGED at 2.0 — converged λ=2 (0.4796) is still the clear max (λ=1:0.4726, λ=5:0.46), band {1,2}, tie-break -> 2.0. Downstream merge jobs targeted the step-600 spike; re-point to step 2200 for the principled checkpoint.",
+    "argmax_global_spike_step": 600,
+    "argmax_global_spike_ndcg": 0.5042,
+    "within_epsilon_set": [
+      1.0,
+      2.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 1400,
+        "ndcg": 0.452,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1200,
+        "ndcg": 0.4726,
+        "complete": true
+      },
+      "2.0": {
+        "step": 600,
+        "ndcg": 0.5042,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.4203,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.4591,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.46,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, full λ grid 0.5 to 5.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-1.7B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.4846,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.4846,
+    "within_epsilon_set": [
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [
+      5.0
+    ],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1400,
+        "ndcg": 0.4382,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1400,
+        "ndcg": 0.4529,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1400,
+        "ndcg": 0.4513,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1400,
+        "ndcg": 0.4821,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.4846,
+        "complete": true
+      },
+      "5.0": {
+        "step": null,
+        "ndcg": 0.0936,
+        "complete": true,
+        "collapsed": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4765,
+    "heldout_argmax_step_full_run": 2305,
+    "heldout_argmax_ndcg_full_run": 0.4799,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4799,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 2305,
+        "ndcg": 0.467,
+        "psi_var": 0.0102,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1200,
+        "ndcg": 0.4764,
+        "psi_var": 0.0074,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.4703,
+        "psi_var": 0.006,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1400,
+        "ndcg": 0.4702,
+        "psi_var": 0.0053,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2200,
+        "ndcg": 0.475,
+        "psi_var": 0.0053,
+        "complete": true
+      },
+      "5.0": {
+        "step": 2305,
+        "ndcg": 0.4799,
+        "psi_var": 0.0049,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B-OG (non-thinking)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2000,
+    "lambda_star_ndcg": 0.4791,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4791,
+    "within_epsilon_set": [
+      0.5,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 2200,
+        "ndcg": 0.4641,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.456,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.4729,
+        "complete": true
+      },
+      "3.0": {
+        "step": 200,
+        "ndcg": 0.4678,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.4724,
+        "complete": true
+      },
+      "5.0": {
+        "step": 2000,
+        "ndcg": 0.4791,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-1.7B-OG (non-thinking)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4705,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.4705,
+    "within_epsilon_set": [
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [
+      5.0
+    ],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1400,
+        "ndcg": 0.4238,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2305,
+        "ndcg": 0.432,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2000,
+        "ndcg": 0.4463,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.4563,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1000,
+        "ndcg": 0.4705,
+        "complete": true
+      },
+      "5.0": {
+        "step": null,
+        "ndcg": 0.0797,
+        "complete": true,
+        "collapsed": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E2B-it)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.4366,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4366,
+    "within_epsilon_set": [
+      0.5,
+      2.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 400,
+        "ndcg": 0.4265,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1000,
+        "ndcg": 0.3839,
+        "complete": true
+      },
+      "2.0": {
+        "step": 600,
+        "ndcg": 0.4309,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.3188,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1800,
+        "ndcg": 0.3993,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1200,
+        "ndcg": 0.4366,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-3B",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4608,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.4677,
+    "within_epsilon_set": [
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "revised": "CONVERGED-AUDIT: λ* CHANGED 4.0 -> 5.0. The earlier λ*=4.0 hung on λ=4's step-800 held-out 0.4764, which is an ISOLATED single-eval spike (neighbors 600:0.419, 1000:0.440); λ=4's converged (steps>=1000) best is only 0.4656. On converged held-out the per-λ maxima are 0.5:0.4373, 1:0.4400, 2:0.4530, 3:0.4677, 4:0.4656, 5:0.4608 -> argmax λ=3 (0.4677), 1-SE band {2,3,4,5} (all within 0.015 of 0.4677), higher-λ tie-break -> λ*=5.0. (With the spike, λ=4's inflated 0.4764 tightened the band to {3,4} and wrongly excluded λ=5 — the artifact.) λ=5 best converged @step 1000 (0.4608) on a stable plateau (1000:0.461,1200:0.459,1400:0.456). This makes Granite-3B K=1 consistent with Granite-8B K=1, Granite-3B K=10, and the larger Qwen3-OG bases (all λ*=5.0).",
+    "per_lambda": {
+      "0.5": {
+        "step": 1000,
+        "ndcg": 0.4373,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1000,
+        "ndcg": 0.44,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4556,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.453,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.4677,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.4656,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4764,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4608,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, convergence-audited.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-8B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.444,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.4454,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 600,
+        "ndcg": 0.4333,
+        "complete": true
+      },
+      "1.0": {
+        "step": 600,
+        "ndcg": 0.4331,
+        "complete": true
+      },
+      "2.0": {
+        "step": 200,
+        "ndcg": 0.4454,
+        "complete": true
+      },
+      "3.0": {
+        "step": 200,
+        "ndcg": 0.4353,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.4448,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1400,
+        "ndcg": 0.444,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-14B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.4608,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.4673,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "revised": "FULL-GRID + CONVERGED: λ* CHANGED from provisional 3.0 -> 5.0. λ=4/5 are now trained (p4de). On CONVERGED held-out (steps>=1000) the per-λ maxima are 0.5:0.4636, 1:0.4596, 2:0.4554, 3:0.4673, 4:0.4654, 5:0.4608 — a FLAT band (spread ~0.012 < 1 SE), so the 1-SE band is the WHOLE grid and the higher-λ tie-break -> λ*=5.0 (same λ-flat regime as 4B-OG and 8B-OG K=1). IMPORTANT: the training doc's 'K1 climbs monotonically to λ=5, 0.4807 @ s800' is a STEP-800 EARLY-SPIKE artifact (λ=5 neighbors 600:0.433, 1000:0.443); λ=5 converged is only 0.4608 @1400, BELOW λ=3 (0.4673). Checkpoint = converged step 1400 (0.4608), NOT the s800 spike. No collapse (min stdev 0.36).",
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.4636,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1000,
+        "ndcg": 0.4596,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.4554,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1400,
+        "ndcg": 0.4673,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.4654,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4701,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1400,
+        "ndcg": 0.4608,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4807,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), full λ grid over completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-14B-OG (non-thinking)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4618,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.4651,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1400,
+        "ndcg": 0.4538,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.4601,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.4651,
+        "global_spike_step": 400,
+        "global_spike_ndcg": 0.4669,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2305,
+        "ndcg": 0.4568,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4711,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1600,
+        "ndcg": 0.4558,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.458,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4618,
+        "global_spike_step": 800,
+        "global_spike_ndcg": 0.4622,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), full λ grid over completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-8B",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4402,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4402,
+    "within_epsilon_set": [
+      0.5,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 600,
+        "ndcg": 0.4354,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2200,
+        "ndcg": 0.4163,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2305,
+        "ndcg": 0.4288,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.4348,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2000,
+        "ndcg": 0.4386,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4402,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-3B",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4524,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4524,
+    "within_epsilon_set": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.4192,
+        "complete": true
+      },
+      "1.0": {
+        "step": 400,
+        "ndcg": 0.4433,
+        "complete": true
+      },
+      "2.0": {
+        "step": 800,
+        "ndcg": 0.4449,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.4451,
+        "complete": true
+      },
+      "4.0": {
+        "step": 800,
+        "ndcg": 0.4406,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4524,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-8B-OG (non-thinking)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2000,
+    "lambda_star_ndcg": 0.428,
+    "lambda_star_step_note": "CHECKPOINT = step 2000 (converged-plateau argmax, ~0.428). The raw per-λ best for λ=5 was step 200 (0.4310) but that is an isolated early-training spike (neighbors 400:0.392, 600:0.390 crash); the converged 2nd-half is a stable ~0.42-0.428 plateau, best at step 2000. Do NOT use the step-200 checkpoint.",
+    "lambda_star_ndcg_rawspike": 0.431,
+    "lambda_star_step_rawspike": 200,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.4358,
+    "within_epsilon_set": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1600,
+        "ndcg": 0.4182,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2200,
+        "ndcg": 0.4224,
+        "complete": true
+      },
+      "2.0": {
+        "step": 200,
+        "ndcg": 0.4288,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2000,
+        "ndcg": 0.4313,
+        "complete": true
+      },
+      "4.0": {
+        "step": 200,
+        "ndcg": 0.4358,
+        "complete": true
+      },
+      "5.0": {
+        "step": 200,
+        "ndcg": 0.431,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E2B-it)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2305,
+    "lambda_star_ndcg": 0.4316,
+    "lambda_star_step_note": "CHECKPOINT = step 2305 (converged-region argmax, ~0.432). The raw per-λ best for λ=5 was step 600 (0.4521) but that is an isolated early-training spike (drops to 0.41 immediately after); the converged 2nd-half settles ~0.42-0.43, best at step 2305. Do NOT use the step-600 checkpoint. (Cell is provisional/noisy regardless — defer to downstream.)",
+    "lambda_star_ndcg_rawspike": 0.4521,
+    "lambda_star_step_rawspike": 600,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4521,
+    "within_epsilon_set": [
+      2.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over converged non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 2000,
+        "ndcg": 0.3966,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.4289,
+        "complete": true
+      },
+      "2.0": {
+        "step": 200,
+        "ndcg": 0.4476,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1800,
+        "ndcg": 0.3444,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.3877,
+        "complete": true
+      },
+      "5.0": {
+        "step": 600,
+        "ndcg": 0.4521,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-8B",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4395,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4395,
+    "within_epsilon_set": [
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.4097,
+        "global_step": 800,
+        "global_ndcg": 0.4192,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2000,
+        "ndcg": 0.4241,
+        "global_step": 600,
+        "global_ndcg": 0.4399,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1000,
+        "ndcg": 0.4197,
+        "global_step": 600,
+        "global_ndcg": 0.4268,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1600,
+        "ndcg": 0.4231,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1000,
+        "ndcg": 0.4358,
+        "global_step": 600,
+        "global_ndcg": 0.437,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4395,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "Iterative-v2 (v2fromv1) OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.48,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4809,
+    "within_epsilon_set": [
+      5.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "n/a — single-point continuation (no λ grid). λ=5.0 INHERITED from the v1 OG-4B K=1 pick (λ*=5.0).",
+    "is_lambda_selection": false,
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 2200 (converged-region argmax, 0.4800), per our rule, which operates on CONVERGED held-out ('higher-λ tie-break over converged non-collapsed λ') and which we applied to drop early spikes on the 8B and E2B K=10 cells. The GLOBAL argmax-over-all-steps is step 400 (0.4809), but that is an isolated single-eval spike during the warmup-500 ramp (step 0:0.259, 200:0.442, 400:0.481, 600:0.425) — NOT converged, so the rule excludes it, same standard as 8B(dropped @200)/E2B(dropped @600). DOWNSTREAM WAS RUN ON step 400 (the step-400 downstream runs): this is a NAIVE global-argmax choice, not the rule's pick. It is not compromised numerically (step 400 0.4809 vs converged step 2200 0.4800 differ by 0.0009, far inside N=100 SE), but methodologically step 2200 is the principled checkpoint. Future iterations/evals should use the converged-region selection for consistency.",
+    "downstream_as_run_step": 400,
+    "downstream_as_run_ndcg": 0.4809,
+    "downstream_as_run_note": "naive global argmax (early warmup-ramp spike); within noise of the canonical converged pick but not what the converged rule selects",
+    "per_lambda": {
+      "5.0": {
+        "step": 2200,
+        "ndcg": 0.48,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.4809,
+        "last_step": 2305,
+        "last_ndcg": 0.4746,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training run.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "Iterative-v3 (v3fromv2) OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2000,
+    "lambda_star_ndcg": 0.4943,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4943,
+    "within_epsilon_set": [
+      5.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "n/a — single-point continuation (no λ grid). λ=5.0 INHERITED from v2/v1 OG-4B (λ*=5.0). Checkpoint by CONVERGED rule (steps>=1000).",
+    "is_lambda_selection": false,
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 2000 (converged-region argmax, 0.4943) per our converged rule. The GLOBAL argmax-over-all-steps is step 400 (0.5283) but that is an isolated early-warmup spike (0:0.259, 200:0.449, 400:0.528, 600:0.474) — excluded, same standard as v2 (dropped @400). Back-half is strong and rising (1600-2305 all 0.467-0.494). Step 2000 is also the robustness optimum (PSI-var proxy 0.0013, worst-perm nDCG 0.5124 = best in run), so quality and stability agree.",
+    "downstream_as_run_step": null,
+    "per_lambda": {
+      "5.0": {
+        "step": 2000,
+        "ndcg": 0.4943,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.5283,
+        "last_step": 2305,
+        "last_ndcg": 0.4895,
+        "complete": true
+      }
+    },
+    "aux_metrics_at_step2000": {
+      "mse_to_silver": 0.0137,
+      "pearson": 0.9842,
+      "psi_var_proxy": 0.0013,
+      "worst_perm_ndcg": 0.5124,
+      "student_stdev": 0.652
+    },
+    "source": "User-provided training eval curve (qrels_ndcg_cut_10, 100q, v3fromv2 λ500 warmup500 run).",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "Iterative-v3 (v3fromv2-STEP2000 lineage) OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.4726,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4726,
+    "within_epsilon_set": [
+      5.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "n/a — single-point continuation (no λ grid). λ=5.0 INHERITED from v2/v1 OG-4B. Checkpoint by CONVERGED rule (steps>=1000).",
+    "is_lambda_selection": false,
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 2200 (converged-region argmax, 0.4726). GLOBAL argmax-over-all-steps is step 400 (0.4878), an isolated early-warmup spike (0:0.259, 200:0.452, 400:0.488, 600:0.459) — excluded, same standard as v2/v3(step400). Converged back-half noisy (1000-2305 range 0.446-0.473), best at 2200.",
+    "downstream_as_run_step": null,
+    "lineage_note": "CLEAN 'best-checkpoint-at-every-hop' lineage: v3 student trained on silver from v2's CONVERGED step-2000 checkpoint (config qwen3-4b-nonthink-v3fromv2-step2000-...; at iterative self-distillation step 5). Contrast with the OTHER v3 cell (v3fromv2 step-400 lineage) which used v2's held-out-argmax step-400 spike silver.",
+    "per_lambda": {
+      "5.0": {
+        "step": 2200,
+        "ndcg": 0.4726,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.4878,
+        "last_step": 2305,
+        "last_ndcg": 0.4549,
+        "complete": true
+      }
+    },
+    "aux_metrics_at_step2200": {
+      "mse_to_silver": 0.0082,
+      "pearson": 0.9888,
+      "psi_var_proxy": 0.0011,
+      "worst_perm_ndcg": 0.5124,
+      "student_stdev": 0.5999
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 and PSI (100q/25q), completed training run.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=1",
+    "recipe": "Iterative-v2 (v2fromv1) OC-SFT + warmup-500",
+    "lambda_star": 2.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.469475,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.469475,
+    "within_epsilon_set": [
+      2.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "n/a — single-point continuation (no λ grid). λ=2.0 INHERITED from the v1 Gemma-E4B K=1 warmup pick (λ*=2.0). Checkpoint by CONVERGED rule (steps>=1000).",
+    "is_lambda_selection": false,
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 1200 (0.4695). NO early-spike issue here — the best is already converged (step 1200) and the back-half is stable (~0.465-0.467), so the converged rule and global argmax AGREE (unlike the Qwen3-4B v2/v3 cells whose global best was an s400 spike). Final step 2305 = 0.4674.",
+    "per_lambda": {
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.469475,
+        "last_step": 2305,
+        "last_ndcg": 0.4674,
+        "complete": true
+      }
+    },
+    "source": "User-provided training eval curve (qrels_ndcg_cut_10, 100q, gemma4-v2fromv1 λ200 warmup500 run).",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4707,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 1000 (converged-region argmax for λ=5, 0.4707). NO early-spike issue: for EVERY λ the global argmax already lies at a converged step (>=1000), so global and converged selections AGREE (unlike the E2B K=10 / Qwen3-8B K=10 cells which had step-200/600 spikes). λ=5 back-half is a stable plateau (1000:0.4707, 1200:0.4666, 2305:0.4603) — healthy curve, not noise.",
+    "restart_note": "CORRECTED: λ=4 has TWO full restarts. The authoritative LATER job (-1780561873) peaks 0.4636 @2000; an earlier superseded job (-1780487778) peaked higher at 0.4758 @2000. Initial extraction grabbed the earlier (coincidentally 775006 B > 773370 B), inflating λ=4 to 0.4758 and mis-reporting it as the converged argmax. Using the canonical λ=4=0.4636, the converged argmax is λ=2.0 (0.4743); the 1-SE band still spans the whole grid so the higher-λ tie-break is UNCHANGED -> λ*=5.0 @ step 1000.",
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.4743,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1000,
+        "ndcg": 0.4639,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2000,
+        "ndcg": 0.4687,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1400,
+        "ndcg": 0.4743,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2200,
+        "ndcg": 0.4631,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2000,
+        "ndcg": 0.4636,
+        "complete": true,
+        "restart_superseded_ndcg": 0.4758,
+        "restart_note": "0.4636 = authoritative later job -1780561873; 0.4758 was an earlier superseded restart -1780487778."
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.4707,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-32B-OG (non-thinking)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500",
+    "lambda_star": 4.0,
+    "lambda_star_step": 2000,
+    "lambda_star_ndcg": 0.4842,
+    "lambda_star_step_note": "CANONICAL CHECKPOINT = step 2000 (converged-region argmax, 0.4842). λ=4 is consistently strong across the converged region (1200:0.4679, 2000:0.4842, 2200:0.4690), so the pick is robust, not a lone spike; the back-half mean is ~0.46-0.47 with 2000 the high point. Pre-1000 values excluded by rule.",
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.4842,
+    "within_epsilon_set": [
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1000,
+        "ndcg": 0.4515,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1000,
+        "ndcg": 0.4684,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.4576,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2200,
+        "ndcg": 0.4759,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2000,
+        "ndcg": 0.4842,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1400,
+        "ndcg": 0.4587,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-32B-OG (non-thinking)",
+    "k": "K=10",
+    "recipe": "Hybrid K=10 OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1800,
+    "lambda_star_ndcg": 0.4555,
+    "lambda_star_step_note": "CHECKPOINT = step 1800 (converged-region argmax, 0.4555) PER RULE, but this value is a LOCAL SPIKE within the converged region (neighbors 1600:0.4235, 2000:0.4416; back-half otherwise ~0.42-0.44). Treat as low-confidence; a more stable representative is ~0.44. Downstream is the real arbiter — if shipping, consider a stabler ckpt or re-eval.",
+    "lambda_star_ndcg_stable_estimate": 0.44,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4555,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 1800,
+        "ndcg": 0.455,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.4428,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.4405,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2305,
+        "ndcg": 0.4486,
+        "complete": true
+      },
+      "4.0": {
+        "step": 2000,
+        "ndcg": 0.4512,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1800,
+        "ndcg": 0.4555,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-1.7B (non-thinking)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.4623,
+    "lambda_star_step_note": "CHECKPOINT = step 1400 (converged-region argmax for λ=4, 0.4623) PER RULE, but this is a LOCAL SPIKE in a noisy curve (neighbors 1200:0.4367, 1600:0.4388, dips to 0.398@1800). Low-confidence. The underlying signal actually favors LOW λ (argmax λ=1.0 @2305 on an end-loaded rise). Downstream is the arbiter.",
+    "argmax_lambda": 1.0,
+    "argmax_ndcg": 0.4752,
+    "within_epsilon_set": [
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 2000,
+        "ndcg": 0.456,
+        "complete": true
+      },
+      "1.0": {
+        "step": 2305,
+        "ndcg": 0.4752,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2000,
+        "ndcg": 0.4696,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2305,
+        "ndcg": 0.4674,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.4623,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1400,
+        "ndcg": 0.4472,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B (non-thinking)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.4747,
+    "lambda_star_step_note": "CHECKPOINT = step 1200 (converged-region argmax for λ=5, 0.4747) PER RULE, but this is a LOCAL SPIKE in a noisy curve (neighbors 1000:0.4405, 1400:0.4461; a 2nd bump at 2000:0.4694). Pre-1000 huge warmup spikes (λ=2 hits 0.4900@800, λ=0.5 0.4850@600) excluded by rule. Low-confidence; downstream is the arbiter.",
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.4747,
+    "within_epsilon_set": [
+      2.0,
+      3.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 2305,
+        "ndcg": 0.4592,
+        "global_argmax_step": 600,
+        "global_argmax_ndcg": 0.485,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.4579,
+        "global_argmax_step": 600,
+        "global_argmax_ndcg": 0.4818,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1800,
+        "ndcg": 0.4616,
+        "global_argmax_step": 800,
+        "global_argmax_ndcg": 0.49,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.4734,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.453,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1200,
+        "ndcg": 0.4747,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), completed training runs, latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-4B (non-thinking)",
+    "k": "K=10 Hybrid",
+    "recipe": "K=10 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.45462,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.45552,
+    "within_epsilon_set": [
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "3": {
+        "step": 1600,
+        "ndcg": 0.43626,
+        "complete": true,
+        "global_argmax_step": 800,
+        "global_argmax_ndcg": 0.4744
+      },
+      "4": {
+        "step": 1200,
+        "ndcg": 0.45552,
+        "complete": true,
+        "global_argmax_step": 200,
+        "global_argmax_ndcg": 0.46308
+      },
+      "5": {
+        "step": 1200,
+        "ndcg": 0.45462,
+        "complete": true,
+        "global_argmax_step": 600,
+        "global_argmax_ndcg": 0.47665
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-1.7B (non-thinking)",
+    "k": "K=10 Hybrid",
+    "recipe": "K=10 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 3.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.46716,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.46716,
+    "within_epsilon_set": [
+      3.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "3": {
+        "step": 2200,
+        "ndcg": 0.46716,
+        "complete": true
+      },
+      "4": {
+        "step": 2305,
+        "ndcg": 0.45189,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.46011
+      },
+      "5": {
+        "step": 1000,
+        "ndcg": 0.45179,
+        "complete": true,
+        "global_argmax_step": 200,
+        "global_argmax_ndcg": 0.45717
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4-E2B",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 1.0,
+    "lambda_star_step": 1800,
+    "lambda_star_ndcg": 0.45662,
+    "argmax_lambda": 1.0,
+    "argmax_ndcg": 0.45662,
+    "within_epsilon_set": [
+      1.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.40925,
+        "complete": true
+      },
+      "1": {
+        "step": 1800,
+        "ndcg": 0.45662,
+        "complete": true
+      },
+      "2": {
+        "step": 2305,
+        "ndcg": 0.40207,
+        "complete": true
+      },
+      "3": {
+        "step": 1800,
+        "ndcg": 0.40026,
+        "complete": true
+      },
+      "4": {
+        "step": 1800,
+        "ndcg": 0.42116,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.44274
+      },
+      "5": {
+        "step": 1600,
+        "ndcg": 0.4398,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4-E2B",
+    "k": "K=10 Hybrid",
+    "recipe": "K=10 OC-SFT + warmup-500 [GPT5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1600,
+    "lambda_star_ndcg": 0.43359,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.44702,
+    "within_epsilon_set": [
+      2.0,
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "2": {
+        "step": 2200,
+        "ndcg": 0.43605,
+        "complete": true
+      },
+      "3": {
+        "step": 1200,
+        "ndcg": 0.44702,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.45857
+      },
+      "4": {
+        "step": 1600,
+        "ndcg": 0.43359,
+        "complete": true
+      },
+      "5": {
+        "step": 2000,
+        "ndcg": 0.31958,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-30B",
+    "k": "K=1",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.45775,
+    "argmax_lambda": 1.0,
+    "argmax_ndcg": 0.46874,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.46557,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1400,
+        "ndcg": 0.46874,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.46476,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.45007,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.45775,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.44731,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), via scripts/select_lambda.py --local-runs-root runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-30B",
+    "k": "K=10-hybrid",
+    "recipe": "OC-SFT warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.4534,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.45784,
+    "within_epsilon_set": [
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 2200,
+        "ndcg": 0.43862,
+        "complete": true,
+        "global_argmax_step": 800,
+        "global_argmax_ndcg": 0.4461
+      },
+      "1.0": {
+        "step": 1800,
+        "ndcg": 0.43922,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.44838,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.44514,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.45784,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1200,
+        "ndcg": 0.4534,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), via scripts/select_lambda.py --local-runs-root runs.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 31B",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500 [OG 31B silver]",
+    "lambda_star": 2.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.49589,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.49589,
+    "within_epsilon_set": [
+      2.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "HIGH",
+    "provisional": false,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.47137,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1600,
+        "ndcg": 0.46255,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.46821
+      },
+      "2.0": {
+        "step": 1200,
+        "ndcg": 0.49589,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1600,
+        "ndcg": 0.44443,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1400,
+        "ndcg": 0.47937,
+        "complete": true,
+        "global_argmax_step": 800,
+        "global_argmax_ndcg": 0.52374
+      },
+      "5.0": {
+        "step": 1400,
+        "ndcg": 0.47173,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.47912
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 31B",
+    "k": "K=10",
+    "recipe": "K=10 OC-SFT + warmup-500 [OG 31B silver]",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.49266,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.49266,
+    "within_epsilon_set": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 1200,
+        "ndcg": 0.44706,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1200,
+        "ndcg": 0.48571,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2200,
+        "ndcg": 0.482,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1200,
+        "ndcg": 0.47844,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1800,
+        "ndcg": 0.4808,
+        "complete": true
+      },
+      "5.0": {
+        "step": 2200,
+        "ndcg": 0.49266,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500 [GPT-5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 3.0,
+    "lambda_star_step": 1400,
+    "lambda_star_ndcg": 0.49905,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.49905,
+    "within_epsilon_set": [
+      3.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "1.0": {
+        "step": 1000,
+        "ndcg": 0.44869,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1800,
+        "ndcg": 0.44503,
+        "complete": true,
+        "global_argmax_step": 600,
+        "global_argmax_ndcg": 0.45476
+      },
+      "3.0": {
+        "step": 1400,
+        "ndcg": 0.49905,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.45216,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1200,
+        "ndcg": 0.43689,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.4588
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E4B-it)",
+    "k": "K=10-hybrid",
+    "recipe": "K=10-hybrid OC-SFT + warmup-500 [GPT-5.4 cross-family silver]",
+    "silver_source": "gpt5.4-genbsc",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.4827,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.4827,
+    "within_epsilon_set": [
+      4.0
+    ],
+    "tie_invoked": false,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "1.0": {
+        "step": 1200,
+        "ndcg": 0.43709,
+        "complete": true
+      },
+      "2.0": {
+        "step": 1800,
+        "ndcg": 0.4477,
+        "complete": true
+      },
+      "3.0": {
+        "step": 1800,
+        "ndcg": 0.46413,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.4827,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1200,
+        "ndcg": 0.44087,
+        "complete": true
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4 (E4B-it) [GPT5.4 bracket]",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT warmup-500 [GPT5.4 cross-family silver bracket]",
+    "lambda_star": 3.0,
+    "lambda_star_step": 2305,
+    "lambda_star_ndcg": 0.44795,
+    "argmax_lambda": 1.0,
+    "argmax_ndcg": 0.46249,
+    "within_epsilon_set": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "tie_invoked": true,
+    "boundary": true,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "1.0": {
+        "step": 1400,
+        "ndcg": 0.46249,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2000,
+        "ndcg": 0.45606,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2305,
+        "ndcg": 0.44795,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.46361
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Granite-4.1-8B [GPT5.4 bracket]",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT warmup-500 [GPT5.4 cross-family silver bracket]",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1200,
+    "lambda_star_ndcg": 0.46422,
+    "argmax_lambda": 4.0,
+    "argmax_ndcg": 0.46422,
+    "within_epsilon_set": [
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "3.0": {
+        "step": 1000,
+        "ndcg": 0.4612,
+        "complete": true,
+        "global_argmax_step": 800,
+        "global_argmax_ndcg": 0.46444
+      },
+      "4.0": {
+        "step": 1200,
+        "ndcg": 0.46422,
+        "complete": true,
+        "global_argmax_step": 400,
+        "global_argmax_ndcg": 0.46724
+      },
+      "5.0": {
+        "step": 1000,
+        "ndcg": 0.43798,
+        "complete": true,
+        "global_argmax_step": 200,
+        "global_argmax_ndcg": 0.46534
+      }
+    },
+    "source": "Local progress.jsonl qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4-26B-A4B (MoE)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500",
+    "lambda_star": 3.0,
+    "lambda_star_step": 1000,
+    "lambda_star_ndcg": 0.4691,
+    "argmax_lambda": 2.0,
+    "argmax_ndcg": 0.48169,
+    "within_epsilon_set": [
+      2.0,
+      3.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "confidence": "LOW",
+    "provisional": true,
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Gemma-4-26B-A4B (MoE)",
+    "k": "K=10-hybrid",
+    "recipe": "K=10-hybrid OC-SFT + warmup-500",
+    "lambda_star": 5.0,
+    "lambda_star_step": 2200,
+    "lambda_star_ndcg": 0.48859,
+    "argmax_lambda": 5.0,
+    "argmax_ndcg": 0.48859,
+    "within_epsilon_set": [
+      5.0
+    ],
+    "tie_invoked": false,
+    "boundary": true,
+    "confidence": "LOW",
+    "provisional": true,
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  },
+  {
+    "family": "Qwen3-Reranker-4B (A2)",
+    "k": "K=1",
+    "recipe": "K=1 OC-SFT + warmup-500",
+    "lambda_star": 4.0,
+    "lambda_star_step": 1800,
+    "lambda_star_ndcg": 0.50868,
+    "argmax_lambda": 3.0,
+    "argmax_ndcg": 0.51642,
+    "within_epsilon_set": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "tie_invoked": true,
+    "boundary": false,
+    "rule_version": "amended-2026-05-29 (grid {0.5,1,2,3,4,5}, collapse-disqualifier, 1-SE band, higher-λ tie-break over CONVERGED non-collapsed λ; per-cell independent)",
+    "missing_lambdas": [],
+    "collapsed_lambdas": [],
+    "confidence": "LOW",
+    "provisional": true,
+    "per_lambda": {
+      "0.5": {
+        "step": 2200,
+        "ndcg": 0.50349,
+        "complete": true
+      },
+      "1.0": {
+        "step": 1800,
+        "ndcg": 0.50205,
+        "complete": true
+      },
+      "2.0": {
+        "step": 2200,
+        "ndcg": 0.50491,
+        "complete": true
+      },
+      "3.0": {
+        "step": 2305,
+        "ndcg": 0.51642,
+        "complete": true
+      },
+      "4.0": {
+        "step": 1800,
+        "ndcg": 0.50868,
+        "complete": true
+      },
+      "5.0": {
+        "step": 1800,
+        "ndcg": 0.49268,
+        "complete": true
+      }
+    },
+    "source": "TensorBoard student_eval/qrels_ndcg_cut_10 (100q), latest run per λ.",
+    "independent_selection": true
+  }
+]

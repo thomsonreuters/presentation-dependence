@@ -1,0 +1,29 @@
+###############################################################################
+# Sweep: three tracked rerankers over the same DL19 passage pool.
+#
+# Example sweep, and a working one: every `exp_id` below resolves to a tracked
+# config in configs/experiments/. It needs the DL19 passage data in place; see
+# docs/DATA-SETUP.md. Add --dry-run to expand the matrix and print the commands
+# without running anything, which needs no data at all.
+#
+# Run with:  uv run python scripts/run_sweep.py configs/sweeps/passage-rerankers-dl19-example.yaml
+###############################################################################
+
+id: passage-rerankers-dl19-example
+description: "Three rerankers on the same DL19 passage pool (example sweep)."
+
+execution:
+  max_parallel: 1
+
+common_overrides:
+  # Applied to every job. Batch size is the usual thing to lower when the
+  # configs assume more GPU memory than the machine has.
+  reranker.batch_size: 8
+
+jobs:
+  - exp_id: example-passage-mxbai-large-v2
+  - exp_id: example-passage-jina-v3-b20
+  - exp_id: example-passage-granite-b20-psi
+    # Per-job overrides win over common_overrides.
+    overrides:
+      reranker.batch_size: 4

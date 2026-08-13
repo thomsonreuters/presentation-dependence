@@ -1,0 +1,36 @@
+id: example-passage-granite-b20-psi
+
+reranker:
+  class: Granite41GradeReranker
+  model_name: ibm-granite/granite-4.1-8b
+  revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+  model_size: 8b
+  model_release: granite41
+  inference_engine: hf
+  device: auto
+  dtype: bfloat16
+  scoring_mode: setwise_grade_prompt
+  score_output: probability
+  continuous_readout: true
+  instruction: Given a web search query, retrieve relevant passages that answer the query
+  max_length: 4096
+  max_doc_chars: 1200
+  docs_per_score_forward: 20
+  batch_size: 20
+
+data:
+  dataloader_class: FixtureLoader
+  run_path: data/dl19-passage/fixture.jsonl
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10, map, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle, middle_injection]
+  k_cutoff_for_ndcg: 10
+
+logging: {level: INFO}

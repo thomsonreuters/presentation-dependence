@@ -1,0 +1,349 @@
+schema_version: 1
+
+task:
+  id: response-ranking
+  description: Train and evaluate order-stable candidate-response scorers.
+
+shared: configs/reproduction/shared.yaml
+
+silver:
+  id: response-ranking-silver
+
+  candidate_pool:
+    output_dir: data/ultrafeedback-response-quality-train
+    dataset: openbmb/UltraFeedback
+    split: train
+    sampling_seed: 42
+    materialized_queries: 30700
+    training_queries: 30000
+    heldout_queries: 500
+    dev_queries: 200
+    candidates_per_query: 4
+    grade_thresholds: [4.0, 6.0, 8.0]
+    all_qids: qids_all.txt
+    training_qids: qids_30k.txt
+    heldout_qids: qids_heldout_500.txt
+    dev_qids: qids_dev_200.txt
+    topics: topics.tsv
+    qrels: qrels.txt
+    run: run.ultrafeedback-response-quality-train_sorted.txt
+    fixture: fixture.jsonl
+
+  scoring:
+    topics_id: ultrafeedback-response-quality-train
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    prompt_template: response-quality-grade-int-v1
+    max_length: 8192
+    max_doc_chars: 2000
+
+  teachers:
+    - id: qwen3-4b-response-train
+      cohort: training
+      model: qwen3-4b-nonthinking
+      qids: qids_30k.txt
+      presentations: 10
+      serving_width: 4
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+    - id: qwen3-4b-response-heldout
+      cohort: heldout
+      model: qwen3-4b-nonthinking
+      qids: qids_heldout_500.txt
+      presentations: 10
+      serving_width: 4
+      cross_query_batch: 4
+
+    - id: qwen3-4b-response-pointwise-train
+      cohort: training
+      role: pointwise
+      model: qwen3-4b-nonthinking
+      qids: qids_30k.txt
+      presentations: 1
+      serving_width: 1
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+    - id: qwen3-4b-response-pointwise-heldout
+      cohort: heldout
+      role: pointwise
+      model: qwen3-4b-nonthinking
+      qids: qids_heldout_500.txt
+      presentations: 1
+      serving_width: 1
+      cross_query_batch: 4
+
+  products:
+    - id: k10-train
+      labels: order-average-10
+      cohort: training
+      source: teacher-run
+    - id: k10-heldout
+      labels: order-average-10
+      cohort: heldout
+      source: teacher-run
+    - id: k1-train
+      labels: presentation-seed-0
+      cohort: training
+      filename: k1-train.jsonl
+    - id: k1-heldout
+      labels: presentation-seed-0
+      cohort: heldout
+      filename: k1-heldout.jsonl
+    - id: pointwise-train
+      labels: pointwise-single
+      cohort: training
+      filename: pointwise-k1-train.jsonl
+    - id: pointwise-heldout
+      labels: pointwise-single
+      cohort: heldout
+      filename: pointwise-k1-heldout.jsonl
+
+  consumers:
+    k10-train: [k10-sft]
+    k10-heldout: [k10-sft]
+    k1-train: [k1-sft, shuffled-view-augmentation, debias-first, oc-sft]
+    k1-heldout: [k1-sft, shuffled-view-augmentation, debias-first, oc-sft]
+    pointwise-train: [true-pointwise-b1]
+    pointwise-heldout: [true-pointwise-b1]
+
+  execution:
+    fixture_channel: ultrafeedback-response-quality-train
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/response-ranking/silver
+    configs_dir: configs/silver
+    manifest: manifest.json
+    summary: summary.md
+
+training:
+  silver_manifest: build/reproduction/response-ranking/silver/manifest.json
+  seeds:
+    42: {view_seeds: [0, 1]}
+    43: {view_seeds: [2, 3]}
+    44: {view_seeds: [4, 5]}
+
+  variants:
+    - id: k1-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-ultrafeedback-rq-30k-k1-labels.yaml
+      silver: k1
+
+    - id: k10-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-ultrafeedback-rq-30k-k10-labels.yaml
+      silver: k10
+
+    - id: shuffled-view-augmentation
+      template: configs/self-distill/qwen3-4b-nonthink-k1-pos-aug-only-ultrafeedback-rq-30k.yaml
+      silver: k1
+      view_seeded: true
+
+    - id: debias-first
+      template: configs/self-distill/qwen3-4b-nonthink-k1-debias-first-ultrafeedback-rq-30k.yaml
+      silver: k1
+      view_seeded: true
+
+    - id: oc-sft
+      template_pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-ultrafeedback-rq-30k.yaml
+      silver: k1
+      view_seeded: true
+      lambda_grid:
+        - {code: "050", value: 0.5}
+        - {code: "100", value: 1.0}
+        - {code: "200", value: 2.0}
+        - {code: "300", value: 3.0}
+        - {code: "400", value: 4.0}
+        - {code: "500", value: 5.0}
+
+  checkpoint_selection:
+    metric: qrels_ndcg_cut_10
+    rule: a-priori-by-scale
+    # The paper fixes lambda=1.0 a priori at 4B (0.5 at 1.7B). The function
+    # below remains an optional reference for new experiments, not the
+    # reported-paper selection procedure. Collection anchors on expected_lambda
+    # unless an explicit receipt is present.
+    selection_protocol: presentation_dependence.self_distill.selection.select_amortization_matching
+    expected_lambda: 1.0
+    selection_receipt: build/reproduction/response-ranking/training/lambda_selection.json
+
+  optional_ablations:
+    enabled_by_default: false
+    variants:
+      - id: true-pointwise-b1
+        purpose: isolate B=4 comparison-aware scoring from one-response scoring
+        runnable: true
+        seeds: [42, 43, 44]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-ultrafeedback-rq-30k-k1-labels.yaml
+        silver: pointwise
+        patch:
+          reranker:
+            docs_per_score_forward: 1
+            batch_size: 1
+          student:
+            silver_labels_path: build/reproduction/response-ranking/silver/pointwise-k1-train.jsonl
+            eval_silver_labels_path: build/reproduction/response-ranking/silver/pointwise-k1-heldout.jsonl
+            data:
+              chunk_size: 1
+              candidate_set_id: ultrafeedback_response_quality_pointwise_b1
+      - id: policy-optimization
+        purpose: excluded downstream policy experiment
+        runnable: false
+        note: out of scope for this pipeline; no training template is declared
+      - id: raft-distillation
+        purpose: excluded response-selection distillation control
+        runnable: false
+        note: out of scope for this pipeline; no training template is declared
+
+  execution:
+    max_parallel: 1
+
+  outputs:
+    root: build/reproduction/response-ranking/training
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    checkpoint_catalog: checkpoints.json
+
+direct_eval:
+  population: response-ranking-5
+  checkpoint_catalog: build/reproduction/response-ranking/training/checkpoints.json
+
+  variants:
+    trained: [k1-sft, k10-sft, shuffled-view-augmentation, debias-first, oc-sft]
+    references:
+      - id: off-shelf
+        kind: base
+      # Repository-only diagnostic. The manuscript does not use Jina as a
+      # response-ranking stability or quality comparator.
+      - id: jina-reranker-v3
+        kind: external
+        model:
+          class: JinaListwiseReranker
+          model_name: jinaai/jina-reranker-v3
+          revision: 10fb694fc21f7a710a563ff1eb977a460f3868e4
+          dtype: auto
+          max_doc_length: 2048
+          max_query_length: 512
+      - id: skywork-reward-v2-qwen3-4b
+        kind: external
+        order_invariant: true
+        model:
+          class: SkyworkBTReranker
+          model_name: Skywork/Skywork-Reward-V2-Qwen3-4B
+          revision: fd958fef475f323f4e6b195930e3dd918485c668
+          dtype: bfloat16
+          batch_size: 8
+          max_length: 4096
+      - id: pairrm
+        kind: external
+        order_invariant: true
+        model:
+          class: PairRMReranker
+          model_name: llm-blender/PairRM-hf
+          revision: f9000bd5dc59f3cd5cd23a4b7bfa63b95f0b14e4
+          dtype: float32
+          batch_size: 16
+
+  protocol:
+    serving_width: 4
+    perturbations: [random_shuffle]
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    derive_self_consistency: true
+    sc_k_subsets: [1, 2, 3, 5, 10]
+    sc_measures: [ndcg_cut_10, ndcg_cut_1, recip_rank]
+
+  evaluation:
+    measures: [ndcg_cut_10, ndcg_cut_1, map, recip_rank]
+    headline_quality: ndcg_cut_1
+    headline_robustness: tau_psi
+
+  optional_controls:
+    enabled_by_default: false
+    variants:
+      - id: pointwise-serving
+        kind: geometry-control
+        runnable: true
+        order_invariant: true
+        source_variant: oc-sft
+        training_seed: 42
+      - id: true-pointwise-b1
+        kind: training-width-control
+        runnable: true
+        source_variant: true-pointwise-b1
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/response-ranking/training-ablations/checkpoints.json
+      - id: test-time-scaling
+        kind: inference-control
+        runnable: false
+        note: named for completeness; no inference specification is declared for it
+      - id: capcal
+        kind: calibration-control
+        runnable: false
+        note: >-
+          no response-ranking model is declared for it; the passage-reranking
+          pipeline runs CapCal as a reference variant
+
+  execution:
+    max_parallel: 1
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/response-ranking/direct-eval
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    per_dataset: per_dataset.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+downstream_eval:
+  source_stage: direct-eval
+  population: response-ranking-5
+
+  variants:
+    trained: [k1-sft, k10-sft, shuffled-view-augmentation, debias-first, oc-sft]
+    # Only off-shelf/trained rows belong to paper pair-flip aggregation.
+    # Jina is repository-only; Skywork/PairRM are direct-quality references.
+    references:
+      - off-shelf
+      - jina-reranker-v3
+      - skywork-reward-v2-qwen3-4b
+      - pairrm
+
+  protocol:
+    scorer_presentations: 10
+    canonical_presentation: 0
+    selection_rule: argmax-score
+    preference_pair: top-and-bottom
+    order_invariant_flip: 0.0
+    headline_datasets: [rewardbench2, nectar, ppe-math, ppe-mmlu-pro, rmbench]
+
+  evaluation:
+    measures:
+      - selection_flip_rate
+      - selected_quality_flip_rate
+      - preference_pair_flip_rate
+      - mean_selected_quality
+      - canonical_selected_quality
+      - benchmark_score_range
+    headline_quality: mean_selected_quality
+    headline_stability: preference_pair_flip_rate
+
+  outputs:
+    root: build/reproduction/response-ranking/downstream-eval
+    run_manifest: run_manifest.json
+    per_consumer: per_consumer.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+controls:
+  silver: []
+  training: []
+  direct_eval: []
+  downstream_eval: []
+
+analyses:
+  implementation: existing-analysis-scripts

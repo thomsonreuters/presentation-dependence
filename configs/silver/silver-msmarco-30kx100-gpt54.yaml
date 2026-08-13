@@ -1,0 +1,44 @@
+experiment_id: silver-msmarco-30kx100-gpt54
+
+# Closed-model production candidate: GPT-5.4 over the exact same  
+# same self-distill MS MARCO 30K qid set and
+# top-100 fixture used by Qwen3/Gemma4.
+
+input:
+  query_set: ms_marco_passage_train
+  query_count: all
+  candidates_per_query: 100
+  data:
+    dataloader_class: FixtureLoader
+    run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+    unsorted_run_file: true
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+teacher:
+  model_id: gpt-5.4
+  protocol: closed_model_generated_bsc
+  client: openai
+  endpoint:
+    # Omit base_url for the default provider; set it for a gateway or a local
+    # OpenAI-compatible server. Credentials come from OPENAI_API_KEY.
+    base_url: null
+  scoring:
+    subset_size: 20
+    runs: 10
+    run_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    score_min: 0
+    score_max: 3
+    # 1536 gives headroom for one grade line per document at B=20.
+    max_tokens: 1536
+
+prompts:
+  - grade_int_v1
+
+cost:
+  # Estimate
+  max_budget_usd: 10000.0
+
+output:
+  base_dir: runs/silver/silver-msmarco-30kx100-gpt54
+

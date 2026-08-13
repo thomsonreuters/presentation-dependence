@@ -1,0 +1,70 @@
+###############################################################################
+# CapCal over the off-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
+#
+# External baseline: Lv+2026 content-free probability calibration, wrapped around
+# the same grade scorer the trained arms use so the calibration is the only
+# difference. The wrapped base stays runnable uncalibrated.
+###############################################################################
+
+id: example-passage-capcal-b20-psi
+
+reranker:
+  class: CapCalReranker
+  docs_per_score_forward: 20
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_doc_chars: 1200
+  base_reranker:
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    revision: 1cfa9a7208912126459214e8b04321603b3df60c
+    device: auto
+    dtype: bfloat16
+    scoring_mode: setwise_grade_prompt
+    continuous_readout: true
+    inference_engine: vllm
+    chat_template_kwargs:
+      enable_thinking: false
+    vllm_settings:
+      max_model_len: 8192
+      gpu_memory_utilization: 0.85
+      enable_prefix_caching: true
+      tensor_parallel_size: 1
+      top_logprobs: 50
+    instruction: "Given a web search query, retrieve relevant passages that answer the query"
+    max_length: 8192
+    docs_per_score_forward: 20
+    batch_size: 20
+    max_doc_chars: 1200
+  capcal:
+    strength: 1.0
+    entropy_adaptive: true
+    probe_query_texts: null
+    probe_passage_text: ""
+    require_grade_probabilities: true
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage
+  topics_tsv: data/dl19-passage/topics.tsv
+  index: msmarco-v1-passage
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10, ndcg_cut_5, map, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle, middle_injection]
+  k_cutoff_for_ndcg: 10
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

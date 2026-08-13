@@ -1,0 +1,60 @@
+###############################################################################
+# OG Qwen3-8B non-thinking K=10 BSC self-distillation silver.
+#
+# Same K=10/B=20/30K teacher protocol as the existing Qwen3-Instruct K=10 pass.
+###############################################################################
+
+id: qwen3-8b-nonthink-k10-bsc-msmarco-30k
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-8B
+  model_size: 8b
+  model_release: qwen3-og
+  revision: null
+  device: cuda
+  dtype: bfloat16
+  inference_engine: vllm
+  chat_template_kwargs:
+    enable_thinking: false
+  vllm_settings:
+    max_model_len: 4096
+    gpu_memory_utilization: 0.85
+    enable_prefix_caching: true
+    tensor_parallel_size: 1
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 20
+  max_doc_chars: 1200
+
+data:
+  dataloader_class: FixtureLoader
+  topics: msmarco-passage-train
+  topics_tsv: data/msmarco-train-selfdistill-seed42/topics.tsv
+  run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+  k_input: 100
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+eval:
+  qrels_path: data/msmarco-train-selfdistill-seed42/qrels.txt
+  strict_qrels_filter: false
+  measures: [ndcg_cut_10]
+
+teacher:
+  protocol: k_shot_bsc
+  k_perms: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  prompt_template_id: grade_int_v1
+  grade_max: 3
+  cross_query_batch: 4
+  local_data_parallel_workers: 8
+  output_subdir: silver
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

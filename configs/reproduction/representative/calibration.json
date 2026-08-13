@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "family": "calibration",
+  "evidence_level": "paper-fit-protocol-example",
+  "source": {
+    "historical_asset_id": "part3e_random_only/metricfit_random_only_tau.json",
+    "selector": "cell_fit_clustered_by_model.slope",
+    "note": "Compact points preserve the reported fit line; full CR1 inference uses 198 cells."
+  },
+  "payload": {
+    "x": [0.2, 0.25, 0.3, 0.35, 0.4, 0.45],
+    "y": [
+      0.08081655535009518,
+      0.08339635617662949,
+      0.0859761570031638,
+      0.08855595782969811,
+      0.09113575865623242,
+      0.09371555948276674
+    ],
+    "groups": ["qwen3", "qwen3", "granite", "granite", "gemma", "gemma"]
+  }
+}

@@ -1,0 +1,347 @@
+schema_version: 1
+
+task:
+  id: multi-document-qa
+  description: Train and evaluate order-stable evidence-support scorers.
+
+shared: configs/reproduction/shared.yaml
+
+silver:
+  id: multi-document-qa-silver
+
+  candidate_pool:
+    output_dir: data/hotpotqa-distractor-support-train
+    dataset: hotpot_qa
+    dataset_config: distractor
+    split: train
+    sampling_seed: 42
+    materialized_queries: 30500
+    training_queries: 30000
+    heldout_queries: 500
+    candidates_per_query: 10
+    supports_per_query: 2
+    all_qids: qids_all.txt
+    training_qids: qids_30k.txt
+    heldout_qids: qids_heldout_500.txt
+    topics: topics.tsv
+    qrels: qrels.txt
+    run: run.hotpotqa-distractor-support-train_sorted.txt
+    fixture: fixture.jsonl
+
+  scoring:
+    topics_id: hotpotqa-distractor-support-train
+    instruction: Given a multi-hop question, identify passages that support answering the question
+    grade_rubric: answer_support_v1
+    prompt_template: answer-support-grade-int-v1
+    max_length: 4096
+    max_doc_chars: 1600
+
+  teachers:
+    - id: qwen3-4b-support-train
+      cohort: training
+      model: qwen3-4b-nonthinking
+      qids: qids_30k.txt
+      presentations: 10
+      serving_width: 10
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+    - id: qwen3-4b-support-heldout
+      cohort: heldout
+      model: qwen3-4b-nonthinking
+      qids: qids_heldout_500.txt
+      presentations: 10
+      serving_width: 10
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+    - id: qwen3-4b-support-pointwise-train
+      cohort: training
+      role: pointwise
+      model: qwen3-4b-nonthinking
+      qids: qids_30k.txt
+      presentations: 1
+      serving_width: 1
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+    - id: qwen3-4b-support-pointwise-heldout
+      cohort: heldout
+      role: pointwise
+      model: qwen3-4b-nonthinking
+      qids: qids_heldout_500.txt
+      presentations: 1
+      serving_width: 1
+      cross_query_batch: 4
+      local_data_parallel_workers: 8
+
+  products:
+    - id: k10-train
+      labels: order-average-10
+      cohort: training
+      source: teacher-run
+    - id: k10-heldout
+      labels: order-average-10
+      cohort: heldout
+      source: teacher-run
+    - id: k1-train
+      labels: presentation-seed-0
+      cohort: training
+      filename: k1-train.jsonl
+    - id: k1-heldout
+      labels: presentation-seed-0
+      cohort: heldout
+      filename: k1-heldout.jsonl
+    - id: pointwise-train
+      labels: pointwise-single
+      cohort: training
+      filename: pointwise-k1-train.jsonl
+    - id: pointwise-heldout
+      labels: pointwise-single
+      cohort: heldout
+      filename: pointwise-k1-heldout.jsonl
+
+  consumers:
+    k10-train: [k10-sft]
+    k10-heldout: [k10-sft]
+    k1-train: [k1-sft, oc-sft]
+    k1-heldout: [k1-sft, oc-sft]
+    pointwise-train: [true-pointwise-b1]
+    pointwise-heldout: [true-pointwise-b1]
+
+  execution:
+    fixture_channel: hotpotqa-distractor-support-train
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/multi-document-qa/silver
+    configs_dir: configs/silver
+    manifest: manifest.json
+    summary: summary.md
+
+training:
+  silver_manifest: build/reproduction/multi-document-qa/silver/manifest.json
+  seeds:
+    42: {view_seeds: [0, 1]}
+    43: {view_seeds: [2, 3]}
+    44: {view_seeds: [4, 5]}
+
+  variants:
+    - id: k1-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k1-labels.yaml
+      silver: k1
+
+    - id: k10-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k10-labels.yaml
+      silver: k10
+
+    - id: oc-sft
+      template_pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-hotpotqa-support-30k.yaml
+      silver: k1
+      view_seeded: true
+      lambda_grid:
+        - {code: "050", value: 0.5}
+        - {code: "100", value: 1.0}
+        - {code: "200", value: 2.0}
+        - {code: "300", value: 3.0}
+
+  checkpoint_selection:
+    metric: qrels_ndcg_cut_10
+    rule: heldout-argmax
+    exact_tie_break: earliest-step
+    # Lambda selection rule is not executed by this collection pipeline.
+    # Collection anchors on expected_lambda; run scripts/select_lambda.py
+    # against the training runs to re-derive it.
+    selection_protocol: presentation_dependence.self_distill.selection.select_heldout_lambda
+    selector_cli: scripts/select_lambda.py
+    expected_lambda: 3.0
+    selection_scope: mean-over-training-seeds
+    cadence_steps: 50
+
+  optional_ablations:
+    enabled_by_default: false
+    variants:
+      - id: true-pointwise-b1
+        purpose: isolate native B=10 support scoring from one-passage scoring
+        runnable: true
+        seeds: [42, 43, 44]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k1-labels.yaml
+        silver: pointwise
+        patch:
+          reranker:
+            docs_per_score_forward: 1
+            batch_size: 1
+          student:
+            silver_labels_path: build/reproduction/multi-document-qa/silver/pointwise-k1-train.jsonl
+            eval_silver_labels_path: build/reproduction/multi-document-qa/silver/pointwise-k1-heldout.jsonl
+            data:
+              chunk_size: 1
+              candidate_set_id: hotpotqa_distractor_support_pointwise_b1
+      - id: alternative-reader-size
+        purpose: test downstream-reader sensitivity after scorer training
+        runnable: false
+        note: no training template is declared for this arm, so no job is generated
+
+  execution:
+    max_parallel: 1
+
+  outputs:
+    root: build/reproduction/multi-document-qa/training
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    checkpoint_catalog: checkpoints.json
+
+direct_eval:
+  population: multi-document-qa-3
+  checkpoint_catalog: build/reproduction/multi-document-qa/training/checkpoints.json
+
+  variants:
+    trained: [k1-sft, k10-sft, oc-sft]
+    references:
+      - id: off-shelf
+        kind: base
+      # Repository-only diagnostic. The manuscript has no external QA
+      # stability comparator; exclude this row from paper aggregates.
+      - id: jina-reranker-v3
+        kind: external
+        model:
+          class: JinaListwiseReranker
+          model_name: jinaai/jina-reranker-v3
+          revision: 10fb694fc21f7a710a563ff1eb977a460f3868e4
+          dtype: auto
+          max_doc_length: 2048
+          max_query_length: 512
+
+  protocol:
+    serving_width: 10
+    pool_depth: 10
+    perturbations: [random_shuffle]
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    derive_self_consistency: true
+    sc_k_subsets: [1, 2, 3, 5, 10]
+    sc_measures: [ndcg_cut_10, recall_2, recall_5]
+
+  evaluation:
+    measures: [ndcg_cut_10, ndcg_cut_5, recall_2, recall_5]
+    headline_quality: ndcg_cut_10
+    headline_robustness: tau_psi
+
+  optional_controls:
+    enabled_by_default: false
+    variants:
+      - id: pointwise-serving
+        kind: geometry-control
+        runnable: true
+        order_invariant: true
+        source_variant: oc-sft
+        training_seed: 42
+      - id: true-pointwise-b1
+        kind: training-width-control
+        runnable: true
+        source_variant: true-pointwise-b1
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/multi-document-qa/training-ablations/checkpoints.json
+      - id: matched-variance
+        kind: estimator-control
+        runnable: true
+        source_variant: oc-sft
+        training_seed: 42
+        presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        request_batch_size: 128
+
+  execution:
+    max_parallel: 1
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/multi-document-qa/direct-eval
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    per_dataset: per_dataset.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+downstream_eval:
+  source_stage: direct-eval
+  population: multi-document-qa-3
+  verdict_checkpoint_catalog: build/reproduction/passage-reranking/training/checkpoints.json
+
+  variants:
+    trained: [k1-sft, k10-sft, oc-sft]
+    # Jina is retained for repository diagnostics, not the manuscript matrix.
+    references: [off-shelf, jina-reranker-v3]
+  controls: [true-pointwise-b1]
+
+  reader:
+    engine: vllm
+    model_name: ibm-granite/granite-4.1-8b
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+    family: granite
+    max_tokens: 64
+    max_model_len: 8192
+    enable_thinking: false
+    cot: false
+    batch_size: 0
+
+  verdict_reader:
+    engine: vllm
+    model_name: ibm-granite/granite-4.1-8b
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+    family: granite
+    max_tokens: 8
+    max_model_len: 8192
+    enable_thinking: false
+    choices: [SUPPORTED, REFUTED, NEI]
+    batch_size: 256
+
+  protocol:
+    k_values: [3, 5]
+    headline_k: 5
+    verdict_dataset: climate-fever
+    verdict_k_values: [5]
+    verdict_headline_k: 5
+    canonical_presentation: 0
+    scorer_presentations: 10
+
+  evaluation:
+    measures:
+      - canonical_em
+      - canonical_f1
+      - mean_answer_flip_rate
+      - gold_in_topk_rate
+      - gold_slot_mean
+      - gold_slot_var
+    verdict_measures:
+      - canonical_accuracy
+      - mean_accuracy
+      - mean_verdict_flip_rate
+      - evidence_in_topk_rate
+      - evidence_slot_mean
+      - evidence_slot_var
+    headline_quality: canonical_f1
+    headline_stability: mean_answer_flip_rate
+
+  execution:
+    max_parallel: 1
+
+  outputs:
+    root: build/reproduction/multi-document-qa/downstream-eval
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    per_consumer: per_consumer.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+controls:
+  silver: []
+  training: []
+  direct_eval: []
+  downstream_eval: []
+
+analyses:
+  implementation: existing-analysis-scripts

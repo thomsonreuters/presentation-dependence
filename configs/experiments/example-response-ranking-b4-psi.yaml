@@ -1,0 +1,37 @@
+id: example-response-ranking-b4-psi
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  revision: 1cfa9a7208912126459214e8b04321603b3df60c
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs: {enable_thinking: false}
+  device: auto
+  dtype: bfloat16
+  instruction: Given a user prompt, rate candidate assistant responses by overall quality
+  grade_rubric_id: response_quality_v1
+  max_length: 8192
+  max_doc_chars: 2000
+  docs_per_score_forward: 4
+  batch_size: 4
+
+data:
+  dataloader_class: FixtureLoader
+  topics: rewardbench2-response-quality-test
+  topics_tsv: data/rewardbench2-response-quality-test/topics.tsv
+  run_path: data/rewardbench2-response-quality-test/fixture.jsonl
+  k_input: 4
+
+eval:
+  qrels_path: data/rewardbench2-response-quality-test/qrels.txt
+  strict_qrels_filter: true
+  measures: [ndcg_cut_10, ndcg_cut_1, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle]
+  k_cutoff_for_ndcg: 1
+
+logging: {level: INFO}

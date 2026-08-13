@@ -1,0 +1,53 @@
+###############################################################################
+# jina-reranker-v3 scoring-listwise baseline on DL19, at the matched B=20
+# geometry: docs_per_score_forward=20 gives five listwise forwards over
+# k_input=100, and max_doc_chars=1200 matches the grade-scorer convention.
+#
+# Licence boundary: jina-reranker-v3 is CC-BY-NC-4.0 and stays evaluation-only.
+# Do not use as a teacher, label generator, or fine-tuning base.
+###############################################################################
+
+id: example-passage-jina-v3-b20
+reranker:
+  class: JinaListwiseReranker
+  model_name: jinaai/jina-reranker-v3
+  revision: 10fb694fc21f7a710a563ff1eb977a460f3868e4
+  device: auto
+  dtype: auto
+  max_doc_length: 2048
+  max_query_length: 512
+  max_doc_chars: 1200
+  docs_per_score_forward: 20
+data:
+  dataloader_class: PyseriniLoader
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+  topics_tsv: data/dl19-passage/topics.tsv
+  index: msmarco-v1-passage
+  topics: dl19-passage
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures:
+  - ndcg_cut_10
+  - ndcg_cut_5
+  - map
+  - recip_rank
+robustness:
+  K: 10
+  seeds:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  perturbations:
+  - random_shuffle
+  - middle_injection
+  k_cutoff_for_ndcg: 10
+logging:
+  level: INFO

@@ -1,0 +1,76 @@
+schema_version: 1
+description: One offline paper anchor for each appendix analysis family.
+
+families:
+  bootstrap-ci:
+    operation: hierarchical-bootstrap
+    paper: {file: appendix/E_width.tex, label: "tab:decomp"}
+    fixture: configs/reproduction/representative/bootstrap-ci.json
+    checks:
+      - id: oc-minus-k1-tau-psi
+        path: mean
+        expected: -0.11237976665883642
+        atol: 1.0e-12
+      - id: interval-excludes-zero
+        path: ci95
+        mode: ci-excludes-zero
+
+  tau-psi:
+    operation: mean
+    paper: {file: appendix/D_results.tex, label: "fig:taupsibox"}
+    fixture: configs/reproduction/representative/tau-psi.json
+    checks:
+      - id: dl19-dl20-oc-sft
+        path: mean
+        expected: 0.07185214476084414
+        atol: 1.0e-12
+
+  verdict-flip:
+    operation: mean
+    paper: {file: appendix/G_consumers.tex, label: "tab:downstream"}
+    fixture: configs/reproduction/representative/verdict-flip.json
+    checks:
+      - id: climate-fever-oc-sft
+        path: mean
+        expected: 0.03721940622737147
+        atol: 1.0e-12
+
+  pair-flip:
+    operation: mean
+    paper: {file: appendix/G_consumers.tex, label: "tab:rr-pairflip"}
+    fixture: configs/reproduction/representative/pair-flip.json
+    checks:
+      - id: response-five-collection-oc-sft
+        path: mean
+        expected: 0.493
+        atol: 1.0e-12
+
+  jaccard:
+    operation: pairwise-jaccard
+    paper: {file: appendix/G_consumers.tex, label: "tab:jaccard-perbase"}
+    fixture: configs/reproduction/representative/jaccard.json
+    checks:
+      - id: qwen3-4b-paper18-oc-sft
+        path: mean_pairwise_jaccard
+        expected: 0.831
+        atol: 0.001
+
+  gain-histogram:
+    operation: gain-histogram
+    paper: {file: appendix/E_mechanism.tex, label: "fig:gainhist"}
+    fixture: configs/reproduction/representative/gain-histogram.json
+    checks:
+      - id: public-query-improvement-share
+        path: nonnegative_fraction
+        mode: range
+        expected: [0.89, 0.91]
+
+  calibration:
+    operation: clustered-calibration
+    paper: {file: appendix/E_mechanism.tex, label: "fig:calibration"}
+    fixture: configs/reproduction/representative/calibration.json
+    checks:
+      - id: clustered-cell-fit-slope
+        path: slope
+        expected: 0.05159601653068623
+        atol: 1.0e-12

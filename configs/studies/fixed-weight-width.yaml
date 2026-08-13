@@ -1,0 +1,119 @@
+schema_version: 1
+id: fixed-weight-width
+description: Training-width and deployment-width decomposition across tasks.
+
+outputs:
+  config_root: configs/experiments
+  sweep_root: configs/sweeps
+
+dimensions:
+  tasks: [passage-reranking, multi-document-qa, response-ranking]
+  training_arms:
+    - k1-sft
+    - k10-sft
+    - oc-sft
+  training_seeds: [42, 43, 44]
+  deploy_widths: [1, 10, 20]
+  passage_population: reranking-primary-18
+  qa_population: multi-document-qa-3
+  response_population: response-ranking-5
+
+conditions:
+  multiseed-width:
+    task: passage-reranking
+    population: reranking-frozen-18
+    variant: oc-sft
+    training_seeds: [43, 44]
+    serving_width: 1
+    quality_metric: ndcg_cut_10
+    execution:
+      max_parallel: 1
+      bundle_partitions:
+        - [dl19, dl20, dl21, dl22, dl23, touche2020, fiqa, nfcorpus]
+        - [arguana, climate-fever, trec-covid, dbpedia-entity, scifact, signal1m, trec-news, robust04, legal-a, legal-b]
+
+  fixed-weight-multiseed:
+    variant: oc-sft
+    training_seeds: [42, 43, 44]
+    tasks:
+      passage-reranking: {native_width: 20, quality_metric: ndcg_cut_10, population: reranking-frozen-18}
+      multi-document-qa: {native_width: 10, quality_metric: ndcg_cut_10}
+      response-ranking: {native_width: 4, quality_metric: ndcg_cut_1}
+
+  instrument-width:
+    task: passage-reranking
+    population: reranking-frozen-18
+    training_seed: 42
+    serving_width: 1
+    variants:
+      k10-sft: K=10 SFT
+
+  context-decomposition:
+    task: passage-reranking
+    population: reranking-primary-18
+    variant: oc-sft
+    training_seed: 42
+    serving_width: 20
+    pool_depth: 100
+    variable_pool_size: true
+    query_basis: all-judged-queries
+    canonical_order: first-stage
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    k_cutoff_for_ndcg: 10
+    request_batch_size: 128
+    bootstrap: {samples: 10000, seed: 0}
+    execution:
+      max_parallel: 1
+    contrasts:
+      width: published_width
+      content: semantic_real_vs_unrelated
+      length_slot: companion_length_and_position
+      skeleton: cumulative_skeleton
+    dataset_labels:
+      dl19: DL19
+      dl20: DL20
+      dl21: DL21
+      dl22: DL22
+      dl23: DL23
+      touche2020: Touche-2020
+      fiqa: FiQA
+      nfcorpus: NFCorpus
+      arguana: ArguAna
+      climate-fever: Climate-FEVER
+      trec-covid: TREC-COVID
+      dbpedia-entity: DBPedia
+      scifact: SciFact
+      signal1m: Signal-1M
+      trec-news: TREC-NEWS
+      robust04: Robust04
+      legal-a: Legal-A
+      legal-b: Legal-B
+    shard_counts:
+      dl19: 1
+      dl20: 4
+      dl21: 4
+      dl22: 4
+      dl23: 1
+      touche2020: 1
+      fiqa: 4
+      nfcorpus: 2
+      arguana: 1
+      climate-fever: 10
+      trec-covid: 1
+      dbpedia-entity: 3
+      scifact: 2
+      signal1m: 1
+      trec-news: 1
+      robust04: 1
+      legal-a: 1
+      legal-b: 2
+
+materializers:
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [fixed-weight-multiseed]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [instrument-width]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [multiseed-width]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [context-decomposition]

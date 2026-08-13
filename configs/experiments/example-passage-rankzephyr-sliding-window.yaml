@@ -1,0 +1,75 @@
+###############################################################################
+# RankZephyr generative-listwise baseline on DL19. Inference only.
+#
+# Matched candidate pool: RankZephyr and the trained scorer are measured on the
+# same BM25 top-100 candidates, each in its own native mode (the scorer in B=20
+# chunks, RankZephyr in native sliding windows W=20/S=10), under the same
+# whole-list input-order perturbation. Reranking a top-20 single window instead
+# would hand RankZephyr a smaller, different-recall set and put it below its
+# native top-100 quality. Cross-window bubbling is symmetric across both models,
+# so it is part of the order sensitivity being measured, not a confound.
+#
+# PSI varies input order only (random_shuffle, no middle_injection). A generative
+# listwise model emits a permutation and no per-candidate score, so its
+# self-consistency lift is measured in rank space (Borda over the ten final
+# rankings) by eval/rank_self_consistency.py rather than in score space.
+###############################################################################
+
+id: example-passage-rankzephyr-sliding-window
+
+reranker:
+  class: RankZephyrReranker
+  model_name: castorini/rank_zephyr_7b_v1_full
+  # Pin before publishing a number: a silent HF weight update would move it.
+  # Fill from `huggingface-cli repo info castorini/rank_zephyr_7b_v1_full`.
+  revision: aa11d9da444ec3490827656c3b961d5c5f3af0eb
+  device: auto
+  dtype: auto
+
+  # Native sliding-window bubble-sort (Pradeep+2023 §3): W=20, S=10, end->start.
+  # ~9 sequential forwards per permutation at N=100. RankZephyr's canonical
+  # config. Matches the published W=20/S=10 setup (nDCG ~0.733) and RankZephyr's
+  # native order behavior.
+  window_size: 20
+  stride: 10
+  max_new_tokens: 200
+  max_doc_words: 300
+  max_total_tokens: 4096
+  return_logprobs: false
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage
+  topics_tsv: data/dl19-passage/topics.tsv
+  index: msmarco-v1-passage
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  # BM25 top-100 = the student's eval candidate set (B=20 over top-100).
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures:
+    - ndcg_cut_10
+    - ndcg_cut_5
+    - map
+    - recip_rank
+
+# One varied knob: input order. 10 random_shuffle seeds shuffle the WHOLE
+# top-100 input order (robustness.perturbations shuffles the full k_input list);
+# the reranker then runs its native sliding window on each shuffled order,
+# matching the student's whole-top-100-shuffle -> re-chunk construction. K=1
+# reference is the SEPARATE base ExperimentManager pass (BM25 order), NOT one of
+# these 10. No middle_injection: the cell measures permutation instability only.
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle]
+  k_cutoff_for_ndcg: 10
+
+execution:
+  # ~9 forwards/perm x 11 passes (1 base + 10 shuffles) x 43 queries at N=100.
+  # The same geometry at 13 perms over top-100 completed inside 6h; the 8h cap
+  # leaves headroom for HF cold-start.
+
+logging:
+  level: INFO

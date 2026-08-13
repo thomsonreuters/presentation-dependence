@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "family": "jaccard",
+  "evidence_level": "paper-anchor-protocol-example",
+  "source": {
+    "path": "configs/reproduction/evidence/retained-set-threshold/cross_base_macro_by_arm.csv",
+    "selector": "model=Qwen3-4B,protocol=f1_tuned,arm=supcon,mean_pairwise_jaccard",
+    "note": "Compact retained-set example anchored to the tracked semantic summary row."
+  },
+  "payload": {
+    "sets": [
+      [
+        "c01", "c02", "c03", "c04", "c05", "c06", "c07", "c08", "c09", "c10",
+        "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20",
+        "c21", "c22", "c23", "c24", "c25", "c26", "c27", "c28", "c29", "c30",
+        "c31", "c32", "c33", "c34", "c35", "c36", "c37", "c38", "c39", "c40",
+        "c41", "c42", "c43", "c44", "c45", "c46", "c47", "c48", "c49",
+        "a1", "a2", "a3", "a4", "a5"
+      ],
+      [
+        "c01", "c02", "c03", "c04", "c05", "c06", "c07", "c08", "c09", "c10",
+        "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20",
+        "c21", "c22", "c23", "c24", "c25", "c26", "c27", "c28", "c29", "c30",
+        "c31", "c32", "c33", "c34", "c35", "c36", "c37", "c38", "c39", "c40",
+        "c41", "c42", "c43", "c44", "c45", "c46", "c47", "c48", "c49",
+        "b1", "b2", "b3", "b4", "b5"
+      ]
+    ]
+  }
+}

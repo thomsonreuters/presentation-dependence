@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The gate must pass on a bare runner: no data, no credentials, no GPU, no
+# Java, no warmed Hugging Face cache. Keep it that way, so a red build always
+# means a regression rather than a missing secret.
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --extra dev
+
+      # lint, format-check, smoke, results-check, structural-audit.
+      # The smoke step builds a synthetic fixture, reranks it, and scores it,
+      # ending in a fixed nDCG@10, so it is a self-checking end-to-end run.
+      - name: Gate
+        run: uv run poe ci

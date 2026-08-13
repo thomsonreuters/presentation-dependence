@@ -1,0 +1,92 @@
+schema_version: 1
+id: mechanism-boundary
+description: Presentation-channel, mechanism, boundary, and pool controls.
+
+outputs:
+  config_root: configs/experiments
+  sweep_root: configs/sweeps
+
+population: reranking-frozen-18
+
+dimensions:
+  programs:
+    - trained-channel-cross
+    - round-robin-eval-grid
+    - matched-variance
+    - pool-perturbation
+  tasks: [passage-reranking, multi-document-qa, response-ranking]
+  presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  placeholders: ["1", "2", "3", "?"]
+  pool_arms: [base, k1-sft, oc-sft]
+  pool_perturbations: [replace, drop]
+
+conditions:
+  trained-channel-cross:
+    task: passage-reranking
+    variant: oc-sft
+    training_seed: 42
+    cells:
+      - id: grade-zero-round-robin
+        placeholder: "0"
+        chunk_assignment: interleaved
+
+  round-robin-eval-grid:
+    task: passage-reranking
+    population: reranking-frozen-18
+    training_seed: 42
+    placeholder: "0"
+    chunk_assignment: interleaved
+    variants: [k1-sft, k10-sft]
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    sc_k_subsets: [1, 2, 3, 5, 10]
+    engine_cap_overrides:
+      touche2020: 8192
+    # This condition generates the k1-sft and k10-sft round-robin cells.
+    # The off-shelf cell comes from direct-eval's round-robin-chunks control;
+    # the OC-SFT cell comes from trained-channel-cross.
+    execution:
+      max_parallel: 1
+      bundle_groups:
+        - [robust04]
+        - [arguana]
+        - [scifact]
+        - [trec-news]
+        - [trec-covid]
+        - [fiqa]
+        - [dl19, signal1m, dl22, dl23, nfcorpus, climate-fever]
+        - [dl21, dl20, dbpedia-entity]
+        - [legal-a, touche2020, legal-b]
+
+  matched-variance:
+    variant: oc-sft
+    training_seed: 42
+    tasks:
+      passage-reranking: {k_cutoff: 10, population: reranking-frozen-18}
+      multi-document-qa: {k_cutoff: 10}
+      response-ranking: {k_cutoff: 1}
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    request_batch_size: 128
+
+  grade-one-control:
+    task: passage-reranking
+    training_seed: 42
+    placeholder: "1"
+    variants:
+      k1-sft: K=1 SFT
+      k10-sft: K=10 SFT
+      oc-sft: OC-SFT
+
+materializers:
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [trained-channel-cross]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [round-robin-eval-grid]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [matched-variance]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [grade-one-control]
+  - scripts/gen/gen_pool_perturbation_extension.py
+
+collectors:
+  - entrypoint: scripts/collect_study_results.py
+    arguments: [mechanism-boundary]

@@ -1,0 +1,40 @@
+schema_version: 1
+id: multi-document-qa-3
+pool_depth: 10
+
+datasets:
+  - id: hotpotqa
+    loader: FixtureLoader
+    topics: hotpotqa-distractor-support-dev
+    topics_tsv: data/hotpotqa-distractor-support-dev/topics.tsv
+    run_path: data/hotpotqa-distractor-support-dev/fixture.jsonl
+    qrels_path: data/hotpotqa-distractor-support-dev/qrels.txt
+    qids_to_run_path: data/hotpotqa-distractor-support-dev/qids_200.txt
+    fixture_channel: hotpotqa-distractor-support-dev
+    instruction: Given a multi-hop question, identify passages that support answering the question
+    grade_rubric: answer_support_v1
+    max_doc_chars: 1600
+
+  - id: 2wiki
+    loader: FixtureLoader
+    topics: 2wiki-distractor-support-dev
+    topics_tsv: data/2wiki-distractor-support-dev/topics.tsv
+    run_path: data/2wiki-distractor-support-dev/fixture.jsonl
+    qrels_path: data/2wiki-distractor-support-dev/qrels.txt
+    qids_to_run_path: data/2wiki-distractor-support-dev/qids_200.txt
+    fixture_channel: 2wiki-distractor-support-dev
+    instruction: Given a multi-hop question, identify passages that support answering the question
+    grade_rubric: answer_support_v1
+    max_doc_chars: 1600
+
+  - id: musique
+    loader: FixtureLoader
+    topics: musique-support-dev
+    topics_tsv: data/musique-support-dev/topics.tsv
+    run_path: data/musique-support-dev/fixture.jsonl
+    qrels_path: data/musique-support-dev/qrels.txt
+    qids_to_run_path: data/musique-support-dev/qids_200.txt
+    fixture_channel: musique-support-dev
+    instruction: Given a multi-hop question, identify passages that support answering the question
+    grade_rubric: answer_support_v1
+    max_doc_chars: 1600

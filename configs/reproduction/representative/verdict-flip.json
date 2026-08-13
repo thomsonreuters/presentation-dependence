@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "family": "verdict-flip",
+  "evidence_level": "historical-derived-per-seed",
+  "source": {
+    "historical_asset_id": "table2_completion/verdict_flip_multiseed.json",
+    "selector": "per_seed.ocsft",
+    "raw_artifact": "verdict/per_query.jsonl"
+  },
+  "payload": {
+    "values": [
+      0.0385952208544533,
+      0.03794351918899348,
+      0.035119478638667635
+    ]
+  }
+}

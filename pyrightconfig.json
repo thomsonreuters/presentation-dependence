@@ -1,0 +1,18 @@
+{
+    "include": ["src", "scripts", "tests"],
+    "exclude": ["data", "runs", "sweeps", "build", ".venv", "**/__pycache__"],
+    "venvPath": ".",
+    "venv": ".venv",
+    "extraPaths": ["src", "scripts", "scripts/train"],
+    "typeCheckingMode": "basic",
+    "reportMissingImports": "warning",
+    "reportMissingModuleSource": "none",
+    "executionEnvironments": [
+        {
+            "root": "tests",
+            "reportArgumentType": "none",
+            "reportAttributeAccessIssue": "none",
+            "reportTypedDictNotRequiredAccess": "none"
+        }
+    ]
+}

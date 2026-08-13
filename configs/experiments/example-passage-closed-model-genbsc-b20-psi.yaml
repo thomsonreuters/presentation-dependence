@@ -1,0 +1,65 @@
+###############################################################################
+# GPT-5.4 closed-model generated-BSC baseline on DL19, with full tau-PSI.
+#
+# Closed-model counterpart of the open grade scorers: same data, eval and
+# robustness settings at B=20 with PSI K=10 (random_shuffle only; see comment
+# under robustness). Reported nDCG@10 is the K=10 self-consistency reading
+# from psi/sc_metrics.json, and tau-PSI, Zeng PSI, delta-nDCG and score variance
+# all come from the same run.
+#
+# Single-pass scoring (scoring.runs: 1): list-order diversity comes from
+# robustness.perturbations, matching the open-weight convention. Do not raise
+# runs above 1: that reshuffles inside the client and breaks parity with
+# open-weight PSI.
+#
+# Calls a hosted endpoint (needs OPENAI_API_KEY).
+# Drive it with scripts/run_eval_robust_psi.sh, which also resumes completed
+# base queries. Running the three steps by hand works too, but pass the same
+# --run-dir to each: run_experiment.py, then run_eval.py, then run_psi.py.
+# Without it each step opens its own timestamped dir and metrics.json ends up
+# separated from the psi/ readings quoted above.
+###############################################################################
+
+id: example-passage-closed-model-genbsc-b20-psi
+
+reranker:
+  class: ClosedModelGenBscReranker
+  model_id: gpt-5.4
+  prompt_template_id: pathc_grade_v1
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  grade_rubric_id: relevance_v1
+  max_doc_chars: 1200
+  endpoint:
+    # Omit base_url for the default provider; set it for a gateway or a local
+    # OpenAI-compatible server. Credentials come from OPENAI_API_KEY.
+    base_url: null
+  scoring:
+    subset_size: 20
+    runs: 1
+    score_min: 0
+    score_max: 3
+    max_tokens: 1536
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage
+  topics_tsv: data/dl19-passage/topics.tsv
+  index: msmarco-v1-passage
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10, ndcg_cut_5, map, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  # Random-shuffle-only tau-PSI: ten random_shuffle seeds and no
+  # middle_injection. Targeted injection is a separate diagnostic protocol, and
+  # mixing the two makes tau-PSI incomparable across arms.
+  perturbations: [random_shuffle]
+  k_cutoff_for_ndcg: 10
+
+logging:
+  level: INFO

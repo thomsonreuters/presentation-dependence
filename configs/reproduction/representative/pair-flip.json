@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "family": "pair-flip",
+  "evidence_level": "paper-anchor-protocol-example",
+  "source": {
+    "paper": "Table 29, OC-SFT seed 42",
+    "selector": "RewardBench-2, Nectar, PPE-MATH, PPE MMLU-Pro, RM-Bench",
+    "note": "Five-collection values whose equal mean is the Table 2 pair-flip scope."
+  },
+  "payload": {
+    "values": [
+      0.248,
+      0.470,
+      0.560,
+      0.634,
+      0.553
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+# Container-side pip deps for the generic training/eval entrypoint
+# (`scripts/train/entrypoint.py`).
+#
+# The vLLM Dockerfile installs this file. The SFT-only image uses
+# scripts/train-sft/requirements.txt. Keep both in sync with pyproject.toml and
+# uv.lock where their runtime surfaces overlap.
+#
+# Omissions and pins:
+#  * `pyserini` is intentionally absent. FixtureLoader reads passages from a
+#    pre-built fixture.jsonl mounted with the job inputs, so the container does
+#    not need Java or the ~1.5 GB index download.
+#  * `torch` is intentionally absent: the base image supplies the CUDA-matched
+#    torch wheel. Pinning torch here risks replacing it with an incompatible
+#    PyPI build. That only holds if every other dependency is also pinned tight
+#    enough not to pull a fresh torch transitively. See the `vllm` pin below:
+#    loose `vllm>=0.7.0` resolves to 0.20.x, which depends on torch 2.11+cu130,
+#    silently overwriting the base image's torch 2.7.1+cu126 and breaking GPU
+#    access (host driver supports CUDA 12.8, not 13.0).
+#  * `mxbai-rerank` is installed for R1/Mxbai runs. That adds a small install
+#    surface for non-Mxbai jobs; split per-model requirements only if container
+#    install time becomes a real bottleneck.
+#  * `transformers>=5.4` is the runtime pin and matches pyproject.toml.
+#    The vLLM 0.10.2 stack retained for the Qwen3-4B-Instruct-2507 and
+#    Qwen3-Reranker-4B silver configs calls
+#    ``tokenizer.all_special_tokens_extended``, which was removed in
+#    transformers 5.0; ``presentation_dependence.self_distill.engines._tf5_compat``
+#    restores that property before vLLM imports tokenizer code. The entrypoint
+#    only installs that worker shim when vLLM <0.12 is present.
+
+mxbai-rerank==0.1.6
+transformers>=5.4.0,<6
+accelerate>=1.3.0
+sentencepiece>=0.2.0
+protobuf>=5.27
+tokenizers>=0.22.0
+peft>=0.18.0
+tensorboard>=2.20.0
+
+# HuggingFace's Rust-based parallel downloader. Enabled by setting
+# ``HF_HUB_ENABLE_HF_TRANSFER=1`` (set in both Dockerfiles).
+# Without this, anonymous and even authenticated 16GB Qwen3-Reranker-4B
+# downloads can stall indefinitely at "Fetching 2 files: 0%".
+# hf_transfer parallelises across files and restarts failed chunks; 16GB
+# typically finishes in ~30s-2min instead of hanging for 8-12h.
+hf-transfer>=0.1.6
+
+pytrec-eval>=0.5
+pyyaml>=6.0.1
+numpy>=1.26.4
+tqdm>=4.67.0
+pyarrow>=16.1.0
+ftfy>=6.3.1
+
+# vLLM is shipped to every container so the self-distill teacher can opt in
+# via ``reranker.inference_engine: vllm``. The package is heavy (~1 GB) but
+# pre-installation avoids a 5+ minute pip install at job startup. Container
+# install time is dominated by torch + transformers; vllm adds <90s.
+#
+# Pinning rationale:
+#
+# vLLM has a hard ``torch==X.Y.Z`` dependency that flips with each release.
+# An unconstrained ``vllm>=0.7`` pulls vllm 0.20.1 (latest), then
+# ``torch==2.11`` and a cu130 wheel, which raises
+# ``RuntimeError: The NVIDIA driver on your system is too old`` because the
+# host driver tops out at CUDA 12.9 (driver version ``12090``). The torch
+# upgrade happens transitively and silently; the base image's pre-installed
+# torch is replaced.
+#
+# Constraint table (verified 2026-05-11 against PyPI metadata and public
+# PyTorch/CUDA image stacks):
+#   vllm 0.10.2 → torch==2.8.0  (cu128) with SDK-resolved PyTorch 2.8 py312
+#   vllm 0.19.x + cu130 wheel → torch==2.10.x (cu130) with explicit
+#                                           PyTorch 2.10 py313 cu130 base
+#   vllm 0.20+  → torch==2.11.x (cu130) requires a PyTorch 2.11 base, which was
+#                                           not available when this was pinned
+#
+# Supported pairs:
+#   exact ``vllm==0.10.2`` on a PyTorch 2.8 / py312 base, for the two retained
+#   Qwen teacher configs
+#   explicit vLLM 0.19.1+cu130 wheel on a PyTorch 2.10 cu130 / py313 base
+#
+# vLLM 0.10.2 (Sep 2025) provides v1 EngineCore, a stable logprobs API, mature
+# prefix caching, and FlashAttention 2. Later 0.11+ features (FA3, scheduler
+# changes) target much longer sequences than this stack uses (~2K tokens).
+#
+# Gemma-4 requires vLLM >=0.19 because earlier releases do not support the
+# Transformers-v5 ``rope_parameters`` schema / Gemma4ForConditionalGeneration.
+vllm==0.10.2; python_version < "3.13"
+# Do not use the default PyPI vLLM wheel here: it is linked against CUDA 12 and
+# fails on a CUDA 13 base with ``libcudart.so.12`` missing. Use vLLM's cu130
+# release wheel explicitly.
+vllm @ https://github.com/vllm-project/vllm/releases/download/v0.19.1/vllm-0.19.1%2Bcu130-cp38-abi3-manylinux_2_35_x86_64.whl ; python_version >= "3.13"

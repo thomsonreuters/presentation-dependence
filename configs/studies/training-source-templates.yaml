@@ -1,0 +1,61 @@
+schema_version: 1
+description: >-
+  Source templates retained for primary training and scaling studies.
+  Generated sample-efficiency and historical pilot templates are excluded.
+
+primary:
+  passage-reranking:
+    fixed:
+      - configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+      - configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k10-labels.yaml
+    families:
+      - pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-msmarco-30k.yaml
+        code: ["050", "100", "200", "300", "400", "500"]
+
+  multi-document-qa:
+    fixed:
+      - configs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k1-labels.yaml
+      - configs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k10-labels.yaml
+    families:
+      - pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-hotpotqa-support-30k.yaml
+        code: ["050", "100", "200", "300"]
+
+  response-ranking:
+    fixed:
+      - configs/self-distill/qwen3-4b-nonthink-sft-ultrafeedback-rq-30k-k1-labels.yaml
+      - configs/self-distill/qwen3-4b-nonthink-sft-ultrafeedback-rq-30k-k10-labels.yaml
+    families:
+      - pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-ultrafeedback-rq-30k.yaml
+        code: ["050", "100", "200", "300", "400", "500"]
+
+scaling:
+  fixed:
+    - configs/self-distill/gemma4-sft-msmarco-30k-k1-labels.yaml
+    - configs/self-distill/gemma4-sft-msmarco-30k-k10-labels.yaml
+    - configs/self-distill/granite-41-8b-sft-msmarco-30k-k1-labels.yaml
+    - configs/self-distill/granite-41-8b-sft-msmarco-30k-k10-labels.yaml
+  families:
+    - pattern: configs/self-distill/gemma4-k1-supervised-consistency-lambda{code}-warmup500-msmarco-30k.yaml
+      code: ["050", "100", "200", "300", "400", "500"]
+    - pattern: configs/self-distill/granite-41-8b-k1-supervised-consistency-lambda{code}-warmup500-msmarco-30k.yaml
+      code: ["050", "100", "200", "300", "400", "500"]
+  teacher_silver:
+    - configs/silver/a2-qwen3-reranker-k10-bsc-msmarco-30k.yaml
+    - configs/silver/gemma4-26b-a4b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/gemma4-31b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/gemma4-e2b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/gemma4-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/granite-41-30b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/granite-41-3b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/granite-41-8b-grade-cont-k10-bsc-msmarco-30k.yaml
+    - configs/silver/qwen3-14b-nonthink-k10-bsc-msmarco-30k.yaml
+    - configs/silver/qwen3-1p7b-nonthink-k10-bsc-msmarco-30k.yaml
+    - configs/silver/qwen3-32b-nonthink-k10-bsc-msmarco-30k.yaml
+    - configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml
+    - configs/silver/qwen3-8b-nonthink-k10-bsc-msmarco-30k.yaml
+
+# Prefixes materialized by the study's generators rather than retained here.
+# `gpt54-genbsc-*` is deliberately NOT listed: those are retained source
+generated_prefixes:
+  - configs/self-distill/ts-*
+  - configs/self-distill/*-prefix*-labels.yaml

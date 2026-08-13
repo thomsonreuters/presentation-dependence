@@ -1,0 +1,27 @@
+schema_version: 1
+
+models:
+  qwen3-4b-nonthinking:
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    revision: 1cfa9a7208912126459214e8b04321603b3df60c
+    dtype: bfloat16
+    inference_engine: vllm
+    chat_template_kwargs:
+      enable_thinking: false
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_length: 4096
+    max_doc_chars: 1200
+
+seeds:
+  training: [42, 43, 44]
+  presentations: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+variants:
+  - off-shelf
+  - k1-sft
+  - jina-reranker-v3
+  - k10-sft
+  - oc-sft

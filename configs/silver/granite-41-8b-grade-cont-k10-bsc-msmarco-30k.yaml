@@ -1,0 +1,74 @@
+###############################################################################
+# Granite 4.1 8B Path C: K=10 BSC self-distillation silver (30K queries).
+#
+# Cross-family teacher run mirroring the Qwen3/Gemma4 30K silver passes, using
+# Granite's continuous cumulative grade-skeleton readout rather than generated
+# grade text.
+#
+# Geometry:
+# - K=10, B=20, top_k=100, max_doc_chars=1200.
+# - The 30K qids are a deterministic prefix of sample_qids_seed42.txt, so this
+#   can later be extended non-redundantly with qids_30k_to_100k.txt.
+#
+# Backend:
+# - Granite 4.1 runs on the generic vLLM 0.19/cu130 teacher image.
+# - Local DP uses one full model replica per A100 (tensor_parallel_size=1).
+###############################################################################
+
+id: granite-41-8b-grade-cont-k10-bsc-msmarco-30k
+
+reranker:
+  class: Granite41GradeReranker
+  model_name: ibm-granite/granite-4.1-8b
+  revision: null
+  device: cuda                                      # explicit so silent CPU fallback fails loud
+  dtype: bfloat16
+  trust_remote_code: false
+  continuous_readout: true                          # Path C: fixed grade skeleton + E[grade]
+  scoring_method: continuous_grade
+  inference_engine: vllm
+  vllm_settings:
+    max_model_len: 4096
+    gpu_memory_utilization: 0.85
+    enable_prefix_caching: true
+    tensor_parallel_size: 1                         # local-DP worker owns one GPU
+    top_logprobs: 50
+    extra_llm_kwargs:
+      max_num_seqs: 16
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20                        # B = 20
+  batch_size: 20                                    # irrelevant to vLLM, kept for config symmetry
+  max_doc_chars: 1200
+  grade_prefix_mode: cumulative
+
+data:
+  dataloader_class: FixtureLoader
+  topics: msmarco-passage-train
+  topics_tsv: data/msmarco-train-selfdistill-seed42/topics.tsv
+  run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+  k_input: 100
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+eval:
+  qrels_path: data/msmarco-train-selfdistill-seed42/qrels.txt
+  strict_qrels_filter: false
+  measures: [ndcg_cut_10]
+
+teacher:
+  protocol: k_shot_bsc
+  k_perms: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  prompt_template_id: granite41_grade_int_v1
+  grade_max: 3
+  cross_query_batch: 4
+  local_data_parallel_workers: 8                    # 8 independent TP=1 replicas on A100 40GB
+  output_subdir: silver
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

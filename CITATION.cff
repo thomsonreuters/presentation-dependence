@@ -1,0 +1,49 @@
+# Public citation metadata. At release, keep authors, repository URL, licence,
+# version, and date in step with LICENSE and pyproject.toml.
+# Validate with:  uv run python -c "import yaml; yaml.safe_load(open('CITATION.cff'))"
+# or the cffconvert tool:  pipx run cffconvert --validate
+
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Equal ranking quality, different decisions: presentation dependence in batched scoring"
+abstract: >-
+  Equal ranking quality does not imply equal decisions. At a fixed threshold,
+  reordering the same candidates changes which documents a scorer retains, what
+  a frozen reader answers, and which response a preference model selects. This
+  is strongest where several candidates share one prompt, which conditions each
+  score on the presentation. Five trained scorers within 0.010 nDCG@10 span
+  0.66-0.84 in retained-set overlap under reshuffling. We separate presentation
+  dependence into channels with different remedies: contiguous chunking of a
+  rank-sorted pool costs 0.052 nDCG@10 that round-robin assignment recovers at
+  no additional cost, the answer skeleton's placeholder changes ranking quality,
+  and the order channel survives both. Among training objectives that keep a
+  single serving presentation, a two-view consistency penalty reaches order
+  instability 0.083 against 0.128-0.130 for three matched mitigations at equal
+  quality, and stays below order-averaged distillation on eleven dense bases
+  without averaging at inference. Serving width improves quality only where the
+  alternatives are informative. Order stability is therefore a property of a
+  scorer's decisions, not only its ranking.
+type: software
+authors:
+  - name: "TODO: pending de-anonymization"
+repository-code: "TODO: public repository URL"
+license: "TODO: pending the licence decision"
+version: "TODO: set at publication"
+date-released: "TODO: YYYY-MM-DD"
+keywords:
+  - information retrieval
+  - reranking
+  - large language models
+  - order sensitivity
+  - position bias
+  - knowledge distillation
+
+preferred-citation:
+  type: article
+  title: "Equal ranking quality, different decisions: presentation dependence in batched scoring"
+  authors:
+    - name: "TODO: pending de-anonymization"
+  year: 2026
+  journal: "arXiv preprint"
+  url: "TODO: https://arxiv.org/abs/XXXX.XXXXX"
+  doi: "TODO: 10.48550/arXiv.XXXX.XXXXX"

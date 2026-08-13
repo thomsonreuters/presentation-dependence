@@ -1,0 +1,113 @@
+###############################################################################
+# OG Qwen3-4B non-thinking K=10-label SFT (companion to the K=1 ablation).
+#
+# Mechanism check: separates gain from amortizing K=10 BSC self-consistency
+# labels from gain from teaching the expected-grade readout task and output
+# format. This config and the matched K=1-label config differ only in the silver
+# target (mean of `score_raw_vector[0:10]` here vs `score_raw_vector[0]` in the
+# K=1 file).
+#
+# All other knobs match qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml:
+# same OG Qwen3-4B base, same 29.5K/500 train/heldout split off the
+# qwen3-4b-nonthink-k10-bsc-msmarco-30k teacher run, same B=20 expected-grade
+# readout prompt geometry, same LoRA / AdamW / cosine / DDP recipe, same
+# checkpoint policy.
+###############################################################################
+
+id: qwen3-4b-nonthink-sft-msmarco-30k-k10-labels
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs:
+    enable_thinking: false
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 20
+  max_doc_chars: 1200
+
+student:
+  base_model: Qwen/Qwen3-4B
+  reranker_class: Qwen3InstructGradeReranker
+  silver_labels_path: silver_labels_qwen3_4b_k10_train_29500.jsonl
+  eval_silver_labels_path: silver_labels_qwen3_4b_k10_heldout_500.jsonl
+  fixture_path: fixture.jsonl
+  qrels_path: qrels.txt
+  output_dir: runs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k10-labels/student
+  device: cuda
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+  max_length: 4096
+  max_doc_chars: 1200
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  data:
+    chunk_size: 20
+    candidate_set_id: msmarco_seed42_bm25_top100
+    include_doc_ids_in_prompt: false
+    view: regression
+    preserve_group_metadata: true
+    token_cache:
+      enabled: true
+      max_entries: 100000
+      cache_prefix_strings: true
+      cache_token_ids: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    epochs: 1
+    lr: 0.0002
+    batch_size_per_device: 1
+    grad_accumulation_steps: 8
+    slot_forward_batch_size: 8
+    gradient_checkpointing: true
+    ddp_no_sync_during_grad_accum: true
+    warmup_ratio: 0.10
+    lr_scheduler: cosine
+    weight_decay: 0.01
+    adam_beta1: 0.9
+    adam_beta2: 0.95
+    seed: 42
+    max_steps: null
+    single_forward_readout: true
+    log_every_n_steps: 10
+    heartbeat_every_s: 60
+    progress_jsonl: true
+  evaluation:
+    max_queries: 100
+    every_n_steps: 200
+    at_start: true
+    at_end: true
+    psi:
+      enabled: true
+      max_queries: 25
+      seeds: [0, 1, 2]
+  observability:
+    tensorboard:
+      enabled: true
+  checkpoint:
+    enabled: true
+    save_every_n_steps: 200
+    keep_last_n: 4
+    keep_every_n_steps: 400
+    keep_n_best: 3
+    keep_n_best_metric: qrels_ndcg_cut_10
+    keep_n_best_mode: max
+    resume_from_checkpoint: null
+
+eval:
+  measures: [ndcg_cut_10]
+  strict_qrels_filter: false
+
+execution:
+  fixture_channel: msmarco-train-selfdistill-seed42
+  # 8x A100 40GB; see K=1 sibling config for the size-vs-VRAM rationale.
+  distributed: ddp
+
+logging:
+  level: INFO

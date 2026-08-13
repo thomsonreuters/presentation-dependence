@@ -1,0 +1,75 @@
+# Expanded experiment matrices stay local; commit only reviewed examples and
+# underscore-prefixed schema/smoke fixtures.
+configs/experiments/*.yaml
+!configs/experiments/_*.yaml
+!configs/experiments/example-*.yaml
+# Study materialization writes `<condition>--canonical.yaml` sweeps whose jobs
+# name those local matrices. Tracking one publishes a sweep that resolves to
+# nothing in a fresh clone, so keep the generated sweeps local too.
+configs/sweeps/*--canonical.yaml
+# Local exploratory study; not part of the handover source closure.
+configs/studies/serving-width-open-numbers.yaml
+*.cursor/
+
+# Python / uv ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.venv/
+
+# Hatchling artefacts --------------------------------------------------------
+dist/
+*.egg-info/
+
+# Experiment outputs ---------------------------------------------------------
+# Raw + processed datasets, first-stage runs, BM25 indexes, cached encodings.
+# Everything under data/ is gitignored; pipeline is reproducible from the
+# scripts that populate it.
+data/
+!scripts/data/
+!scripts/data/*.py
+!scripts/data/*.sh
+
+# Run artefacts. Stay out of git; archive externally under the operator's policy.
+runs/
+
+# Model checkpoints
+checkpoints/
+*.safetensors
+*.pt
+*.bin
+
+# Local runtime receipts and scratch -----------------------------------------
+# Sweep YAMLs under configs/sweeps/ are the reproducible launch inputs. This
+# sibling tree contains local post-launch manifests and fetch state. Both
+# patterns are anchored: unanchored, `sweeps/` also matches `configs/sweeps/`
+# and silently drops the tracked inputs from a fresh checkout.
+/build/
+/sweeps/
+tmp/
+runs_trec2/
+metrics.json
+.cache/
+/~/
+
+# Editor / OS ----------------------------------------------------------------
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Logs / tensorboard / experiment trackers -----------------------------------
+*.log
+tb_logs/
+tensorboard/
+wandb/
+mlruns/
+
+# Secrets --------------------------------------------------------------------
+.env
+.env.*
+!.env.example

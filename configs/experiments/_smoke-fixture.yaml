@@ -1,0 +1,35 @@
+###############################################################################
+# Zero-dependency smoke config: IdentityReranker over a synthetic fixture.
+#
+# The only eval surface that needs no network, no Java/Pyserini index, no model
+# download, and no GPU, so it is the first command a fresh checkout can run.
+# Build its data first (deterministic, offline):
+#
+#   uv run python scripts/data/build_smoke_fixture.py
+#
+# Verifies the full ExperimentManager -> EvalManager -> pytrec_eval round trip.
+# The identity reranker passes the fixture's deliberately imperfect candidate
+# order through unchanged, so nDCG@10 is a fixed 0.6805 (pipeline check, not a
+# model result). See configs/experiments/_smoke-identity.yaml for the DL19 smoke,
+# which needs staged data and a ~1.5 GB Pyserini index.
+###############################################################################
+
+id: _smoke-fixture
+
+reranker:
+  class: IdentityReranker
+
+data:
+  dataloader_class: FixtureLoader
+  run_path: data/_smoke/fixture.jsonl                                  # FixtureLoader reads JSONL, not a TREC run
+  k_input: 100
+
+eval:
+  qrels_path: data/_smoke/qrels.txt
+  measures:
+    - ndcg_cut_10
+    - map
+    - recip_rank
+
+logging:
+  level: INFO

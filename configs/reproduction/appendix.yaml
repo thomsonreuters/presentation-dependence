@@ -1,0 +1,163 @@
+schema_version: 1
+description: >-
+  Appendix artifact registry. Each entry names the reproduction program that
+  produces the artifact's inputs, and where present the analyzer that turns
+  those inputs into the reported numbers. The canonical reducer and renderer
+  layer was removed; artifacts without an analyzer are reproducible up to their
+  collected program outputs under build/reproduction/.
+
+artifacts:
+  table-readout:
+    status: canonical
+    program: setup-readout-silver
+    analyzer: scripts/analyze/analyze_complete_readout_grids.py
+    preferred_input: build/reproduction/studies/setup-readout-silver/readout/series.json
+
+  table-task-config:
+    status: static
+    program: setup-readout-silver
+    sources: [configs/reproduction/shared.yaml]
+
+  table-datasets:
+    status: static
+    program: primary-passage
+    sources:
+      - configs/reproduction/populations/reranking-primary-18.yaml
+
+  table-specialized-quality:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    analyzer: scripts/analyze/scaling_recipes_audit.py
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/direct-eval/per_dataset.json
+
+  table-specialized-stability:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/direct-eval/per_dataset.json
+
+  table-defensive-arms:
+    status: canonical
+    program: defensive-controls
+    preferred_input: build/reproduction/passage-reranking/direct-eval/per_dataset.json
+
+  table-public-quality:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    analyzer: scripts/analyze/scaling_recipes_audit.py
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/direct-eval/per_dataset.json
+
+  table-public-stability:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/direct-eval/per_dataset.json
+
+  table-first-stage-summary:
+    status: canonical
+    program: first-stage
+    preferred_input: build/reproduction/studies/first-stage-transfer/direct-eval/per_dataset.json
+
+  table-first-stage-per-dataset:
+    status: canonical
+    program: first-stage
+    preferred_input: build/reproduction/studies/first-stage-transfer/direct-eval/per_dataset.json
+
+  table-boundary:
+    status: canonical
+    program: mechanism-boundary
+    preferred_input: build/reproduction/studies/mechanism-boundary/amortization-law/cells.json
+
+  table-metric-progression:
+    status: canonical
+    program: mechanism-boundary
+    preferred_input: build/reproduction/studies/mechanism-boundary/metric-robustness/rows.json
+
+  table-width-decomposition:
+    status: canonical
+    program: width
+    preferred_input: build/reproduction/studies/fixed-weight-width/context-decomposition/results.json
+
+  table-width-instrument:
+    status: canonical
+    program: width
+    preferred_input: build/reproduction/studies/fixed-weight-width/instrument-width/results.json
+
+  table-train-deploy:
+    status: canonical
+    program: width
+    analyzer: scripts/analyze/analyze_table3_multiseed_width.py
+    preferred_input: build/reproduction/studies/fixed-weight-width/fixed-weight-multiseed/results.json
+
+  table-deploy-width:
+    status: canonical
+    program: width
+    preferred_input: build/reproduction/studies/fixed-weight-width/fixed-weight-multiseed/results.json
+
+  table-cross-task:
+    status: canonical
+    program: cross-task-consumers
+    preferred_input: build/reproduction/passage-reranking/direct-eval/aggregate.json
+
+  table-qa-transfer-reader:
+    status: canonical
+    program: cross-task-consumers
+    analyzer: scripts/analyze/analyze_answer_reader_bridge.py
+    preferred_input: build/reproduction/multi-document-qa/downstream-eval/per_consumer.json
+
+  table-jaccard-per-base:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/downstream-eval/per_consumer.json
+    note: Requires the eleven-base grid, not only the Qwen3-4B primary spine.
+
+  table-downstream:
+    status: canonical
+    program: cross-task-consumers
+    analyzer: scripts/analyze/analyze_table2_verdict_multiseed.py
+    preferred_input: build/reproduction/multi-document-qa/downstream-eval/per_consumer.json
+
+  table-response-pair-flip:
+    status: canonical
+    program: cross-task-consumers
+    analyzer: scripts/analyze/analyze_table2_pair_flip_multiseed.py
+    preferred_input: build/reproduction/response-ranking/downstream-eval/per_consumer.json
+
+  table-reported-score-range:
+    status: canonical
+    program: cross-task-consumers
+    preferred_input: build/reproduction/response-ranking/downstream-eval/per_consumer.json
+
+  figure-stability-box:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/direct-eval/per_dataset.json
+
+  figure-amortization:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/mechanism-boundary/amortization-law/cells.json
+
+  figure-k-curve:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/k-curve/series.json
+
+  figure-sample-efficiency:
+    status: canonical
+    program: scaling-teachers-sample-efficiency
+    analyzer: scripts/analyze/analyze_og_qwen3_4b_sample_efficiency.py
+    preferred_input: build/reproduction/studies/scaling-teachers-sample-efficiency/sample-efficiency/series.json
+
+  figure-boundary:
+    status: canonical
+    program: mechanism-boundary
+    preferred_input: build/reproduction/studies/mechanism-boundary/amortization-law/cells.json
+
+  figure-gain-histograms:
+    status: canonical
+    program: mechanism-boundary
+    preferred_input: build/reproduction/studies/mechanism-boundary/gain-histograms/series.json
+
+  figure-calibration:
+    status: canonical
+    program: mechanism-boundary
+    preferred_input: build/reproduction/studies/mechanism-boundary/calibration/series.json

@@ -1,0 +1,445 @@
+schema_version: 1
+
+task:
+  id: passage-reranking
+  description: Train and evaluate order-stable passage rerankers.
+
+shared: configs/reproduction/shared.yaml
+
+silver:
+  id: passage-reranking-silver
+
+  candidate_pool:
+    output_dir: data/msmarco-train-selfdistill-seed42
+    query_source: ir_datasets
+    query_source_key: msmarco-passage/train
+    index: msmarco-v1-passage
+    retriever: bm25-default
+    sampling_seed: 42
+    query_count: 30000
+    candidates_per_query: 100
+    sample_order: sample_qids_seed42.txt
+    selected_qids: qids_30k.txt
+    topics: topics.tsv
+    qrels: qrels.txt
+    run: run.msmarco-v1-passage.bm25-default.selfdistill.txt
+    fixture: fixture.jsonl
+
+  teacher:
+    id: qwen3-4b-self-consistency
+    model: qwen3-4b-nonthinking
+    protocol: k-shot-batched-self-consistency
+    presentation_seeds: presentations
+    presentations: 10
+    serving_width: 20
+    cross_query_batch: 4
+    local_data_parallel_workers: 8
+    prompt_template: grade-int-v1
+    grade_max: 3
+    output_subdir: silver
+
+  split:
+    heldout_queries: 500
+    training_queries: 29500
+    policy: deterministic-suffix-of-sampled-order
+
+  products:
+    - id: k10-train
+      labels: order-average-10
+      cohort: training
+      filename: k10_train_29500.jsonl
+    - id: k10-heldout
+      labels: order-average-10
+      cohort: heldout
+      filename: k10_heldout_500.jsonl
+    - id: k1-train
+      labels: presentation-seed-0
+      cohort: training
+      filename: k1-train.jsonl
+    - id: k1-heldout
+      labels: presentation-seed-0
+      cohort: heldout
+      filename: k1-heldout.jsonl
+
+  consumers:
+    k10-train:
+      - k10-sft
+    k10-heldout:
+      - k10-sft
+    k1-train:
+      - k1-sft
+      - oc-sft
+    k1-heldout:
+      - k1-sft
+      - oc-sft
+
+  validation:
+    require_query_count: 30000
+    require_candidate_coverage: fixture-matched
+    require_raw_vector_length: 10
+    require_score_range: [0.0, 3.0]
+    require_no_duplicate_pairs: true
+    require_exhaustive_split: true
+    require_disjoint_split: true
+
+  execution:
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/passage-reranking/silver
+    config: configs/silver/teacher.yaml
+    manifest: manifest.json
+    summary: summary.md
+
+training:
+  silver_manifest: build/reproduction/passage-reranking/silver/manifest.json
+  seeds:
+    42: {view_seeds: [0, 1]}
+    43: {view_seeds: [2, 3]}
+    44: {view_seeds: [4, 5]}
+
+  variants:
+    - id: k1-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+      silver: k1
+
+    - id: k10-sft
+      template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k10-labels.yaml
+      silver: k10
+
+    - id: oc-sft
+      template_pattern: configs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda{code}-warmup500-msmarco-30k.yaml
+      silver: k1
+      view_seeded: true
+      lambda_grid:
+        - {code: "050", value: 0.5}
+        - {code: "100", value: 1.0}
+        - {code: "200", value: 2.0}
+        - {code: "300", value: 3.0}
+        - {code: "400", value: 4.0}
+        - {code: "500", value: 5.0}
+
+  checkpoint_selection:
+    metric: qrels_ndcg_cut_10
+    rule: heldout-argmax
+    exact_tie_break: earliest-step
+    # Lambda selection rule is not executed by this collection pipeline: the
+    # 1-SE band and collapse rules need run-level score deviations that only
+    # exist inside training runs. Run scripts/select_lambda.py to execute the
+    # rule and write the decision record below; collection reads that record.
+    # Regenerate with scripts/select_lambda.py when rerunning the grid.
+    selection_protocol: presentation_dependence.self_distill.selection.select_heldout_lambda
+    selector_cli: scripts/select_lambda.py
+    decisions: configs/reproduction/evidence/lambda-selection/decisions.json
+    decision_cell: {family: "Qwen3-4B-OG (non-thinking)", k: "K=1"}
+
+  optional_ablations:
+    enabled_by_default: false
+    variants:
+      - id: true-pointwise-b1
+        purpose: reproduce the separately B=1-trained passage scorer
+        runnable: true
+        seeds: [42, 43, 44]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+        patch:
+          reranker:
+            docs_per_score_forward: 1
+            batch_size: 1
+          student:
+            data:
+              chunk_size: 1
+              candidate_set_id: msmarco_seed42_bm25_top100_pointwise_b1
+      - id: lora-dropout
+        purpose: test generic parameter regularization
+        runnable: true
+        seeds: [42]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+        patch:
+          student:
+            lora: {dropout: 0.20}
+      - id: ema-mean-teacher
+        purpose: test generic consistency without an order-specific objective
+        runnable: true
+        seeds: [42]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+        patch:
+          student:
+            objective:
+              type: mean_teacher
+              loss: mse
+              alpha: 0.5
+              ema_decay: 0.999
+      - id: kl-to-base
+        purpose: test anchoring to the off-shelf scorer
+        runnable: true
+        seeds: [42]
+        template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml
+        patch:
+          student:
+            objective:
+              type: kl_to_base
+              loss: mse
+              beta: 0.05
+              temperature: 1.0
+      - id: augmentation-only
+        purpose: test shuffled views supervised on silver, without a consistency penalty
+        runnable: true
+        seeds: [42, 43, 44]
+        template: configs/self-distill/qwen3-4b-nonthink-k1-pos-aug-only-msmarco-30k.yaml
+      - id: debias-first
+        purpose: test position-aware augmentation plus inverse-propensity slot weights
+        runnable: true
+        seeds: [42, 43, 44]
+        template: configs/self-distill/qwen3-4b-nonthink-k1-debias-first-msmarco-30k.yaml
+        note: >-
+          The augmentation-only arm above is this arm's propensity ablation:
+          all-ones slot weights reduce it to that objective exactly.
+      - id: reverse-order-control
+        purpose: test a deterministic presentation control
+        runnable: false
+        note: owned by direct_eval.optional_controls.reverse-order
+      - id: shuffled-label-control
+        purpose: test whether label structure is necessary
+        runnable: false
+        note: >-
+          run by hand, not by this stage: derive the labels with
+          scripts/data/derive_negative_control_silver.py --mode
+          shuffled-within-query, then train on them with any k1 template
+
+  execution:
+    max_parallel: 1
+
+  outputs:
+    root: build/reproduction/passage-reranking/training
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    checkpoint_catalog: checkpoints.json
+
+direct_eval:
+  population: reranking-primary-18
+  checkpoint_catalog: build/reproduction/passage-reranking/training/checkpoints.json
+
+  variants:
+    trained:
+      - k1-sft
+      - k10-sft
+      - oc-sft
+    references:
+      - id: off-shelf
+        kind: base
+      - id: jina-reranker-v3
+        kind: external
+        model:
+          class: JinaListwiseReranker
+          model_name: jinaai/jina-reranker-v3
+          revision: 10fb694fc21f7a710a563ff1eb977a460f3868e4
+          dtype: auto
+          max_doc_length: 2048
+          max_query_length: 512
+      - id: rankzephyr-7b
+        kind: external
+        model:
+          class: RankZephyrReranker
+          model_name: castorini/rank_zephyr_7b_v1_full
+          revision: aa11d9da444ec3490827656c3b961d5c5f3af0eb
+          dtype: auto
+          window_size: 20
+          stride: 10
+          max_new_tokens: 200
+          max_doc_words: 300
+          max_total_tokens: 4096
+          return_logprobs: false
+      - id: mxbai-rerank-base-v2
+        kind: external
+        order_invariant: true
+        model:
+          class: MxbaiPointwise
+          model_name: mixedbread-ai/mxbai-rerank-base-v2
+          revision: 3ea9d4dffa7d12a4f366be8e275c349de9fc9865
+          dtype: auto
+          batch_size: 32
+          max_length: 8192
+      - id: mxbai-rerank-large-v2
+        kind: external
+        order_invariant: true
+        model:
+          class: MxbaiPointwise
+          model_name: mixedbread-ai/mxbai-rerank-large-v2
+          revision: ca7e1ee484c37c0ddd8d178a9a5c33cec575c5e6
+          dtype: auto
+          batch_size: 32
+          max_length: 8192
+      - id: capcal
+        kind: external
+        model:
+          class: CapCalReranker
+          docs_per_score_forward: 20
+          base_reranker:
+            class: Qwen3InstructGradeReranker
+            model_name: Qwen/Qwen3-4B
+            model_size: 4b
+            model_release: qwen3-og
+            revision: 1cfa9a7208912126459214e8b04321603b3df60c
+            device: auto
+            dtype: bfloat16
+            scoring_mode: setwise_grade_prompt
+            continuous_readout: true
+            inference_engine: vllm
+            chat_template_kwargs: {enable_thinking: false}
+            vllm_settings:
+              max_model_len: 8192
+              gpu_memory_utilization: 0.85
+              enable_prefix_caching: true
+              tensor_parallel_size: 1
+              top_logprobs: 50
+            max_length: 8192
+            docs_per_score_forward: 20
+            batch_size: 20
+          capcal:
+            strength: 1.0
+            entropy_adaptive: true
+            probe_query_texts: null
+            probe_passage_text: ""
+            require_grade_probabilities: true
+
+  protocol:
+    serving_width: 20
+    pool_depth: 100
+    perturbations: [random_shuffle]
+    presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    derive_self_consistency: true
+
+  evaluation:
+    measures: [ndcg_cut_10, ndcg_cut_5, map, recip_rank]
+    headline_quality: ndcg_cut_10
+    headline_robustness: tau_psi
+
+  optional_controls:
+    enabled_by_default: false
+    variants:
+      - id: pointwise-serving
+        kind: geometry-control
+        runnable: true
+        order_invariant: true
+        source_variant: oc-sft
+        training_seed: 42
+      - id: true-pointwise-b1
+        kind: training-width-control
+        runnable: true
+        source_variant: true-pointwise-b1
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
+      - id: round-robin-chunks
+        kind: geometry-control
+        runnable: true
+      - id: alternative-first-stage
+        kind: retrieval-control
+        runnable: false
+        note: owned by the first-stage-transfer study in configs/studies/
+      - id: lora-dropout
+        kind: trained-ablation
+        runnable: true
+        source_variant: lora-dropout
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
+      - id: ema-mean-teacher
+        kind: trained-ablation
+        runnable: true
+        source_variant: ema-mean-teacher
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
+      - id: kl-to-base
+        kind: trained-ablation
+        runnable: true
+        source_variant: kl-to-base
+        training_seed: 42
+        checkpoint_catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
+      - id: reverse-order
+        kind: presentation-control
+        runnable: true
+        source_variant: off-shelf
+      - id: shuffled-label
+        kind: label-control
+        runnable: false
+        note: no model or source variant is declared for it, so no job is generated
+      - id: pine
+        kind: unsupported
+        runnable: false
+        note: >-
+          PineReranker runs only on the HF/eager patched-attention path, which
+          this stage's vLLM serving does not provide. Evaluate it through
+          configs/experiments/example-passage-pine-b20-psi.yaml instead.
+
+  execution:
+    max_parallel: 1
+    environment:
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+  outputs:
+    root: build/reproduction/passage-reranking/direct-eval
+    configs_dir: configs
+    sweep: sweep.yaml
+    run_manifest: run_manifest.json
+    per_dataset: per_dataset.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+downstream_eval:
+  source_stage: direct-eval
+  population: reranking-primary-18
+
+  variants:
+    trained: [k1-sft, k10-sft, oc-sft]
+    references:
+      - off-shelf
+      - jina-reranker-v3
+
+  consumer:
+    id: retained-set-threshold
+    rule: score-at-least-tau
+    threshold_selection: dev-canonical-mean-f1
+    relevance_cutoff: 1
+
+  protocol:
+    development_fraction: 0.5
+    split_seed: 20260610
+    threshold_grid_size: 41
+    canonical_presentation: 0
+    scorer_presentations: 10
+    order_invariant_presentations: 10
+
+  evaluation:
+    measures:
+      - mean_pairwise_jaccard
+      - set_flip_rate
+      - precision_mean
+      - recall_mean
+      - f1_mean
+      - canonical_precision
+      - canonical_recall
+      - canonical_f1
+      - canonical_retention
+      - mean_score_variance
+      - matched_retention_mean_pairwise_jaccard
+      - matched_retention_set_flip_rate
+    headline_quality: canonical_f1
+    headline_stability: mean_pairwise_jaccard
+
+  outputs:
+    root: build/reproduction/passage-reranking/downstream-eval
+    run_manifest: run_manifest.json
+    reduction_plan: reduction_plan.json
+    per_consumer: per_consumer.json
+    per_seed: per_seed.json
+    aggregate: aggregate.json
+
+controls:
+  silver: []
+  training: []
+  direct_eval: []
+  downstream_eval: []
+
+analyses:
+  implementation: existing-analysis-scripts

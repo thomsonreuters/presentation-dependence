@@ -1,0 +1,37 @@
+###############################################################################
+# mxbai-rerank-large-v2 off-the-shelf on DL19.
+#
+# Pointwise cross-encoder reference: it scores one candidate per forward, so it
+# is order-invariant by construction and carries no robustness block.
+###############################################################################
+
+id: example-passage-mxbai-large-v2
+
+reranker:
+  class: MxbaiPointwise
+  model_name: mixedbread-ai/mxbai-rerank-large-v2
+  # Pin the HF commit (2026-04-08 snapshot) so every mxbai config shares one
+  # revision across DL19/DL20/BEIR/legal-a.
+  revision: ca7e1ee484c37c0ddd8d178a9a5c33cec575c5e6
+  device: auto                 # "cuda" | "cpu" | "cuda:0" | "auto"
+  batch_size: 32
+  max_length: 8192
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage                                                 # pyserini topic name (fallback if topics_tsv missing)
+  topics_tsv: data/dl19-passage/topics.tsv                             # prefer a local TSV over a pyserini topics lookup
+  index: msmarco-v1-passage                                            # pyserini prebuilt index (downloads on first use, ~1.5 GB)
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures:
+    - ndcg_cut_10
+    - ndcg_cut_5
+    - map
+    - recip_rank
+
+logging:
+  level: INFO

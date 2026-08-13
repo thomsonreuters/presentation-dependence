@@ -1,0 +1,29 @@
+###############################################################################
+# Smoke-test config: IdentityReranker (passes first-stage order through).
+# Smoke config only: validates the eval pipeline end-to-end
+# without needing a GPU or model download. ID has a leading underscore so it
+# sorts away from the real experiment configs.
+###############################################################################
+
+id: _smoke-identity
+
+reranker:
+  class: IdentityReranker
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage                                                 # pyserini topic name (fallback if topics_tsv missing)
+  topics_tsv: data/dl19-passage/topics.tsv                             # prefer a local TSV over a pyserini topics lookup
+  index: msmarco-v1-passage                                            # pyserini prebuilt index (downloads on first use, ~1.5 GB)
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures:
+    - ndcg_cut_10
+    - map
+    - recip_rank
+
+logging:
+  level: INFO

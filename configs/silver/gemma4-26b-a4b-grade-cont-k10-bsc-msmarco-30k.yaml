@@ -1,0 +1,76 @@
+###############################################################################
+# Gemma-4-26B-A4B-it (MoE) Path C: K=10 BSC self-distillation silver (30K queries).
+#
+# Architecture-control teacher point for the Gemma-4 self-distillation track:
+# matches the dense E2B/E4B/31B silver passes on: same fixture,
+# qids, BM25 top-100, B=20, K=10 seeds, Path C expected-grade readout, cross-query
+# batching) but the teacher is the sparse 26B-total / ~4B-active MoE instruct model.
+#
+# MoE-specific notes (vs the dense 31B teacher config this mirrors):
+#   - vLLM keeps ALL experts resident, so peak memory is higher than a dense 4B.
+#     ``gpu_memory_utilization: 0.70`` + ``extra_llm_kwargs.max_num_seqs: 4`` carry
+#     over from the proven MoE off-shelf eval configs to avoid OOM / KV churn.
+#   - ``tensor_parallel_size: 1`` per local-DP worker: the ~52 GB bf16 MoE weights
+#     fit one H100-80GB, matching the Qwen/31B large-teacher feasibility pattern
+#     (8 single-replica workers on 8x H100 80GB). VERIFY this fits before the full
+###############################################################################
+
+id: gemma4-26b-a4b-grade-cont-k10-bsc-msmarco-30k
+
+reranker:
+  class: Gemma4GradeReranker
+  model_name: google/gemma-4-26B-A4B-it
+  model_size: 26b-a4b
+  model_release: gemma4-moe
+  revision: null
+  device: cuda
+  dtype: bfloat16
+  continuous_readout: true
+  inference_engine: vllm
+  chat_template_kwargs:
+    enable_thinking: false
+  vllm_settings:
+    max_model_len: 4096
+    gpu_memory_utilization: 0.70
+    enable_prefix_caching: true
+    tensor_parallel_size: 1
+    top_logprobs: 50
+    extra_llm_kwargs:
+      max_num_seqs: 4
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 20
+  max_doc_chars: 1200
+  setwise_missing_grade: 0
+
+data:
+  dataloader_class: FixtureLoader
+  topics: msmarco-passage-train
+  topics_tsv: data/msmarco-train-selfdistill-seed42/topics.tsv
+  run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+  k_input: 100
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+eval:
+  qrels_path: data/msmarco-train-selfdistill-seed42/qrels.txt
+  strict_qrels_filter: false
+  measures: [ndcg_cut_10]
+
+teacher:
+  protocol: k_shot_bsc
+  k_perms: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  prompt_template_id: gemma4_grade_int_v1
+  grade_max: 3
+  cross_query_batch: 4
+  local_data_parallel_workers: 8
+  output_subdir: silver
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

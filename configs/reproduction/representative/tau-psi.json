@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "family": "tau-psi",
+  "evidence_level": "embedded-frozen-historical-summary",
+  "source": {
+    "provenance": "embedded-frozen-historical-summary",
+    "raw_artifact_type": "per-dataset tau-PSI values",
+    "note": "Self-contained frozen historical summary retained after removal of the broader log-control artifact."
+  },
+  "payload": {
+    "values": [
+      0.0694329339910735,
+      0.07427135553061479
+    ]
+  }
+}

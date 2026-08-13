@@ -1,0 +1,53 @@
+###############################################################################
+# PINE over the off-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
+#
+# External baseline: Wang+2025 position-invariant attention, routed through the
+# dedicated HF/eager path in rerankers/pine.py. Stock vLLM cannot serve the
+# patched attention, so inference_engine is pinned to hf.
+###############################################################################
+
+id: example-passage-pine-b20-psi
+
+reranker:
+  class: PineReranker
+  model_name: Qwen/Qwen3-4B
+  model_size: 4b
+  model_release: qwen3-og
+  revision: 1cfa9a7208912126459214e8b04321603b3df60c
+  device: auto
+  dtype: bfloat16
+  continuous_readout: true
+  inference_engine: hf
+  attn_implementation: eager
+  chat_template_kwargs:
+    enable_thinking: false
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 1
+  max_doc_chars: 1200
+
+data:
+  dataloader_class: PyseriniLoader
+  topics: dl19-passage
+  topics_tsv: data/dl19-passage/topics.tsv
+  index: msmarco-v1-passage
+  run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10, ndcg_cut_5, map, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle, middle_injection]
+  k_cutoff_for_ndcg: 10
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

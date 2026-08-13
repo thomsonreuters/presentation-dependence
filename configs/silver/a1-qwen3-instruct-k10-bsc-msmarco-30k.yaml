@@ -1,0 +1,57 @@
+###############################################################################
+# Qwen3-4B-Instruct K=10 BSC self-distillation.
+###############################################################################
+
+id: a1-qwen3-instruct-k10-bsc-msmarco-30k
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B-Instruct-2507
+  revision: null
+  device: cuda                                      # explicit so silent CPU fallback fails loud
+  dtype: bfloat16
+  inference_engine: vllm                            # vLLM teacher with prefix caching
+  vllm_settings:
+    max_model_len: 4096
+    gpu_memory_utilization: 0.85
+    enable_prefix_caching: true
+    tensor_parallel_size: 1                         # local-DP worker owns one GPU
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096                                  # MS MARCO actual P99 ~3.2K tokens
+  docs_per_score_forward: 20                        # B = 20
+  batch_size: 20
+  max_doc_chars: 1200
+
+data:
+  dataloader_class: FixtureLoader
+  topics: msmarco-passage-train
+  topics_tsv: data/msmarco-train-selfdistill-seed42/topics.tsv
+  run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+  k_input: 100
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+eval:
+  qrels_path: data/msmarco-train-selfdistill-seed42/qrels.txt
+  strict_qrels_filter: false
+  measures: [ndcg_cut_10]
+
+teacher:
+  protocol: k_shot_bsc
+  k_perms: 10                                       # 93% of K=20 lift, 33% cheaper than K=15
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  prompt_template_id: grade_int_v1
+  grade_max: 3
+  cross_query_batch: 4                              # 4 queries' chunks per engine call (smoke-tested)
+  local_data_parallel_workers: 8                    # 8 independent TP=1 replicas on A100 40GB
+  output_subdir: silver
+
+execution:
+  environment:
+    # vLLM v1 EngineCore boots a subprocess per TP rank; the base image has
+    # already touched CUDA in the parent process, so spawn
+    # is required to avoid "Cannot re-initialize CUDA in forked subprocess".
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

@@ -1,0 +1,331 @@
+files:
+  data/2wiki-distractor-support-dev/fixture.jsonl:
+    sha256: 72399778812b6ff739d0d0f8c0fea48a38a6654ce1774ecff4e32e562e8fe80c
+    size_bytes: 1049286
+  data/2wiki-distractor-support-dev/qids_200.txt:
+    sha256: 5939cf244742376a881b18effd16e465a7145eb913e33a0650bd28deb045c43b
+    size_bytes: 6600
+  data/2wiki-distractor-support-dev/qrels.txt:
+    sha256: bc4a34f80604cb5022a48284bc827d525055b7a1cbaaf41166c08b622733f848
+    size_bytes: 150000
+  data/2wiki-distractor-support-dev/topics.tsv:
+    sha256: d5d1cdfe548495e60136d2a25e606c68c29c2869a9ebb5246be66db007e06f7f
+    size_bytes: 19340
+  data/beir-v1.0.0-arguana-test/fixture.jsonl:
+    sha256: 006f146f5f3c4d35d2618110d2a0407a3c870159affc382aab6c8daf533423a2
+    size_bytes: 246984793
+  data/beir-v1.0.0-arguana-test/qrels.txt:
+    sha256: 687d4efbee424d462825f554fb9d0eb491e178c789a7e4960fbd889f984eeae3
+    size_bytes: 97676
+  data/beir-v1.0.0-arguana-test/run.bm25.arguana.txt:
+    sha256: 08ec744e1d3db62684b4e10eca1bafe2293153005646e411bfb352cc9739a989
+    size_bytes: 132908626
+  data/beir-v1.0.0-arguana-test/topics.tsv:
+    sha256: 6899cbb7dd14211990984e52ed638411ae92034930eb8c5aeb4c5d90a898be4f
+    size_bytes: 1735262
+  data/beir-v1.0.0-climate-fever-test/fixture.jsonl:
+    sha256: 547190819e236ad14f84ecf6e76f054d3ab38adbf2df093f95e3353969807f6e
+    size_bytes: 250631258
+  data/beir-v1.0.0-climate-fever-test/qrels.txt:
+    sha256: c56d76b87252a8cc23faafd7e02c1093b84556b599d9a73077a85378d4674773
+    size_bytes: 130489
+  data/beir-v1.0.0-climate-fever-test/run.bm25.climate-fever_sorted.txt:
+    sha256: 1220ca096266e2f7bb84eb566d3ff68e3c22943474ea86acc2bfdd4b54a14932
+    size_bytes: 79865923
+  data/beir-v1.0.0-climate-fever-test/topics.tsv:
+    sha256: c6bc8c2f38bfc9e0596ab75ff8813e54c1cf2383d4ecf7a287927fe8ca4f6650
+    size_bytes: 199480
+  data/beir-v1.0.0-dbpedia-entity-test/fixture.jsonl:
+    sha256: ff2d253e945cc668c7659f5ca44f40f1b36c14e6dae348b2926e5a77637052ac
+    size_bytes: 16798328
+  data/beir-v1.0.0-dbpedia-entity-test/qrels.txt:
+    sha256: e903b89f644875e1eb3706ff0a161d0c7c003f75fca5c05dace5f6fe99e2cf5e
+    size_bytes: 2153618
+  data/beir-v1.0.0-dbpedia-entity-test/run.bm25.dbpedia.txt:
+    sha256: 0cbbaa58af19a222cd0980e103cb0dc9c9bcac2beb5d07a56be30cbe5ea9e599
+    size_bytes: 28714356
+  data/beir-v1.0.0-dbpedia-entity-test/topics.tsv:
+    sha256: ff0216de1bba2dc24f3a80b61004acff3b51f87551ecdb1302329062b8663ff8
+    size_bytes: 19762
+  data/beir-v1.0.0-fiqa-test/fixture.jsonl:
+    sha256: 3026fe5e3f6ce137aa925a284de5f17256ece47191d01ba280be273c38032a67
+    size_bytes: 113016454
+  data/beir-v1.0.0-fiqa-test/qrels.txt:
+    sha256: 424164b5418f5e537fd19b97383c7301166e5738cbfa8e249bc9c10f6b6cd926
+    size_bytes: 26936
+  data/beir-v1.0.0-fiqa-test/run.bm25.fiqa_sorted.txt:
+    sha256: 12c73da88e0bdfd3d1f421ac27bb8bdb2d78b0f2d0110c977e6c8d21bd79c832
+    size_bytes: 23721032
+  data/beir-v1.0.0-fiqa-test/topics.tsv:
+    sha256: a3abf67ba46eb8536813b161110c5abf972fe2ac1c9bc213a5e7722e92699b5d
+    size_bytes: 44643
+  data/beir-v1.0.0-nfcorpus-test/fixture.jsonl:
+    sha256: 76680fa1b22769a17ce32231b473ee5926f0b90d6645f88dbda526139e66df49
+    size_bytes: 36177150
+  data/beir-v1.0.0-nfcorpus-test/qrels.txt:
+    sha256: 9d822ee3fc9e3b395d7fe25a13d81686f54b2a056992574daa825e792800c959
+    size_bytes: 291880
+  data/beir-v1.0.0-nfcorpus-test/run.bm25.nfcorpus.txt:
+    sha256: cd10efd8d4991224c0bca9a0bf49fd2158e7eb3229040ff53d93ce713318f126
+    size_bytes: 5805881
+  data/beir-v1.0.0-nfcorpus-test/topics.tsv:
+    sha256: 93c3112b0ecbc32d98626b52443c9c8722e15e8f6bdf74ec3ebdadd57813049d
+    size_bytes: 10816
+  data/beir-v1.0.0-robust04-test/fixture.jsonl:
+    sha256: 7af07cecadfa354d7312b451f4d3d589b1b7e7e6f83a92387969e84083716970
+    size_bytes: 246417134
+  data/beir-v1.0.0-robust04-test/qrels.txt:
+    sha256: f8f2c972d3c710d85daa7ead02daf4ffe2bbe3647c9f3904500182f43ddbf4c3
+    size_bytes: 6543541
+  data/beir-v1.0.0-robust04-test/run.bm25.robust04.txt:
+    sha256: 80afe6ae5477d99974e2f51b17593c6c26f24bc74571f8f434f4100b55ad4f59
+    size_bytes: 10569640
+  data/beir-v1.0.0-robust04-test/topics.tsv:
+    sha256: 9e4e2899626f5f871c7f6be64dab7d3f2fb57ed5c5278e00d0b1edb078a6f8f0
+    size_bytes: 25519
+  data/beir-v1.0.0-scifact-test/fixture.jsonl:
+    sha256: e60c8c0465acf751c8a284e48c7368e50716af0bfaea61bd45b11f86e9e8f8b9
+    size_bytes: 48848287
+  data/beir-v1.0.0-scifact-test/qrels.txt:
+    sha256: 8b7315286f8dc823956025a1fc9c9ff0bfe142d7b409458ccd758cfa0713ccba
+    size_bytes: 5702
+  data/beir-v1.0.0-scifact-test/run.bm25.scifact_sorted.txt:
+    sha256: 9f59c30a204c9f63edd0e438c255923584b9660a4e8fca5ebf846b1e8f465a35
+    size_bytes: 11096548
+  data/beir-v1.0.0-scifact-test/topics.tsv:
+    sha256: f9ed2b0cc5c3d4f9d12a8d4658cddbe1004aedfcdf3f5e12624f96d8fae4552f
+    size_bytes: 28677
+  data/beir-v1.0.0-signal1m-test/fixture.jsonl:
+    sha256: f149053dd7e86de790ba5b77c2b13c77a1d0c668622dc34a4435627f109ff816
+    size_bytes: 1287209
+  data/beir-v1.0.0-signal1m-test/qrels.txt:
+    sha256: 208dec8d9ba1ecd87c6a55e61939d59faefe7ea53765a2fd54a2a54e84a23f07
+    size_bytes: 113940
+  data/beir-v1.0.0-signal1m-test/run.bm25.signal1m.txt:
+    sha256: 7344d3a1beb979c65f7faef9ee0be4c571f949f0cc38ddd4890456370cb722a7
+    size_bytes: 7851434
+  data/beir-v1.0.0-signal1m-test/topics.tsv:
+    sha256: 5e9fd1198f444211d9dfaa4d4c7e84dfa870699c8dd7c9a86cabe6555d3eb498
+    size_bytes: 9622
+  data/beir-v1.0.0-trec-covid-test/fixture.jsonl:
+    sha256: a76da30c9c6a5083f2329c29530b8da4100fd86f46c660476849956d7b141f29
+    size_bytes: 8026600
+  data/beir-v1.0.0-trec-covid-test/qrels.txt:
+    sha256: 0d94dcea5bc3b44a64a1f9b1430f7672fae39fad1c980d581b92890ab0448713
+    size_bytes: 1047107
+  data/beir-v1.0.0-trec-covid-test/run.bm25.trec-covid_sorted.txt:
+    sha256: 53a6a0c82f81e3f6deea7d21a1be59c06c2905d6c9141da5a73fd19eef567671
+    size_bytes: 1841228
+  data/beir-v1.0.0-trec-covid-test/topics.tsv:
+    sha256: e05213f07998f9bc33cf96c027767826c8949457f1670fc3fa5e57123a817014
+    size_bytes: 3653
+  data/beir-v1.0.0-trec-news-test/fixture.jsonl:
+    sha256: 4c6b99f6c9b872aa236afdc20e2868a883bcc2eebf8f355acd70d79f7b375a9c
+    size_bytes: 40150477
+  data/beir-v1.0.0-trec-news-test/qrels.txt:
+    sha256: 81ad5aba09051e0e79ac011a66a23e05bc62c32a2f9e8c10894e51869b2868c2
+    size_bytes: 669359
+  data/beir-v1.0.0-trec-news-test/run.bm25.trec-news.txt:
+    sha256: 6d39391cf6a3a720f4794a6faad014b87bdb28b71f95caa3098c6c81b164ffce
+    size_bytes: 3655974
+  data/beir-v1.0.0-trec-news-test/topics.tsv:
+    sha256: 86482fd768ac236469db3a299156a8b1676e93d2af2e6262c1883798ea7954f1
+    size_bytes: 4287
+  data/beir-v1.0.0-webis-touche2020-test/fixture.jsonl:
+    sha256: 9c22b7a88c0064eba725e61669261284aebc821aa7376d4ac470b2dc6793723b
+    size_bytes: 19135828
+  data/beir-v1.0.0-webis-touche2020-test/qrels.txt:
+    sha256: c919d5afb251678825f5dec39f63cbf8540cc59b0450bbd069c5a8e1b468af27
+    size_bytes: 43588
+  data/beir-v1.0.0-webis-touche2020-test/run.beir.bm25-flat.webis-touche2020_sorted.txt:
+    sha256: e27042ec247a5b01d4a55ef44866bb16b4f3fd05b8b6f9d12aeef8e9ca5aa091
+    size_bytes: 3320082
+  data/beir-v1.0.0-webis-touche2020-test/topics.tsv:
+    sha256: 1bf00e0f3bd492519b0d48daaaae34c90f35253a680c5168ff72a6c9ff3e4b18
+    size_bytes: 2315
+  data/dl19-passage/fixture.jsonl:
+    sha256: 339c247fafbb7a36d9c788d5a175e77ee8f3b145248ec5bb4a416652db9d83c3
+    size_bytes: 1811306
+  data/dl19-passage/qrels.txt:
+    sha256: 54dea8f531d6bfd93da8d3dd2f4f7a2609e2fb962835a000780ec60b1b819387
+    size_bytes: 177832
+  data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt:
+    sha256: 552cd51c01a994c9af6c742d85d1fb1488b903db59036198fd4470acb882d7f5
+    size_bytes: 1725146
+  data/dl19-passage/topics.tsv:
+    sha256: 7b2b24d3a3170130a4f73a3740bf049d4ca7d7710c3302d6a8800c000539587c
+    size_bytes: 1764
+  data/dl20-passage/fixture.jsonl:
+    sha256: a3b5ec8cb77c57d3dbd1f920e6c184f52c8d4e79b8bb15a0cfe4340e9eeb38e2
+    size_bytes: 8586555
+  data/dl20-passage/qrels.txt:
+    sha256: 60d4c34561f9687f8f73e0a752ba80ab80159b3e9c1bedd0a351f747ed6f5684
+    size_bytes: 218617
+  data/dl20-passage/run.msmarco-v1-passage.bm25-default.dl20_sorted.txt:
+    sha256: ff52acf2bd71f4ac168d5bd57b87c1d607152fda7924a5ee1e1c397e5ca67f08
+    size_bytes: 8050376
+  data/dl20-passage/topics.tsv:
+    sha256: c9b3183ffe4f5f2f474e09411580c1040a7326c9def4c8f4e2045d40e2c70a74
+    size_bytes: 8194
+  data/dl21-passage/fixture.jsonl:
+    sha256: 7a88adf27173388b9300f3becc894747afa28ea0c9489934e269691e22388ed6
+    size_bytes: 1899241
+  data/dl21-passage/qrels.txt:
+    sha256: 15d1c6e8b13fd665dd043c43213e331452213ddc70f70b8522600bcce64db427
+    size_bytes: 433887
+  data/dl22-passage/fixture.jsonl:
+    sha256: 1246e4f96d0f7efea7875e5fdfa40d0fec34764590d1eaf233ee338626bb41be
+    size_bytes: 2676560
+  data/dl22-passage/qrels.txt:
+    sha256: 6d03b5a1b0acc26925b8ba9967469a012ec0491fb55455cd36677c387366cf5f
+    size_bytes: 15800539
+  data/dl23-passage/fixture.jsonl:
+    sha256: fc5d7e441c42c09909d941a0b2712a780900aa65948f569c3a3c12ed188d0b82
+    size_bytes: 2980331
+  data/dl23-passage/qrels.txt:
+    sha256: 5a98a95d5714b00c5066593719e5eb7ca93dd13588d0facf7f426a4c9d6b19b8
+    size_bytes: 912450
+  data/hotpotqa-distractor-support-dev/fixture.jsonl:
+    sha256: 1c1e79a68159a83229616bc0bbbd31c741b01a02ffca2fe0b105b3f5a00c05ac
+    size_bytes: 1427034
+  data/hotpotqa-distractor-support-dev/qids_200.txt:
+    sha256: 700946f8d955c86a307158707a596ce867855c88999503e6fab74fab0c5c56ca
+    size_bytes: 5000
+  data/hotpotqa-distractor-support-dev/qrels.txt:
+    sha256: de90e54e4cd2d58a224e831f84057d9c1206fb20072479d3d387bae01936d589
+    size_bytes: 118000
+  data/hotpotqa-distractor-support-dev/topics.tsv:
+    sha256: 067ff6f8b43655b83a310ad2b4f06fae8cc8695479051c3c2a838a072e019dbd
+    size_bytes: 24632
+  data/musique-support-dev/fixture.jsonl:
+    sha256: 83528a00713f022c327c8fb76bef10fe86aa006bc3d54ab458b58f3754956cdc
+    size_bytes: 1214975
+  data/musique-support-dev/qids_200.txt:
+    sha256: 7ad655bd1ae1eaed6f66ce205802efc8444b6690a5b926436d4abd0b9116dec2
+    size_bytes: 3893
+  data/musique-support-dev/qrels.txt:
+    sha256: 7a1313efd3baa20e29def5e075f5feb45728345a75ed4600490c75c94054929a
+    size_bytes: 95860
+  data/musique-support-dev/topics.tsv:
+    sha256: a5ce06f122a902063a585995896a4bb571191616e1f107d51d3273ca07b52645
+    size_bytes: 18102
+  data/nectar-response-quality/fixture.jsonl:
+    sha256: 22b5ec162dd41ade2eb0bb35f3284aae0576670e9288f208077d58e8f9df44fa
+    size_bytes: 3478597
+  data/nectar-response-quality/qrels.txt:
+    sha256: 4ed768bed168d5e97d2d5f1b3d81ba2286fbe695bee91de51ae455ba49c903f4
+    size_bytes: 128982
+  data/nectar-response-quality/topics.tsv:
+    sha256: c7b87a0a9d40bd921e1fc094c63fa9de0bce2002b3f5a34d0c86d6ad6e82e58e
+    size_bytes: 165749
+  data/ppe-math-response-quality/fixture.jsonl:
+    sha256: 8cd937b24b12709e3f45e695a2a7d6d518abcb39d925a82b4a114ff4c8f6a165
+    size_bytes: 6386138
+  data/ppe-math-response-quality/qids_all.txt:
+    sha256: aee535a91834e4170b42426ce2f361b886019a1c4aa7194579d0500beb2c22c7
+    size_bytes: 11268
+  data/ppe-math-response-quality/qrels.txt:
+    sha256: c55026f7073482799e194d44ba269ddce61a2cd0a09a2b703b09fb9f36b2b9cb
+    size_bytes: 208303
+  data/ppe-math-response-quality/topics.tsv:
+    sha256: 314189010b28a5dbafe99a7a092b015914422d273acaa9883261a5304e08494c
+    size_bytes: 131273
+  data/ppe-mmlu-pro-response-quality/fixture.jsonl:
+    sha256: 36bdc4da43253983837388b295e3adec54ea13225b78fc9f8ec801d607180055
+    size_bytes: 5635191
+  data/ppe-mmlu-pro-response-quality/qids_all.txt:
+    sha256: 00e6ebfffbd9090d1e281b7cf569b3a9ab27ec71fec73568b8d3c1fe8f1b5c83
+    size_bytes: 9468
+  data/ppe-mmlu-pro-response-quality/qrels.txt:
+    sha256: 085c12fff7ce3a59105f60cf143d5beea23d435d2ac9ca61afb9cc1f2ec7b43c
+    size_bytes: 188352
+  data/ppe-mmlu-pro-response-quality/topics.tsv:
+    sha256: ff493bf8325d5733e666c7b67de6164a3e478895406992f226ee0ec74949fdc7
+    size_bytes: 145637
+  data/rewardbench2-response-quality-test/fixture.jsonl:
+    sha256: 2911bd3b5dbc8bacd02359a817c4e80214527eb3646a0d112b9930d7edee55a2
+    size_bytes: 13793743
+  data/rewardbench2-response-quality-test/qids_all.txt:
+    sha256: 5067978849d7ea31be2f963855815c949ab425934c71010c9a4f36f51eda3584
+    size_bytes: 31650
+  data/rewardbench2-response-quality-test/qrels.txt:
+    sha256: 9105d23c81e8b4588bc0d95cef423d9e0eed3cbf0fffc46cd94fa9c73fcab92f
+    size_bytes: 316668
+  data/rewardbench2-response-quality-test/topics.tsv:
+    sha256: a83743f2b6db43070b8e8dabed03c2c1be9be480068062decbed8cdca1b0027e
+    size_bytes: 282500
+  data/rmbench-response-quality/fixture.jsonl:
+    sha256: 47286a6046a30a18fd99e97a9dc542c7289b55e710195ec925cf7030113588d3
+    size_bytes: 11155969
+  data/rmbench-response-quality/qids_all.txt:
+    sha256: 3fa5c44ede405f9e6763d486bd6dafd766cb3a326af019689d4cd395afaf806d
+    size_bytes: 24188
+  data/rmbench-response-quality/qrels.txt:
+    sha256: 595eb359f44493a0b3c498931a22bc16f66667178c57d4e2707436226d0b769f
+    size_bytes: 361914
+  data/rmbench-response-quality/topics.tsv:
+    sha256: 8b21f705cbc437192b22187f5f2f7d7cc46c3d05fbb9095951d87b08bd8306b4
+    size_bytes: 306336
+  configs/reproduction/fixtures/nectar-dedup-clean-qids.txt:
+    sha256: 1c2dcbe9f5c05653830d724936444b55ccbd747a9410e8a65cf0165053ab8e81
+    size_bytes: 6076
+  configs/reproduction/fixtures/taupsi-qids/arguana.txt:
+    sha256: b09d91be9e0a730e244780a3793636e9e146eaec5bbbd0fecfae5a43c679e029
+    size_bytes: 3242
+  configs/reproduction/fixtures/taupsi-qids/climate-fever.txt:
+    sha256: e58ed66250d0f3f3f6af0b0d7fda2121a29a36aa4372b3c65f29746a9dec6b7c
+    size_bytes: 462
+  configs/reproduction/fixtures/taupsi-qids/dbpedia-entity.txt:
+    sha256: b482ff822f7696393f7ef7223d3c87e1627b819ae540a0f8d00a82a37bfa1d7d
+    size_bytes: 1455
+  configs/reproduction/fixtures/taupsi-qids/dl19.txt:
+    sha256: 37bcd0bbec4a992c12089df28179424e9bcf0153f5c9e93dc8fd05ba9cec6887
+    size_bytes: 313
+  configs/reproduction/fixtures/taupsi-qids/dl20.txt:
+    sha256: 3f7682e487033224fb9b0e8100122d38964c7ccb96408d962330454a74b58958
+    size_bytes: 397
+  configs/reproduction/fixtures/taupsi-qids/dl21.txt:
+    sha256: 702c8e703e2e42a2fbabfdf539116df0cbf1b704c1b48325c3da87ad1640c4bb
+    size_bytes: 382
+  configs/reproduction/fixtures/taupsi-qids/dl22.txt:
+    sha256: 6eae6c6ec20eeea109dc54637dbac37b881d2cd2d302859de9c3f64e3d580772
+    size_bytes: 608
+  configs/reproduction/fixtures/taupsi-qids/dl23.txt:
+    sha256: d156e6b5de769d311ad16f53934db4a7b77b77dab1008a9f612648584b394d78
+    size_bytes: 656
+  configs/reproduction/fixtures/taupsi-qids/fiqa.txt:
+    sha256: 5d8599f5e39d645e5805e03c350aef6bebb51802d06b14142659e3724b2f45b0
+    size_bytes: 491
+  configs/reproduction/fixtures/taupsi-qids/nfcorpus.txt:
+    sha256: a40d186ce3ee26c7d3c32863f57fa63c5b4ac05611d953c0360cdd39f1c87714
+    size_bytes: 1071
+  configs/reproduction/fixtures/taupsi-qids/robust04.txt:
+    sha256: c93063f50f7ca78dfe30fa2e2f3537f77c937a894af19a95513bed1031158000
+    size_bytes: 400
+  configs/reproduction/fixtures/taupsi-qids/scifact.txt:
+    sha256: 4e8a201321184dd328c0beb926654823733f1e239cdef77ca41a381f4abac0f1
+    size_bytes: 417
+  configs/reproduction/fixtures/taupsi-qids/signal1m.txt:
+    sha256: 47714c8910f8dee43f5a3c165e95b7605222ac0c0c66556446393a053d28ec37
+    size_bytes: 3589
+  configs/reproduction/fixtures/taupsi-qids/touche2020.txt:
+    sha256: b60ec01f522cfdc641345dde67af9078da372c72a739d7bdd40c539620df476a
+    size_bytes: 138
+  configs/reproduction/fixtures/taupsi-qids/trec-covid.txt:
+    sha256: 02d36ee22aefffbb3eac4f90f703dd0be636851031144132b43af85384a2afcd
+    size_bytes: 141
+  configs/reproduction/fixtures/taupsi-qids/trec-news.txt:
+    sha256: efa60208c81ae34845129d8d7c90cfb57e97a55dbc9e0bef48dbb66ba5197f7a
+    size_bytes: 228
+datasets:
+  berkeley-nest/Nectar: 3c6b4c47fa1cc38869f9f32dce1699f7abad8b06
+models:
+  Qwen/Qwen3-4B: 1cfa9a7208912126459214e8b04321603b3df60c
+  Skywork/Skywork-Reward-V2-Qwen3-4B: fd958fef475f323f4e6b195930e3dd918485c668
+  castorini/rank_zephyr_7b_v1_full: aa11d9da444ec3490827656c3b961d5c5f3af0eb
+  ibm-granite/granite-4.1-8b: 1504002f650e656a0a3789d99574df12e3e94ed0
+  jinaai/jina-reranker-v3: 10fb694fc21f7a710a563ff1eb977a460f3868e4
+  llm-blender/PairRM-hf: f9000bd5dc59f3cd5cd23a4b7bfa63b95f0b14e4
+  mixedbread-ai/mxbai-rerank-base-v2: 3ea9d4dffa7d12a4f366be8e275c349de9fc9865
+  mixedbread-ai/mxbai-rerank-large-v2: ca7e1ee484c37c0ddd8d178a9a5c33cec575c5e6
+schema_version: 1

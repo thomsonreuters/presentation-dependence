@@ -1,0 +1,22 @@
+schema_version: 1
+description: Selected-run registry for experiment metadata. Ships empty; record your own runs into it. Exact measurements
+  stay in run artifacts; this file records which runs were selected and why.
+  Update with scripts/record_result.py after important runs.
+statuses:
+- planned
+- running
+- complete
+- partial
+- topup-needed
+- superseded
+- failed
+- diagnostic
+roles:
+- primary
+- reference
+- ablation
+- negative-control
+- smoke
+- topup
+- diagnostic
+results: []

@@ -1,0 +1,46 @@
+###############################################################################
+# PairRM external reference on RewardBench-2 (llm-blender/PairRM-hf, ~0.4B).
+#
+# Pairwise reference on the pointwise–pairwise–listwise axis. Same RewardBench-2
+# queries, gold, and nDCG@1 as the trained arms. It ranks candidates from all
+# ordered pairs aggregated by Copeland, and averages over both A/B orders per
+# pair, so it is order-invariant here: quality only, no robustness block.
+#
+# Not scale-matched to the trained arms: ~0.4B, so it is a method-family
+# reference, not a size-matched one.
+###############################################################################
+
+id: example-response-ranking-pairrm
+
+reranker:
+  class: PairRMReranker
+  model_name: llm-blender/PairRM-hf
+  revision: f9000bd5dc59f3cd5cd23a4b7bfa63b95f0b14e4
+  device: auto
+  dtype: float32
+  batch_size: 16
+  max_doc_chars: 2000
+
+data:
+  dataloader_class: FixtureLoader
+  topics: rewardbench2-response-quality-test
+  topics_tsv: data/rewardbench2-response-quality-test/topics.tsv
+  run_path: data/rewardbench2-response-quality-test/fixture.jsonl
+  k_input: 4
+
+qids_to_run_path: data/rewardbench2-response-quality-test/qids_all.txt
+
+eval:
+  qrels_path: data/rewardbench2-response-quality-test/qrels.txt
+  strict_qrels_filter: true
+  measures:
+    - ndcg_cut_10
+    - ndcg_cut_1
+    - map
+    - recip_rank
+
+execution:
+  fixture_channel: rewardbench2-response-quality-test
+
+logging:
+  level: INFO

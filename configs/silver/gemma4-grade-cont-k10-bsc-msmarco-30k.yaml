@@ -1,0 +1,71 @@
+###############################################################################
+# Gemma-4-E4B-it Path C: K=10 BSC self-distillation silver (30K queries).
+#
+# Cross-family teacher run mirroring the Qwen3 30K silver passes, using
+# Gemma4's continuous grade-skeleton readout rather than JSON grade generation.
+#
+# Geometry:
+# - K=10, B=20, top_k=100, max_doc_chars=1200.
+# - The 30K qids are a deterministic prefix of sample_qids_seed42.txt, so this
+#   can later be extended non-redundantly with qids_30k_to_100k.txt.
+#
+# Backend:
+# - Gemma-4 requires vLLM >=0.19 because vLLM 0.10 lacks native support for its
+#   Transformers-v5 rope_parameters / Gemma4ForConditionalGeneration config.
+# - Use the prebuilt PyTorch 2.10 / py313 / cu130 image with vLLM 0.19.1+cu130.
+# - Local DP uses one full model replica per A100 (tensor_parallel_size=1).
+###############################################################################
+
+id: gemma4-grade-cont-k10-bsc-msmarco-30k
+
+reranker:
+  class: Gemma4GradeReranker
+  model_name: google/gemma-4-E4B-it
+  revision: null
+  device: cuda                                      # explicit so silent CPU fallback fails loud
+  dtype: bfloat16
+  continuous_readout: true                          # Path C: fixed grade skeleton + E[grade]
+  inference_engine: vllm
+  vllm_settings:
+    max_model_len: 4096
+    gpu_memory_utilization: 0.85
+    enable_prefix_caching: true
+    tensor_parallel_size: 1                         # local-DP worker owns one GPU
+    top_logprobs: 50
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20                        # B = 20
+  batch_size: 20                                    # irrelevant to vLLM, kept for config symmetry
+  max_doc_chars: 1200
+  setwise_missing_grade: 0
+
+data:
+  dataloader_class: FixtureLoader
+  topics: msmarco-passage-train
+  topics_tsv: data/msmarco-train-selfdistill-seed42/topics.tsv
+  run_path: data/msmarco-train-selfdistill-seed42/fixture.jsonl
+  k_input: 100
+
+qids_to_run_path: data/msmarco-train-selfdistill-seed42/qids_30k.txt
+
+eval:
+  qrels_path: data/msmarco-train-selfdistill-seed42/qrels.txt
+  strict_qrels_filter: false
+  measures: [ndcg_cut_10]
+
+teacher:
+  protocol: k_shot_bsc
+  k_perms: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  prompt_template_id: gemma4_grade_int_v1
+  grade_max: 3
+  cross_query_batch: 4
+  local_data_parallel_workers: 8                    # 8 independent TP=1 replicas on A100 40GB
+  output_subdir: silver
+
+execution:
+  environment:
+    VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+logging:
+  level: INFO

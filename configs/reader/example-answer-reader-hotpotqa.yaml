@@ -1,0 +1,20 @@
+id: example-answer-reader-hotpotqa
+phase: R3
+
+reader:
+  engine: vllm
+  model_name: ibm-granite/granite-4.1-8b
+  family: granite
+  max_tokens: 64
+  cot: false
+  enable_thinking: false
+  max_model_len: 8192
+
+dataset: hotpotqa
+k_values: [3, 5]
+canonical_perm: 0
+
+scorer:
+  exp_id: example-multi-document-qa-b10-psi
+  recipe: off-shelf
+  size: 4b

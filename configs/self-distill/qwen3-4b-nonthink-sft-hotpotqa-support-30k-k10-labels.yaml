@@ -1,0 +1,106 @@
+###############################################################################
+# OG Qwen3-4B multi-document QA HotpotQA 30K student; mirrors the 1.7B arm with
+# a model/silver swap.
+###############################################################################
+
+id: qwen3-4b-nonthink-sft-hotpotqa-support-30k-k10-labels
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs:
+    enable_thinking: false
+  instruction: "Given a multi-hop question, identify passages that support answering the question"
+  grade_rubric_id: answer_support_v1
+  max_length: 4096
+  docs_per_score_forward: 10
+  batch_size: 10
+  max_doc_chars: 1600
+
+student:
+  base_model: Qwen/Qwen3-4B
+  reranker_class: Qwen3InstructGradeReranker
+  silver_labels_path: silver_labels_hotpotqa_support_30k_k10_qwen3_4b_train.jsonl
+  eval_silver_labels_path: silver_labels_hotpotqa_support_heldout500_k10_qwen3_4b.jsonl
+  fixture_path: fixture.jsonl
+  qrels_path: qrels.txt
+  output_dir: runs/self-distill/qwen3-4b-nonthink-sft-hotpotqa-support-30k-k10-labels/student
+  device: cuda
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+  max_length: 4096
+  max_doc_chars: 1600
+  instruction: "Given a multi-hop question, identify passages that support answering the question"
+  grade_rubric_id: answer_support_v1
+  objective:
+    type: supervised_mse
+    loss: mse
+  data:
+    chunk_size: 10
+    candidate_set_id: hotpotqa_distractor_support_b10
+    include_doc_ids_in_prompt: false
+    view: regression
+    preserve_group_metadata: true
+    token_cache:
+      enabled: true
+      max_entries: 100000
+      cache_prefix_strings: true
+      cache_token_ids: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    epochs: 1
+    lr: 0.0002
+    batch_size_per_device: 1
+    grad_accumulation_steps: 8
+    slot_forward_batch_size: 8
+    gradient_checkpointing: true
+    ddp_no_sync_during_grad_accum: true
+    warmup_ratio: 0.10
+    lr_scheduler: cosine
+    weight_decay: 0.01
+    adam_beta1: 0.9
+    adam_beta2: 0.95
+    seed: 42
+    max_steps: null
+    single_forward_readout: true
+    log_every_n_steps: 10
+    heartbeat_every_s: 60
+    progress_jsonl: true
+  evaluation:
+    max_queries: 100
+    every_n_steps: 50
+    at_start: true
+    at_end: true
+    psi:
+      enabled: true
+      max_queries: 25
+      seeds: [0, 1, 2]
+  observability:
+    tensorboard:
+      enabled: true
+  checkpoint:
+    enabled: true
+    save_every_n_steps: 50
+    keep_last_n: 4
+    keep_every_n_steps: 100
+    keep_n_best: 3
+    keep_n_best_metric: qrels_ndcg_cut_10
+    keep_n_best_mode: max
+    resume_from_checkpoint: null
+
+eval:
+  measures: [ndcg_cut_10]
+  strict_qrels_filter: true
+
+execution:
+  fixture_channel: hotpotqa-distractor-support-train
+  distributed: ddp
+
+logging:
+  level: INFO

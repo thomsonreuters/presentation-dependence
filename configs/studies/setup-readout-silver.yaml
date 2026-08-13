@@ -1,0 +1,100 @@
+schema_version: 1
+id: setup-readout-silver
+description: Readout, silver-label, and placeholder controls.
+
+outputs:
+  config_root: configs/experiments
+  sweep_root: configs/sweeps
+
+task: passage-reranking
+stages: [silver]
+population: reranking-frozen-18
+
+dimensions:
+  models:
+    - qwen3-4b
+    - gemma-e4b
+    - granite-8b
+  readouts:
+    - {id: argmax-grade, scalarizer: argmax_grade}
+    - {id: yes-no-probability, scalarizer: binary_relevance}
+    - {id: expected-grade, scalarizer: expected_grade}
+  silver_k: [1, 10]
+  placeholder_controls: ["0", "1", "2", "3", "?"]
+
+conditions:
+  placeholder-controls:
+    task: passage-reranking
+    population: reranking-frozen-18
+    informativeness:
+      placeholders:
+        one: "1"
+        two: "2"
+        three: "3"
+        qmark: "?"
+      serving_width: 20
+      chunk_assignment: sorted
+      perturbations: [random_shuffle]
+    execution:
+      max_parallel: 1
+      standalone_datasets:
+        - robust04
+        - arguana
+        - scifact
+        - trec-news
+        - trec-covid
+        - fiqa
+      bundle_groups:
+        - [dl19, signal1m, dl22, dl23, nfcorpus, climate-fever]
+        - [dl21, dl20, dbpedia-entity]
+        - [legal-a, touche2020, legal-b]
+
+  complete-readout-grid:
+    serving_width: 20
+    pool_depth: 100
+    quality_metric: ndcg_cut_10
+    placeholders: ["0", "1", "2", "3"]
+    readout_placeholder: "0"
+    chunk_assignment: sorted
+    run_robustness: false
+    models:
+      qwen3-4b:
+        paper_name: Qwen3-4B
+        class: Qwen3InstructGradeReranker
+        model_name: Qwen/Qwen3-4B
+        model_size: 4b
+        model_release: qwen3-og
+        dtype: bfloat16
+        inference_engine: vllm
+        chat_template_kwargs: {enable_thinking: false}
+        max_model_len: 4096
+        max_model_len_overrides:
+          touche2020: 8192
+          legal-a: 8192
+          legal-b: 8192
+        placeholder_key: grade_skeleton_dummy
+      gemma-e4b:
+        paper_name: Gemma-E4B
+        class: Gemma4GradeReranker
+        model_name: google/gemma-4-E4B-it
+        dtype: bfloat16
+        inference_engine: vllm
+        continuous_readout: true
+        max_model_len: 8192
+        placeholder_key: grade_skeleton_dummy
+      granite-8b:
+        paper_name: Granite-8B
+        class: Granite41GradeReranker
+        model_name: ibm-granite/granite-4.1-8b
+        device: cuda
+        dtype: bfloat16
+        inference_engine: vllm
+        trust_remote_code: false
+        scoring_method: continuous_grade
+        max_model_len: 32768
+        placeholder_key: grade_dummy
+materializers:
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [complete-readout-grid]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [placeholder-controls]

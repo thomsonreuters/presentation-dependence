@@ -1,0 +1,34 @@
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+
+data/
+runs/
+build/
+checkpoints/
+dist/
+sweeps/
+tmp/
+notebooks/
+*.egg-info/
+*.log
+wandb/
+mlruns/
+tb_logs/
+tensorboard/
+
+.git/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Local study expansion. Keep only reviewed tracked examples/fixtures in the
+# context; generated matrices can contain stale paths and are mounted separately.
+configs/experiments/*.yaml
+!configs/experiments/_*.yaml
+!configs/experiments/example-*.yaml
+configs/sweeps/*--canonical.yaml

@@ -1,0 +1,178 @@
+schema_version: 1
+id: reranking-primary-18
+pool_depth: 100
+
+datasets:
+  - id: dl19
+    loader: PyseriniLoader
+    topics: dl19-passage
+    topics_tsv: data/dl19-passage/topics.tsv
+    index: msmarco-v1-passage
+    run_path: data/dl19-passage/run.msmarco-v1-passage.bm25-default.dl19_sorted.txt
+    qrels_path: data/dl19-passage/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 1200
+
+  - id: dl20
+    loader: PyseriniLoader
+    topics: dl20-passage
+    topics_tsv: data/dl20-passage/topics.tsv
+    index: msmarco-v1-passage
+    run_path: data/dl20-passage/run.msmarco-v1-passage.bm25-default.dl20_sorted.txt
+    qrels_path: data/dl20-passage/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 1200
+
+  - id: dl21
+    loader: FixtureLoader
+    run_path: data/dl21-passage/fixture.jsonl
+    qrels_path: data/dl21-passage/qrels.txt
+    fixture_channel: dl21
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 1200
+
+  - id: dl22
+    loader: FixtureLoader
+    run_path: data/dl22-passage/fixture.jsonl
+    qrels_path: data/dl22-passage/qrels.txt
+    fixture_channel: dl22
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 1200
+
+  - id: dl23
+    loader: FixtureLoader
+    run_path: data/dl23-passage/fixture.jsonl
+    qrels_path: data/dl23-passage/qrels.txt
+    fixture_channel: dl23
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 1200
+
+  - id: touche2020
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-webis-touche2020-test
+    topics_tsv: data/beir-v1.0.0-webis-touche2020-test/topics.tsv
+    index: beir-v1.0.0-webis-touche2020.flat
+    run_path: data/beir-v1.0.0-webis-touche2020-test/run.beir.bm25-flat.webis-touche2020_sorted.txt
+    qrels_path: data/beir-v1.0.0-webis-touche2020-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: fiqa
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-fiqa-test
+    topics_tsv: data/beir-v1.0.0-fiqa-test/topics.tsv
+    index: beir-v1.0.0-fiqa.flat
+    run_path: data/beir-v1.0.0-fiqa-test/run.bm25.fiqa_sorted.txt
+    qrels_path: data/beir-v1.0.0-fiqa-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: nfcorpus
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-nfcorpus-test
+    topics_tsv: data/beir-v1.0.0-nfcorpus-test/topics.tsv
+    index: beir-v1.0.0-nfcorpus.flat
+    run_path: data/beir-v1.0.0-nfcorpus-test/run.bm25.nfcorpus.txt
+    qrels_path: data/beir-v1.0.0-nfcorpus-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: arguana
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-arguana-test
+    topics_tsv: data/beir-v1.0.0-arguana-test/topics.tsv
+    index: beir-v1.0.0-arguana.flat
+    run_path: data/beir-v1.0.0-arguana-test/run.bm25.arguana.txt
+    qrels_path: data/beir-v1.0.0-arguana-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: climate-fever
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-climate-fever-test
+    topics_tsv: data/beir-v1.0.0-climate-fever-test/topics.tsv
+    index: beir-v1.0.0-climate-fever.flat
+    run_path: data/beir-v1.0.0-climate-fever-test/run.bm25.climate-fever_sorted.txt
+    qrels_path: data/beir-v1.0.0-climate-fever-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: trec-covid
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-trec-covid-test
+    topics_tsv: data/beir-v1.0.0-trec-covid-test/topics.tsv
+    index: beir-v1.0.0-trec-covid.flat
+    run_path: data/beir-v1.0.0-trec-covid-test/run.bm25.trec-covid_sorted.txt
+    qrels_path: data/beir-v1.0.0-trec-covid-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: dbpedia-entity
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-dbpedia-entity-test
+    topics_tsv: data/beir-v1.0.0-dbpedia-entity-test/topics.tsv
+    index: beir-v1.0.0-dbpedia-entity.flat
+    run_path: data/beir-v1.0.0-dbpedia-entity-test/run.bm25.dbpedia.txt
+    qrels_path: data/beir-v1.0.0-dbpedia-entity-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: scifact
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-scifact-test
+    topics_tsv: data/beir-v1.0.0-scifact-test/topics.tsv
+    index: beir-v1.0.0-scifact.flat
+    run_path: data/beir-v1.0.0-scifact-test/run.bm25.scifact_sorted.txt
+    qrels_path: data/beir-v1.0.0-scifact-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: signal1m
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-signal1m-test
+    topics_tsv: data/beir-v1.0.0-signal1m-test/topics.tsv
+    index: beir-v1.0.0-signal1m.flat
+    run_path: data/beir-v1.0.0-signal1m-test/run.bm25.signal1m.txt
+    qrels_path: data/beir-v1.0.0-signal1m-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: trec-news
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-trec-news-test
+    topics_tsv: data/beir-v1.0.0-trec-news-test/topics.tsv
+    index: beir-v1.0.0-trec-news.flat
+    run_path: data/beir-v1.0.0-trec-news-test/run.bm25.trec-news.txt
+    qrels_path: data/beir-v1.0.0-trec-news-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: robust04
+    loader: PyseriniLoader
+    topics: beir-v1.0.0-robust04-test
+    topics_tsv: data/beir-v1.0.0-robust04-test/topics.tsv
+    index: beir-v1.0.0-robust04.flat
+    run_path: data/beir-v1.0.0-robust04-test/run.bm25.robust04.txt
+    qrels_path: data/beir-v1.0.0-robust04-test/qrels.txt
+    instruction: Given a web search query, retrieve relevant passages that answer the query
+    max_doc_chars: 500
+
+  - id: legal-a
+    access: internal
+    loader: FixtureLoader
+    run_path: data/legal-a/fixture.jsonl
+    qrels_path: data/legal-a/qrels.txt
+    fixture_channel: legal-a
+    instruction: Given a legal search query, retrieve relevant legal passages that answer the query
+    max_doc_chars: 500
+    max_model_len: 8192
+
+  - id: legal-b
+    access: internal
+    loader: FixtureLoader
+    run_path: data/legal-b/fixture.jsonl
+    qrels_path: data/legal-b/qrels.txt
+    fixture_channel: legal-b
+    instruction: Given a legal search query, retrieve relevant legal passages that answer the query
+    max_doc_chars: 500
+    max_model_len: 8192

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "family": "gain-histogram",
+  "evidence_level": "embedded-paper-stated-payload",
+  "source": {
+    "provenance": "embedded-paper-stated-payload",
+    "paper_anchor": "fig:gainhist",
+    "raw_artifact_type": "psi/psi_per_query.json",
+    "note": "Self-contained paper-stated payload retained after removal of the generated figure source."
+  },
+  "payload": {
+    "gains": [-0.01, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09],
+    "bins": [-0.02, 0.0, 0.02, 0.04, 0.06, 0.08, 0.1]
+  }
+}

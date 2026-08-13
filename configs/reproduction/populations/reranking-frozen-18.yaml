@@ -1,0 +1,41 @@
+schema_version: 1
+id: reranking-frozen-18
+base_population: reranking-primary-18
+description: Frozen fixture-backed candidate pools for mechanism studies.
+
+datasets:
+  - {id: dl19, loader: FixtureLoader, run_path: data/dl19-passage/fixture.jsonl, fixture_channel: dl19-passage}
+  - {id: dl20, loader: FixtureLoader, run_path: data/dl20-passage/fixture.jsonl, fixture_channel: dl20-passage}
+  - {id: dl21, loader: FixtureLoader, run_path: data/dl21-passage/fixture.jsonl}
+  - {id: dl22, loader: FixtureLoader, run_path: data/dl22-passage/fixture.jsonl}
+  - {id: dl23, loader: FixtureLoader, run_path: data/dl23-passage/fixture.jsonl}
+  - id: touche2020
+    loader: FixtureLoader
+    run_path: data/beir-v1.0.0-webis-touche2020-test/fixture.jsonl
+    fixture_channel: beir-v1.0.0-webis-touche2020-test
+  - {id: fiqa, loader: FixtureLoader, run_path: data/beir-v1.0.0-fiqa-test/fixture.jsonl, fixture_channel: beir-v1.0.0-fiqa-test}
+  - {id: nfcorpus, loader: FixtureLoader, run_path: data/beir-v1.0.0-nfcorpus-test/fixture.jsonl, fixture_channel: beir-v1.0.0-nfcorpus-test}
+  - {id: arguana, loader: FixtureLoader, run_path: data/beir-v1.0.0-arguana-test/fixture.jsonl, fixture_channel: beir-v1.0.0-arguana-test}
+  - id: climate-fever
+    loader: FixtureLoader
+    run_path: data/beir-v1.0.0-climate-fever-test/fixture.jsonl
+    fixture_channel: beir-v1.0.0-climate-fever-test
+  - id: trec-covid
+    loader: FixtureLoader
+    run_path: data/beir-v1.0.0-trec-covid-test/fixture.jsonl
+    fixture_channel: beir-v1.0.0-trec-covid-test
+  - id: dbpedia-entity
+    loader: FixtureLoader
+    run_path: data/beir-v1.0.0-dbpedia-entity-test/fixture.jsonl
+    fixture_channel: beir-v1.0.0-dbpedia-entity-test
+    qids_to_run_path: configs/reproduction/fixtures/taupsi-qids/dbpedia-entity.txt
+  - {id: scifact, loader: FixtureLoader, run_path: data/beir-v1.0.0-scifact-test/fixture.jsonl, fixture_channel: beir-v1.0.0-scifact-test}
+  - {id: signal1m, loader: FixtureLoader, run_path: data/beir-v1.0.0-signal1m-test/fixture.jsonl, fixture_channel: beir-v1.0.0-signal1m-test}
+  - {id: trec-news, loader: FixtureLoader, run_path: data/beir-v1.0.0-trec-news-test/fixture.jsonl, fixture_channel: beir-v1.0.0-trec-news-test}
+  - id: robust04
+    loader: FixtureLoader
+    run_path: data/beir-v1.0.0-robust04-test/fixture.jsonl
+    fixture_channel: beir-v1.0.0-robust04-test
+    qids_to_run_path: configs/reproduction/fixtures/taupsi-qids/robust04.txt
+  - {id: legal-a, loader: FixtureLoader, run_path: data/legal-a/fixture.jsonl}
+  - {id: legal-b, loader: FixtureLoader, run_path: data/legal-b/fixture.jsonl}

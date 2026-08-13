@@ -1,0 +1,56 @@
+###############################################################################
+# Sweep: one reranker across four BEIR surfaces.
+#
+# The dataset-axis counterpart to passage-rerankers-dl19-example.yaml, which
+# holds the surface fixed and varies the model. Every cell here reuses one
+# tracked config and overrides the surface, so adding a dataset is three lines
+# rather than a new config file.
+#
+# Each cell also overrides `id`. That is what puts its results in their own
+# runs/<id>/ directory: without it every cell would land under the base
+# config's id, distinguishable only by timestamp.
+#
+# Because the cells share an `exp_id`, name a single one by its index rather
+# than by exp_id when resuming:
+#
+#     uv run python scripts/run_sweep.py configs/sweeps/beir-surfaces-psi-example.yaml --only 2
+#
+# Needs the four BEIR fixtures; see docs/DATA-SETUP.md. --dry-run needs none.
+#
+# Run with:  uv run python scripts/run_sweep.py configs/sweeps/beir-surfaces-psi-example.yaml
+###############################################################################
+
+id: beir-surfaces-psi-example
+description: "Qwen3-4B B=20 across four BEIR surfaces (example sweep)."
+
+execution:
+  # These cells each hold a 4B model on the GPU, so they run one at a time.
+  max_parallel: 1
+
+common_overrides:
+  # One permutation seed instead of the config's ten: a first pass across four
+  # surfaces, not a variance estimate. Drop both overrides for the full PSI run.
+  robustness.K: 1
+  robustness.seeds: [0]
+
+jobs:
+  - exp_id: example-passage-b20-psi
+    overrides:
+      id: beir-example--trec-covid
+      data.run_path: data/beir-v1.0.0-trec-covid-test/fixture.jsonl
+      eval.qrels_path: data/beir-v1.0.0-trec-covid-test/qrels.txt
+  - exp_id: example-passage-b20-psi
+    overrides:
+      id: beir-example--fiqa
+      data.run_path: data/beir-v1.0.0-fiqa-test/fixture.jsonl
+      eval.qrels_path: data/beir-v1.0.0-fiqa-test/qrels.txt
+  - exp_id: example-passage-b20-psi
+    overrides:
+      id: beir-example--scifact
+      data.run_path: data/beir-v1.0.0-scifact-test/fixture.jsonl
+      eval.qrels_path: data/beir-v1.0.0-scifact-test/qrels.txt
+  - exp_id: example-passage-b20-psi
+    overrides:
+      id: beir-example--nfcorpus
+      data.run_path: data/beir-v1.0.0-nfcorpus-test/fixture.jsonl
+      eval.qrels_path: data/beir-v1.0.0-nfcorpus-test/qrels.txt

@@ -1,0 +1,32 @@
+schema_version: 1
+id: scaling-teachers-sample-efficiency
+description: Teacher strength, model scaling, and label-pool efficiency.
+
+outputs:
+  config_root: configs/experiments
+  sweep_root: configs/sweeps
+
+population: reranking-primary-18
+template_manifest: configs/studies/training-source-templates.yaml
+
+dimensions:
+  student_families: [qwen3, gemma4, granite-4.1]
+  teacher_families: [qwen3, gemma4, granite-4.1, frontier]
+  recipes: [k1-sft, k10-sft, oc-sft]
+  label_pool_size: [100, 1000, 3000, 10000, 30000]
+  lambda_code: ["050", "100", "200", "300", "400", "500"]
+  training_seeds: [42, 43, 44]
+
+materializers:
+  - entrypoint: scripts/gen/gen_teacher_strength_configs.py
+    arguments: [--phase, tier1-wave1]
+  - entrypoint: scripts/gen/gen_teacher_strength_configs.py
+    arguments: [--phase, tier1-wave2]
+  - entrypoint: scripts/gen/gen_teacher_strength_configs.py
+    arguments: [--phase, tier2-facet1-sft]
+  - entrypoint: scripts/gen/gen_teacher_strength_configs.py
+    arguments: [--phase, tier2-facet2-sft]
+  - entrypoint: scripts/gen/gen_teacher_strength_configs.py
+    arguments: [--phase, tier3-density-fill-sft]
+  # Training-config materializer only.
+  - scripts/gen/gen_og_qwen3_4b_sample_efficiency_configs.py

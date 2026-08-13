@@ -1,0 +1,135 @@
+schema_version: 1
+id: first-stage-transfer
+description: Transfer across BM25, dense, and sparse first-stage retrievers.
+
+outputs:
+  config_root: configs/experiments
+  sweep_root: configs/sweeps
+
+task: passage-reranking
+population: reranking-primary-18
+checkpoint_bindings: build/reproduction/first-stage-transfer/checkpoints.yaml
+
+scorers:
+  qwen3-4b-base:
+    kind: off-shelf
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    chat_template_kwargs: {enable_thinking: false}
+
+  granite-41-8b-base:
+    kind: off-shelf
+    class: Granite41GradeReranker
+    model_name: ibm-granite/granite-4.1-8b
+    model_size: 8b
+    model_release: granite41
+    inference_engine: vllm
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+
+  qwen3-4b-k1:
+    kind: lora
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    chat_template_kwargs: {enable_thinking: false}
+    checkpoint_ref: qwen3-4b-k1
+    training_seed: 42
+    taupsi_cap: true
+
+  qwen3-4b-k10:
+    kind: lora
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    chat_template_kwargs: {enable_thinking: false}
+    checkpoint_ref: qwen3-4b-k10
+    training_seed: 42
+    taupsi_cap: true
+
+  qwen3-4b-supcon-l500-warmup:
+    kind: lora
+    class: Qwen3InstructGradeReranker
+    model_name: Qwen/Qwen3-4B
+    model_size: 4b
+    model_release: qwen3-og
+    chat_template_kwargs: {enable_thinking: false}
+    checkpoint_ref: qwen3-4b-oc-sft
+    training_seed: 42
+    taupsi_cap: true
+
+  granite41-8b-k1:
+    kind: lora
+    class: Granite41GradeReranker
+    model_name: ibm-granite/granite-4.1-8b
+    model_size: 8b
+    model_release: granite41
+    inference_engine: vllm
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+    checkpoint_ref: granite41-8b-k1
+    training_seed: 42
+
+  granite41-8b-k10:
+    kind: lora
+    class: Granite41GradeReranker
+    model_name: ibm-granite/granite-4.1-8b
+    model_size: 8b
+    model_release: granite41
+    inference_engine: vllm
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+    checkpoint_ref: granite41-8b-k10
+    training_seed: 42
+
+  granite41-8b-k1-supcon-l500-warmup:
+    kind: lora
+    class: Granite41GradeReranker
+    model_name: ibm-granite/granite-4.1-8b
+    model_size: 8b
+    model_release: granite41
+    inference_engine: vllm
+    revision: 1504002f650e656a0a3789d99574df12e3e94ed0
+    checkpoint_ref: granite41-8b-oc-sft
+    training_seed: 42
+
+first_stage_tokens:
+  bge: bge-base-en-v1.5
+  splade: splade-pp-ed
+
+conditions:
+  first-stage-panel:
+    datasets:
+      - dl19
+      - dl20
+      - fiqa
+      - nfcorpus
+      - arguana
+      - climate-fever
+      - trec-covid
+      - touche2020
+      - dbpedia-entity
+      - scifact
+      - signal1m
+      - trec-news
+      - robust04
+    first_stages: [bge, splade]
+
+  first-stage-newsurf:
+    datasets: [dl21, dl22, dl23, legal-a, legal-b]
+    first_stages: [bm25]
+    execution:
+      bundle_per_scorer: true
+      max_parallel: 1
+
+materializers:
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [first-stage-panel]
+  - entrypoint: scripts/materialize_appendix_study.py
+    arguments: [first-stage-newsurf]
+
+collectors:
+  - entrypoint: scripts/collect_study_results.py
+    arguments: [first-stage-transfer]
+    operator_inputs_required: true

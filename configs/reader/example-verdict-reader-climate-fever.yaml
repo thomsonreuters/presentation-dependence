@@ -1,0 +1,27 @@
+id: example-verdict-reader-climate-fever
+phase: V3
+
+reader:
+  engine: vllm
+  model_name: ibm-granite/granite-4.1-8b
+  family: granite
+  max_tokens: 8
+  choices: [SUPPORTED, REFUTED, NEI]
+  batch_size: 256
+  enable_thinking: false
+  max_model_len: 8192
+
+dataset: climate-fever
+data_channel: climate-fever-verdict-example
+verdict_qids_filename: verdict_qids.txt
+k_values: [5]
+canonical_perm: 0
+
+scorer:
+  # Must be a scorer run over the same collection named in `dataset` above: the
+  # bridge joins the score log to that fixture on claim id, and a run from
+  # another collection shares none, yielding an empty result rather than an
+  # error. `--scorer-run` overrides this.
+  exp_id: example-verdict-climate-fever-b20-psi
+  recipe: off-shelf
+  size: 4b

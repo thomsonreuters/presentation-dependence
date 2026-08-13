@@ -1,0 +1,36 @@
+id: example-passage-dense-first-stage
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  revision: 1cfa9a7208912126459214e8b04321603b3df60c
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs: {enable_thinking: false}
+  device: auto
+  dtype: bfloat16
+  scoring_mode: setwise_grade_prompt
+  score_output: probability
+  continuous_readout: true
+  instruction: Given a web search query, retrieve relevant passages that answer the query
+  max_length: 4096
+  max_doc_chars: 1200
+  docs_per_score_forward: 20
+  batch_size: 20
+
+data:
+  dataloader_class: FixtureLoader
+  run_path: data/dl19-passage/fixture.bge-base-en-v1.5.dl19.jsonl
+  k_input: 100
+
+eval:
+  qrels_path: data/dl19-passage/qrels.txt
+  measures: [ndcg_cut_10, map, recip_rank]
+
+robustness:
+  K: 10
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  perturbations: [random_shuffle]
+  k_cutoff_for_ndcg: 10
+
+logging: {level: INFO}

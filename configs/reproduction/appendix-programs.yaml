@@ -1,0 +1,102 @@
+schema_version: 1
+description: From-scratch execution programs shared by appendix artifacts.
+
+programs:
+  setup-readout-silver:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+      - configs/reproduction/shared.yaml
+    study: configs/studies/setup-readout-silver.yaml
+    reducers:
+      - scripts/analyze/analyze_complete_readout_grids.py
+      - scripts/analyze/analyze_grade_scalarizations.py
+      - scripts/analyze/analyze_staged_context_labels.py
+
+  primary-passage:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+      - configs/reproduction/populations/reranking-primary-18.yaml
+    study_stages: [silver, training, direct-eval, downstream-eval]
+    task: passage-reranking
+    reducers:
+      - scripts/analyze/scaling_recipes_audit.py
+      - scripts/analyze/analyze_table2_jaccard_multiseed.py
+
+  scaling-teachers-sample-efficiency:
+    inputs:
+      - configs/studies/training-source-templates.yaml
+      - configs/reproduction/populations/reranking-primary-18.yaml
+    study: configs/studies/scaling-teachers-sample-efficiency.yaml
+    reducers:
+      - scripts/analyze/scaling_recipes_audit.py
+      - scripts/analyze/analyze_og_qwen3_4b_sample_efficiency.py
+
+  defensive-controls:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+    task: passage-reranking
+    study_commands:
+      - [training, materialize, --include-ablations]
+      - [training, validate, --include-ablations]
+      - [training, execute, --dry-run, --include-ablations]
+      - [training, collect, --include-ablations]
+      - [direct-eval, materialize, --include-controls]
+      - [direct-eval, validate, --include-controls]
+      - [direct-eval, execute, --dry-run, --include-controls]
+      - [direct-eval, collect, --include-controls]
+    reducers:
+      - scripts/analyze/analyze_category_b_multiseed.py
+
+  first-stage:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+    study: configs/studies/first-stage-transfer.yaml
+
+  mechanism-boundary:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+      - configs/reproduction/populations/reranking-primary-18.yaml
+    study: configs/studies/mechanism-boundary.yaml
+    reducers:
+      - scripts/analyze/analyze_pool_perturbation.py
+
+  width:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+      - configs/reproduction/multi-document-qa.yaml
+      - configs/reproduction/response-ranking.yaml
+    study: configs/studies/fixed-weight-width.yaml
+    reducers:
+      - scripts/analyze/analyze_table3_multiseed_width.py
+      - scripts/analyze/analyze_rr_fixed_weight_width.py
+
+  cross-task-consumers:
+    inputs:
+      - configs/reproduction/passage-reranking.yaml
+      - configs/reproduction/multi-document-qa.yaml
+      - configs/reproduction/response-ranking.yaml
+    tasks:
+      - passage-reranking
+      - multi-document-qa
+      - response-ranking
+    study_commands:
+      - [silver, materialize]
+      - [silver, validate]
+      - [silver, execute, --dry-run]
+      - [silver, collect]
+      - [training, materialize, --include-ablations]
+      - [training, validate, --include-ablations]
+      - [training, execute, --dry-run, --include-ablations]
+      - [training, collect, --include-ablations]
+      - [direct-eval, materialize, --include-controls]
+      - [direct-eval, validate, --include-controls]
+      - [direct-eval, execute, --dry-run, --include-controls]
+      - [direct-eval, collect, --include-controls]
+      - [downstream-eval, materialize]
+      - [downstream-eval, validate]
+      - [downstream-eval, execute, --dry-run]
+      - [downstream-eval, collect]
+    reducers:
+      - scripts/analyze/analyze_answer_reader_bridge.py
+      - scripts/analyze/analyze_table2_verdict_multiseed.py
+      - scripts/analyze/analyze_table2_pair_flip_multiseed.py

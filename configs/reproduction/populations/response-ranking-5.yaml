@@ -1,0 +1,73 @@
+schema_version: 1
+id: response-ranking-5
+
+datasets:
+  - id: rewardbench2
+    loader: FixtureLoader
+    topics: rewardbench2-response-quality-test
+    topics_tsv: data/rewardbench2-response-quality-test/topics.tsv
+    run_path: data/rewardbench2-response-quality-test/fixture.jsonl
+    qrels_path: data/rewardbench2-response-quality-test/qrels.txt
+    qids_to_run_path: data/rewardbench2-response-quality-test/qids_all.txt
+    fixture_channel: rewardbench2-response-quality-test
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    pool_depth: 4
+    max_doc_chars: 2000
+    max_model_len: 8192
+
+  - id: nectar
+    loader: FixtureLoader
+    topics: nectar-response-quality
+    topics_tsv: data/nectar-response-quality/topics.tsv
+    run_path: data/nectar-response-quality/fixture.jsonl
+    qrels_path: data/nectar-response-quality/qrels.txt
+    qids_to_run_path: configs/reproduction/fixtures/nectar-dedup-clean-qids.txt
+    fixture_channel: nectar-response-quality
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    pool_depth: 7
+    max_doc_chars: 1500
+    max_model_len: 8192
+
+  - id: ppe-math
+    loader: FixtureLoader
+    topics: ppe-math-response-quality
+    topics_tsv: data/ppe-math-response-quality/topics.tsv
+    run_path: data/ppe-math-response-quality/fixture.jsonl
+    qrels_path: data/ppe-math-response-quality/qrels.txt
+    qids_to_run_path: data/ppe-math-response-quality/qids_all.txt
+    fixture_channel: ppe-math-response-quality
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    pool_depth: 8
+    max_doc_chars: 2500
+    max_model_len: 12288
+
+  - id: ppe-mmlu-pro
+    loader: FixtureLoader
+    topics: ppe-mmlu-pro-response-quality
+    topics_tsv: data/ppe-mmlu-pro-response-quality/topics.tsv
+    run_path: data/ppe-mmlu-pro-response-quality/fixture.jsonl
+    qrels_path: data/ppe-mmlu-pro-response-quality/qrels.txt
+    qids_to_run_path: data/ppe-mmlu-pro-response-quality/qids_all.txt
+    fixture_channel: ppe-mmlu-pro-response-quality
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    pool_depth: 8
+    max_doc_chars: 2500
+    max_model_len: 12288
+
+  - id: rmbench
+    loader: FixtureLoader
+    topics: rmbench-response-quality
+    topics_tsv: data/rmbench-response-quality/topics.tsv
+    run_path: data/rmbench-response-quality/fixture.jsonl
+    qrels_path: data/rmbench-response-quality/qrels.txt
+    qids_to_run_path: data/rmbench-response-quality/qids_all.txt
+    fixture_channel: rmbench-response-quality
+    instruction: Given a user prompt, rate candidate assistant responses by overall quality
+    grade_rubric: response_quality_v1
+    pool_depth: 6
+    max_doc_chars: 1500
+    max_model_len: 8192

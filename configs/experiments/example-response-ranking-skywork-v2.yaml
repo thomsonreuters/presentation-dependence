@@ -1,0 +1,45 @@
+###############################################################################
+# Skywork-Reward-V2-Qwen3-4B external reference on RewardBench-2.
+#
+# Pointwise Bradley-Terry reward-model reference. Same RewardBench-2 queries,
+# gold, and nDCG@1 as the trained response-ranking arms. Being pointwise it is
+# order-invariant, so it measures quality only and carries no robustness block.
+# Per-subset readings are a post-hoc aggregation over the per-query results; the
+# run itself uses the full query set.
+###############################################################################
+
+id: example-response-ranking-skywork-v2
+
+reranker:
+  class: SkyworkBTReranker
+  model_name: Skywork/Skywork-Reward-V2-Qwen3-4B
+  revision: fd958fef475f323f4e6b195930e3dd918485c668
+  device: auto
+  dtype: bfloat16
+  batch_size: 8
+  max_length: 4096
+  max_doc_chars: 2000
+
+data:
+  dataloader_class: FixtureLoader
+  topics: rewardbench2-response-quality-test
+  topics_tsv: data/rewardbench2-response-quality-test/topics.tsv
+  run_path: data/rewardbench2-response-quality-test/fixture.jsonl
+  k_input: 4
+
+qids_to_run_path: data/rewardbench2-response-quality-test/qids_all.txt
+
+eval:
+  qrels_path: data/rewardbench2-response-quality-test/qrels.txt
+  strict_qrels_filter: true
+  measures:
+    - ndcg_cut_10
+    - ndcg_cut_1
+    - map
+    - recip_rank
+
+execution:
+  fixture_channel: rewardbench2-response-quality-test
+
+logging:
+  level: INFO

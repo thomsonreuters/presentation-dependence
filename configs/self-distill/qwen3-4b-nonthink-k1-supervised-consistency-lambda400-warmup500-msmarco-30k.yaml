@@ -1,0 +1,112 @@
+###############################################################################
+# OG Qwen3-4B non-thinking K=1-label OC-SFT lambda=4.0 with lambda-warmup.
+###############################################################################
+
+id: qwen3-4b-nonthink-k1-supervised-consistency-lambda400-warmup500-msmarco-30k
+
+reranker:
+  class: Qwen3InstructGradeReranker
+  model_name: Qwen/Qwen3-4B
+  model_size: 4b
+  model_release: qwen3-og
+  chat_template_kwargs:
+    enable_thinking: false
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  max_length: 4096
+  docs_per_score_forward: 20
+  batch_size: 20
+  max_doc_chars: 1200
+
+student:
+  base_model: Qwen/Qwen3-4B
+  reranker_class: Qwen3InstructGradeReranker
+  silver_labels_path: silver_labels_qwen3_4b_k1_seed0_train_29500.jsonl
+  eval_silver_labels_path: silver_labels_qwen3_4b_k1_seed0_heldout_500.jsonl
+  fixture_path: fixture.jsonl
+  qrels_path: qrels.txt
+  output_dir: runs/self-distill/qwen3-4b-nonthink-k1-supervised-consistency-lambda400-warmup500-msmarco-30k/student
+  device: cuda
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+  max_length: 4096
+  max_doc_chars: 1200
+  instruction: "Given a web search query, retrieve relevant passages that answer the query"
+  objective:
+    type: supervised_consistency
+    loss: mse
+    lambda: 4.0
+    view_seeds: [0, 1]
+    lambda_warmup:
+      steps: 500
+      init: 0.0
+      schedule: linear
+  data:
+    chunk_size: 20
+    candidate_set_id: msmarco_seed42_bm25_top100
+    include_doc_ids_in_prompt: false
+    view: supervised_consistency
+    preserve_group_metadata: true
+    token_cache:
+      enabled: true
+      max_entries: 100000
+      cache_prefix_strings: true
+      cache_token_ids: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    epochs: 1
+    lr: 0.0002
+    batch_size_per_device: 1
+    grad_accumulation_steps: 8
+    slot_forward_batch_size: 8
+    gradient_checkpointing: true
+    ddp_no_sync_during_grad_accum: true
+    warmup_ratio: 0.10
+    lr_scheduler: cosine
+    weight_decay: 0.01
+    adam_beta1: 0.9
+    adam_beta2: 0.95
+    seed: 42
+    max_steps: null
+    single_forward_readout: true
+    log_every_n_steps: 10
+    heartbeat_every_s: 60
+    progress_jsonl: true
+  evaluation:
+    max_queries: 100
+    every_n_steps: 200
+    at_start: true
+    at_end: true
+    psi:
+      enabled: true
+      max_queries: 25
+      seeds: [0, 1, 2]
+  observability:
+    tensorboard:
+      enabled: true
+  checkpoint:
+    enabled: true
+    save_every_n_steps: 200
+    keep_last_n: 4
+    keep_every_n_steps: 400
+    keep_n_best: 3
+    keep_n_best_metric: qrels_ndcg_cut_10
+    keep_n_best_mode: max
+    resume_from_checkpoint: null
+
+eval:
+  measures: [ndcg_cut_10]
+  strict_qrels_filter: false
+
+execution:
+  fixture_channel: msmarco-train-selfdistill-seed42
+  # 8x A100 40GB; matches the 4B K=1/K=10 SFT students. 4B at
+  # sfb=8/chunk=20 single-forward peaks ~26 GB, so a 24GB A10G profile is
+  # insufficient at the matched-hparams geometry.
+  distributed: ddp
+
+logging:
+  level: INFO

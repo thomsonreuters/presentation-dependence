@@ -83,9 +83,12 @@ def write_downstream_outputs(
     """Write downstream result files and the provenance manifest."""
     destination.mkdir(parents=True, exist_ok=True)
     for key in ("per_consumer", "per_seed", "aggregate"):
+        payload = {"schema_version": 1, key: result[key]}
+        if result.get("reporting_cohorts"):
+            payload["reporting_cohorts"] = result["reporting_cohorts"]
         (destination / str(outputs[key])).write_text(
             json.dumps(
-                {"schema_version": 1, key: result[key]},
+                payload,
                 indent=2,
                 sort_keys=True,
             )
@@ -96,6 +99,7 @@ def write_downstream_outputs(
         json.dumps(
             {
                 "schema_version": 1,
+                "reporting_cohorts": result.get("reporting_cohorts", {}),
                 "runs": [
                     {
                         key: row[key]

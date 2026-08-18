@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import statistics
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -26,6 +27,7 @@ from .reduction import (
     stage_population,
     validate_reduction,
 )
+from .reporting_cohorts import load_reporting_qids, require_cohort_coverage
 from .source_bindings import (
     load_stage_bindings,
     reject_unknown_bindings,
@@ -74,11 +76,32 @@ def validate_response_downstream(
     )
 
 
-def _order_invariant_metrics(run_dir: Path) -> dict[str, float | int]:
+def _order_invariant_metrics(
+    run_dir: Path,
+    reporting_qids: set[str] | None = None,
+) -> dict[str, float | int]:
     metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
     quality = float(metrics["mean_ndcg_cut_1"])
+    n_queries = int(metrics["n_queries"])
+    if reporting_qids is not None:
+        per_query_path = run_dir / "all_queries_eval_results.jsonl"
+        if per_query_path.is_file():
+            per_query = {}
+            for line in per_query_path.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    row = json.loads(line)
+                    if "ndcg_cut_1" in row:
+                        per_query[str(row["qid"])] = float(row["ndcg_cut_1"])
+            require_cohort_coverage(set(per_query), reporting_qids, source=per_query_path)
+            quality = statistics.fmean(per_query[qid] for qid in reporting_qids)
+            n_queries = len(reporting_qids)
+        elif n_queries != len(reporting_qids):
+            raise DownstreamStageError(
+                f"{run_dir} has {n_queries} aggregate queries but reporting requires "
+                f"{len(reporting_qids)}; refetch with --no-prune-detailed"
+            )
     return {
-        "n_queries": int(metrics["n_queries"]),
+        "n_queries": n_queries,
         "selection_flip_rate": 0.0,
         "selected_quality_flip_rate": 0.0,
         "preference_pair_flip_rate": 0.0,
@@ -142,19 +165,33 @@ def collect_response_downstream(
         if run_dir is None:
             missing.append(job["id"])
             continue
+        dataset = population[job["dataset"]]
+        reporting = load_reporting_qids(pipeline, project_root, str(job["dataset"]))
+        reporting_qids = reporting[0] if reporting is not None else None
         if job["order_invariant"]:
-            metrics = _order_invariant_metrics(run_dir)
+            metrics = _order_invariant_metrics(run_dir, reporting_qids)
         else:
-            dataset = population[job["dataset"]]
             aligned = load_aligned_scores(run_dir)
             if not aligned:
                 missing.append(job["id"])
                 continue
+            fixture = load_fixture_pids(project_root / str(dataset["run_path"]))
+            qrels = read_qrels(project_root / str(dataset["qrels_path"]))
+            if reporting_qids is not None:
+                require_cohort_coverage(set(aligned), reporting_qids, source=run_dir)
+                require_cohort_coverage(
+                    set(fixture),
+                    reporting_qids,
+                    source=project_root / str(dataset["run_path"]),
+                )
+                aligned = {qid: aligned[qid] for qid in reporting_qids}
+                fixture = {qid: fixture[qid] for qid in reporting_qids}
+                qrels = {qid: qrels.get(qid, {}) for qid in reporting_qids}
             try:
                 metrics = response_selection_metrics(
                     aligned,
-                    load_fixture_pids(project_root / str(dataset["run_path"])),
-                    read_qrels(project_root / str(dataset["qrels_path"])),
+                    fixture,
+                    qrels,
                 )
             except ValueError as exc:
                 raise DownstreamStageError(str(exc)) from exc
@@ -169,6 +206,7 @@ def collect_response_downstream(
                 "n_queries": metrics["n_queries"],
                 "metrics": {metric: float(metrics[metric]) for metric in measures},
                 "run_dir": str(run_dir),
+                "reporting_cohort": reporting[1] if reporting is not None else None,
             }
         )
     if missing and not allow_missing:
@@ -180,6 +218,9 @@ def collect_response_downstream(
         "schema_version": 1,
         "task": pipeline["task"]["id"],
         "stage": "downstream-eval",
+        "reporting_cohorts": {
+            str(row["dataset"]): row["reporting_cohort"] for row in rows if row.get("reporting_cohort") is not None
+        },
         "expected_jobs": len(jobs),
         "completed_jobs": len(rows),
         "aggregation_datasets": sorted(headline_datasets),

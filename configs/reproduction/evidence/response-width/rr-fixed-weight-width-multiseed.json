@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "metric": "ndcg_cut_1",
+  "seeds": [42, 43, 44],
+  "surfaces": {
+    "ppe-math": {
+      "42": {"b1": 0.71875, "native_single": 0.8046875, "native_k10": 0.841796875, "c_obs": 0.0859375, "v_b": 0.123046875},
+      "43": {"b1": 0.705078125, "native_single": 0.798828125, "native_k10": 0.841796875, "c_obs": 0.09375, "v_b": 0.13671875},
+      "44": {"b1": 0.708984375, "native_single": 0.81640625, "native_k10": 0.845703125, "c_obs": 0.107421875, "v_b": 0.13671875}
+    },
+    "ppe-mmlu-pro": {
+      "42": {"b1": 0.59765625, "native_single": 0.666015625, "native_k10": 0.67578125, "c_obs": 0.068359375, "v_b": 0.078125},
+      "43": {"b1": 0.599609375, "native_single": 0.685546875, "native_k10": 0.685546875, "c_obs": 0.0859375, "v_b": 0.0859375},
+      "44": {"b1": 0.607421875, "native_single": 0.673828125, "native_k10": 0.669921875, "c_obs": 0.06640625, "v_b": 0.0625}
+    },
+    "rmbench": {
+      "42": {"b1": 0.7536, "native_single": 0.7212, "native_k10": 0.7182, "c_obs": -0.0324, "v_b": -0.0354},
+      "43": {"b1": 0.7558402411, "native_single": 0.71213263, "native_k10": 0.7234363225, "c_obs": -0.0437076112, "v_b": -0.0324039186},
+      "44": {"b1": 0.7558402411, "native_single": 0.7113790505, "native_k10": 0.7249434815, "c_obs": -0.0444611907, "v_b": -0.0308967596}
+    }
+  },
+  "finding": "The fixed-weight width sign pattern is identical across all three training seeds: positive on both correctness collections and negative on RM-Bench.",
+  "provenance": {
+    "source_repository": "labs_slm-retrieval-research/experiments/presentation_dependence",
+    "completed_at": "2026-07-31",
+    "live_validation_tolerance": 0.00005,
+    "receipt": {
+      "path": "docs/figures/rr_fixed_weight_width/rr_fixed_weight_width_multiseed.json",
+      "sha256": "116dfea0b03714a0cf5f38094891137a49e40d14830c955b96115ee074d49ca9",
+      "size_bytes": 1463
+    },
+    "report": {
+      "path": "docs/RR-FIXED-WEIGHT-WIDTH-2026-07-30.md",
+      "sha256": "d8c7d78c91cb7d89ec79d8ba7444d099214fed3dbd01b45ac116d1878eafe690",
+      "size_bytes": 5266
+    }
+  }
+}

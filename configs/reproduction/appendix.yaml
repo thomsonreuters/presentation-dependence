@@ -71,6 +71,18 @@ artifacts:
     program: mechanism-boundary
     preferred_input: build/reproduction/studies/mechanism-boundary/metric-robustness/rows.json
 
+  table-metric-discordance:
+    status: canonical
+    program: primary-passage
+    analyzer: scripts/analyze/analyze_metric_discordance.py
+    preferred_input: build/reproduction/analysis/metric-discordance/analysis.json
+
+  table-round-robin-six-arm:
+    status: canonical
+    program: mechanism-boundary
+    analyzer: scripts/analyze/analyze_round_robin_six_arm.py
+    preferred_input: build/reproduction/analysis/round-robin-six-arm/analysis.json
+
   table-width-decomposition:
     status: canonical
     program: width
@@ -95,7 +107,8 @@ artifacts:
   table-cross-task:
     status: canonical
     program: cross-task-consumers
-    preferred_input: build/reproduction/passage-reranking/direct-eval/aggregate.json
+    analyzer: scripts/analyze/analyze_table1_levels.py
+    preferred_input: build/reproduction/analysis/table1-levels/table1.json
 
   table-qa-transfer-reader:
     status: canonical

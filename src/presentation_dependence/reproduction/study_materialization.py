@@ -52,8 +52,12 @@ def _datasets(
     return load_dataset_population(population_id, configs_root=project_root / "configs")
 
 
-def _checkpoint_rows(project_root: Path, pipeline: Mapping[str, Any]) -> list[dict[str, Any]]:
-    path = project_root / str(pipeline["direct_eval"]["checkpoint_catalog"])
+def _checkpoint_rows(
+    project_root: Path,
+    pipeline: Mapping[str, Any],
+    checkpoint_catalog: str | None = None,
+) -> list[dict[str, Any]]:
+    path = project_root / str(checkpoint_catalog or pipeline["direct_eval"]["checkpoint_catalog"])
     if not path.is_file():
         raise ReproductionError(f"Study requires checkpoint catalog: {path}")
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -68,15 +72,14 @@ def _checkpoint(
     pipeline: Mapping[str, Any],
     variant: str,
     seed: int,
+    checkpoint_catalog: str | None = None,
 ) -> dict[str, Any]:
+    def matches(row: Mapping[str, Any]) -> bool:
+        row_seed = row.get("training_seed")
+        return row.get("variant") == variant and row_seed is not None and int(row_seed) == seed
+
     row = next(
-        (
-            row
-            for row in _checkpoint_rows(project_root, pipeline)
-            if row.get("variant") == variant
-            and row.get("training_seed") is not None
-            and int(row["training_seed"]) == seed
-        ),
+        (row for row in _checkpoint_rows(project_root, pipeline, checkpoint_catalog) if matches(row)),
         None,
     )
     if row is None:
@@ -91,10 +94,20 @@ def _source_config(
     dataset: Mapping[str, Any],
     variant: str,
     seed: int | None,
+    checkpoint_variant: str | None = None,
+    checkpoint_catalog: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any] | None]:
     pipeline = _pipeline(project_root, task)
     checkpoint = (
-        _checkpoint(project_root, pipeline, variant, int(seed)) if variant != "off-shelf" and seed is not None else None
+        _checkpoint(
+            project_root,
+            pipeline,
+            checkpoint_variant or variant,
+            int(seed),
+            checkpoint_catalog,
+        )
+        if variant != "off-shelf" and seed is not None
+        else None
     )
     job = {
         "variant": variant,
@@ -1204,7 +1217,7 @@ def materialize_trained_channel_cross(project_root: Path) -> dict[str, Any]:
 def materialize_round_robin_eval_grid(
     project_root: Path,
 ) -> dict[str, Any]:
-    """Materialize the two missing trained arms of the response-ranking round-robin grid."""
+    """Materialize the four trained arms of the full P0.4 round-robin grid."""
     condition_id = "round-robin-eval-grid"
     study = _study_for_condition(project_root, condition_id)
     condition = _condition(study, condition_id)
@@ -1230,8 +1243,10 @@ def materialize_round_robin_eval_grid(
     cap_overrides = {
         str(dataset_id): int(value) for dataset_id, value in (condition.get("engine_cap_overrides") or {}).items()
     }
+    checkpoint_sources = condition.get("checkpoint_sources") or {}
     for variant in condition["variants"]:
         variant_id = str(variant)
+        checkpoint_source = checkpoint_sources.get(variant_id) or {}
         for dataset in datasets:
             dataset_id = str(dataset["id"])
             config, checkpoint = _source_config(
@@ -1240,6 +1255,12 @@ def materialize_round_robin_eval_grid(
                 dataset=dataset,
                 variant=variant_id,
                 seed=seed,
+                checkpoint_variant=(
+                    str(checkpoint_source["variant"]) if checkpoint_source.get("variant") is not None else None
+                ),
+                checkpoint_catalog=(
+                    str(checkpoint_source["catalog"]) if checkpoint_source.get("catalog") is not None else None
+                ),
             )
             config_id = f"round-robin-eval-grid--{variant_id}--{dataset_id}"
             _set_identity(
@@ -1312,6 +1333,8 @@ def materialize_round_robin_eval_grid(
             bundle_ids.append(bundle_id)
             sweep_jobs.append({"exp_id": bundle_id})
 
+    reused_round_robin_variants = 2
+    full_variant_count = len(condition["variants"]) + reused_round_robin_variants
     return _write(
         project_root,
         study,
@@ -1321,10 +1344,10 @@ def materialize_round_robin_eval_grid(
         sweep_jobs=sweep_jobs,
         sweep_execution={"max_parallel": int(execution["max_parallel"])},
         provenance_extra={
-            "expected_grid_cells": 4 * 2 * len(datasets),
+            "expected_grid_cells": full_variant_count * 2 * len(datasets),
             "generated_round_robin_cells": len(configs),
-            "reused_contiguous_cells": 4 * len(datasets),
-            "reused_round_robin_cells": 2 * len(datasets),
+            "reused_contiguous_cells": full_variant_count * len(datasets),
+            "reused_round_robin_cells": reused_round_robin_variants * len(datasets),
             "bundle_configs": bundle_ids,
             "protocol_note": (
                 "Random-only presentation seeds 0..9. Touche-2020 uses the "

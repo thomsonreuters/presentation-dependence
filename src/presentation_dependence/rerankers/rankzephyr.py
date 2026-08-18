@@ -306,6 +306,11 @@ def _prepare_doc_content(text: str, max_words: int) -> str:
     return _replace_bracket_numbers(content)
 
 
+def _apply_optional_char_cap(text: str, max_doc_chars: int | None) -> str:
+    """Apply an exact character cap before RankZephyr's word/token shrinking."""
+    return str(text)[:max_doc_chars] if max_doc_chars is not None else str(text)
+
+
 # -----------------------------------------------------------------------------
 # prompt construction
 # -----------------------------------------------------------------------------
@@ -409,6 +414,10 @@ class RankZephyrReranker(Reranker):
 
         self.max_new_tokens = int(rc.get("max_new_tokens", 200))
         self.max_doc_words = int(rc.get("max_doc_words", 300))
+        raw_max_doc_chars = rc.get("max_doc_chars")
+        self.max_doc_chars = None if raw_max_doc_chars is None else int(raw_max_doc_chars)
+        if self.max_doc_chars is not None and self.max_doc_chars <= 0:
+            raise ValueError("reranker.max_doc_chars must be positive when set")
         # Mistral-v0.1 (Zephyr-β's backbone) has sliding_window=4096: prompts
         # longer than this overflow the attention window and the model starts
         # emitting garbage the parser falls back to identity for. Matches
@@ -608,7 +617,13 @@ class RankZephyrReranker(Reranker):
         max_shrink_attempts = max(self.max_doc_words - self.min_doc_words + 1, 1)
 
         for _ in range(max_shrink_attempts):
-            docs = [_prepare_doc_content(p["text"], max_length) for p in window]
+            docs = [
+                _prepare_doc_content(
+                    _apply_optional_char_cap(p["text"], getattr(self, "max_doc_chars", None)),
+                    max_length,
+                )
+                for p in window
+            ]
             prompt_str = self._render_prompt(query_text, docs)
             n_tokens = len(self.tokenizer(prompt_str, add_special_tokens=False)["input_ids"])
             if n_tokens <= budget:

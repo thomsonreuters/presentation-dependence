@@ -21,6 +21,7 @@ programs:
     reducers:
       - scripts/analyze/scaling_recipes_audit.py
       - scripts/analyze/analyze_table2_jaccard_multiseed.py
+      - scripts/analyze/analyze_metric_discordance.py
 
   scaling-teachers-sample-efficiency:
     inputs:
@@ -59,6 +60,7 @@ programs:
     study: configs/studies/mechanism-boundary.yaml
     reducers:
       - scripts/analyze/analyze_pool_perturbation.py
+      - scripts/analyze/analyze_round_robin_six_arm.py
 
   width:
     inputs:
@@ -67,8 +69,8 @@ programs:
       - configs/reproduction/response-ranking.yaml
     study: configs/studies/fixed-weight-width.yaml
     reducers:
-      - scripts/analyze/analyze_table3_multiseed_width.py
       - scripts/analyze/analyze_rr_fixed_weight_width.py
+      - scripts/analyze/analyze_table3_multiseed_width.py
 
   cross-task-consumers:
     inputs:
@@ -100,3 +102,4 @@ programs:
       - scripts/analyze/analyze_answer_reader_bridge.py
       - scripts/analyze/analyze_table2_verdict_multiseed.py
       - scripts/analyze/analyze_table2_pair_flip_multiseed.py
+      - scripts/analyze/analyze_table1_levels.py

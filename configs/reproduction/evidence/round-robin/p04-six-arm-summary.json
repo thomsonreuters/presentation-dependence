@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "id": "p04-six-arm-round-robin-primary18",
+  "status": "complete",
+  "protocol": {
+    "population": "primary-18",
+    "training_seed": 42,
+    "serving_width": 20,
+    "placeholder": "0",
+    "contiguous_chunk_assignment": "sorted",
+    "round_robin_chunk_assignment": "interleaved",
+    "quality": "canonical-presentation nDCG@10",
+    "stability": "tau-PSI over random_shuffle seeds 0..9"
+  },
+  "datasets": [
+    "arguana",
+    "climate-fever",
+    "dbpedia-entity",
+    "dl19",
+    "dl20",
+    "dl21",
+    "dl22",
+    "dl23",
+    "fiqa",
+    "nfcorpus",
+    "pl-aalp-uk",
+    "pl-aalp-us",
+    "robust04",
+    "scifact",
+    "signal1m",
+    "touche2020",
+    "trec-covid",
+    "trec-news"
+  ],
+  "variants": {
+    "off-shelf": {
+      "contiguous": {"ndcg_cut_10": 0.36987287078831627, "tau_psi": 0.2982615161002198},
+      "round_robin": {"ndcg_cut_10": 0.4220200745317294, "tau_psi": 0.2972344787668202}
+    },
+    "k1-sft": {
+      "contiguous": {"ndcg_cut_10": 0.44769554235991127, "tau_psi": 0.1985480308414983},
+      "round_robin": {"ndcg_cut_10": 0.4621276909890724, "tau_psi": 0.20381597898680393}
+    },
+    "k10-sft": {
+      "contiguous": {"ndcg_cut_10": 0.45821745067136516, "tau_psi": 0.13751523196972087},
+      "round_robin": {"ndcg_cut_10": 0.46939280877377804, "tau_psi": 0.1404515947593055}
+    },
+    "shuffled-view-augmentation": {
+      "contiguous": {"ndcg_cut_10": 0.45401427638694675, "tau_psi": 0.12121296012491693},
+      "round_robin": {"ndcg_cut_10": 0.46741332091087007, "tau_psi": 0.12168435574666753}
+    },
+    "debias-first": {
+      "contiguous": {"ndcg_cut_10": 0.45267179694319637, "tau_psi": 0.1274289472129463},
+      "round_robin": {"ndcg_cut_10": 0.4650399117157278, "tau_psi": 0.1282466924181534}
+    },
+    "oc-sft": {
+      "contiguous": {"ndcg_cut_10": 0.45862267323535555, "tau_psi": 0.08464494795730372},
+      "round_robin": {"ndcg_cut_10": 0.47438543001954186, "tau_psi": 0.08428555190287569}
+    }
+  },
+  "claim_gates": {
+    "max_abs_tau_psi_shift": 0.006,
+    "round_robin_trained_gain_positive": true,
+    "expected_generated_round_robin_cells": 72,
+    "expected_total_grid_cells": 216
+  },
+  "provenance": {
+    "source_repository": "labs_slm-retrieval-research/experiments/presentation_dependence",
+    "completed_at": "2026-08-05",
+    "full_receipt": {
+      "path": "docs/figures/p04_round_robin_eval_grid/p04_round_robin_eval_grid.json",
+      "sha256": "ee8fecc38d9dea54ddf04b5faf8ac88ccb71afc4873d78f146306677696a9cc3",
+      "size_bytes": 58636
+    },
+    "materialization": {
+      "path": "build/reproduction/studies/mechanism-boundary/round-robin-eval-grid/materialization.json",
+      "sha256": "063bab6b22ffe417bcb426736cce428f8bf82ced5f88aa4653dfb3c764e150c5",
+      "size_bytes": 75836
+    },
+    "run_manifest": {
+      "path": "build/reproduction/studies/mechanism-boundary/round-robin-eval-grid/run_manifest.json",
+      "sha256": "8ed037cabc960ebd40fd88661f61a861186afc409015a2ec04cc9a459d9730dc",
+      "size_bytes": 12703
+    },
+    "collected_results": {
+      "path": "build/reproduction/studies/mechanism-boundary/round-robin-eval-grid/results.json",
+      "sha256": "fd034e39ba3cb15fdb0ad97c464939e3154cef8cbf83a5f35bace77fe187e340",
+      "size_bytes": 556114
+    }
+  }
+}

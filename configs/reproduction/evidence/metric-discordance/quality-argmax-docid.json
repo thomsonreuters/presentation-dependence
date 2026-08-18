@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "metric-discordance-quality-argmax-docid",
+  "status": "complete",
+  "protocol": {
+    "population": "primary-18",
+    "systems": ["gpt54", "ocsft", "k10sft", "posaug", "debiasfirst", "k1sft", "jina"],
+    "quality_metric": "ndcg_cut_10",
+    "decision_metric": "mean_pairwise_jaccard",
+    "gpt54_quality_tiebreak": "document-id ascending",
+    "comparison": "per-collection argmax system"
+  },
+  "system_labels": {
+    "gpt54": "GPT-5.4",
+    "ocsft": "OC-SFT",
+    "k10sft": "Order-averaged",
+    "posaug": "Permutation augmentation",
+    "debiasfirst": "DebiasFirst",
+    "k1sft": "Single order",
+    "jina": "jina-reranker-v3"
+  },
+  "ndcg_means": {
+    "gpt54": 0.46815641455316975,
+    "ocsft": 0.4591166666666666,
+    "k10sft": 0.4583555555555556,
+    "posaug": 0.45401427638694675,
+    "debiasfirst": 0.45267179694319626,
+    "k1sft": 0.44754999999999995,
+    "jina": 0.446570679209388
+  },
+  "jaccard_means": {
+    "gpt54": 0.7070096594035251,
+    "ocsft": 0.8350940128458701,
+    "k10sft": 0.742857547204902,
+    "posaug": 0.7602161313049597,
+    "debiasfirst": 0.75871506742795,
+    "k1sft": 0.6559289644004792,
+    "jina": 0.6667001610006963
+  },
+  "rows": [
+    {"dataset": "dl19", "best_ndcg_system": "ocsft", "best_ndcg": 0.7317, "best_jaccard_system": "ocsft", "best_jaccard": 0.8816213760109667, "differ": false},
+    {"dataset": "dl20", "best_ndcg_system": "ocsft", "best_ndcg": 0.6808, "best_jaccard_system": "ocsft", "best_jaccard": 0.8810335828550976, "differ": false},
+    {"dataset": "dl21", "best_ndcg_system": "ocsft", "best_ndcg": 0.6765, "best_jaccard_system": "ocsft", "best_jaccard": 0.8989312499084425, "differ": false},
+    {"dataset": "dl22", "best_ndcg_system": "jina", "best_ndcg": 0.4827720434696455, "best_jaccard_system": "ocsft", "best_jaccard": 0.8246996539460193, "differ": true},
+    {"dataset": "dl23", "best_ndcg_system": "ocsft", "best_ndcg": 0.4482, "best_jaccard_system": "ocsft", "best_jaccard": 0.8141729394910083, "differ": false},
+    {"dataset": "touche2020", "best_ndcg_system": "k10sft", "best_ndcg": 0.286, "best_jaccard_system": "gpt54", "best_jaccard": 0.8323809236332597, "differ": true},
+    {"dataset": "fiqa", "best_ndcg_system": "gpt54", "best_ndcg": 0.36852406320074305, "best_jaccard_system": "ocsft", "best_jaccard": 0.8502336303875033, "differ": true},
+    {"dataset": "nfcorpus", "best_ndcg_system": "gpt54", "best_ndcg": 0.375382738253796, "best_jaccard_system": "ocsft", "best_jaccard": 0.8615952010509546, "differ": true},
+    {"dataset": "arguana", "best_ndcg_system": "jina", "best_ndcg": 0.6496199628046615, "best_jaccard_system": "jina", "best_jaccard": 0.6177975308641974, "differ": false},
+    {"dataset": "climate-fever", "best_ndcg_system": "jina", "best_ndcg": 0.22866487969565394, "best_jaccard_system": "ocsft", "best_jaccard": 0.7983114723769981, "differ": true},
+    {"dataset": "trec-covid", "best_ndcg_system": "gpt54", "best_ndcg": 0.8483314189821458, "best_jaccard_system": "ocsft", "best_jaccard": 0.9333358332569119, "differ": true},
+    {"dataset": "dbpedia-entity", "best_ndcg_system": "ocsft", "best_ndcg": 0.4167, "best_jaccard_system": "ocsft", "best_jaccard": 0.8355734057202163, "differ": false},
+    {"dataset": "scifact", "best_ndcg_system": "gpt54", "best_ndcg": 0.7474817710012276, "best_jaccard_system": "ocsft", "best_jaccard": 0.885972461694684, "differ": true},
+    {"dataset": "signal1m", "best_ndcg_system": "ocsft", "best_ndcg": 0.2947, "best_jaccard_system": "ocsft", "best_jaccard": 0.8128614541654654, "differ": false},
+    {"dataset": "trec-news", "best_ndcg_system": "gpt54", "best_ndcg": 0.5041533714595406, "best_jaccard_system": "ocsft", "best_jaccard": 0.8412852390155389, "differ": true},
+    {"dataset": "robust04", "best_ndcg_system": "gpt54", "best_ndcg": 0.5696632797810288, "best_jaccard_system": "ocsft", "best_jaccard": 0.8585994292554254, "differ": true},
+    {"dataset": "pl-aalp-uk", "best_ndcg_system": "k10sft", "best_ndcg": 0.3593, "best_jaccard_system": "ocsft", "best_jaccard": 0.7790211055718174, "differ": true},
+    {"dataset": "pl-aalp-us", "best_ndcg_system": "debiasfirst", "best_ndcg": 0.3105824388196488, "best_jaccard_system": "ocsft", "best_jaccard": 0.8275557212908232, "differ": true}
+  ],
+  "claim_gates": {
+    "expected_collections": 18,
+    "expected_different_argmax": 11,
+    "reported_ndcg_mean_span_at_3dp": 0.021
+  },
+  "provenance": {
+    "source_repository": "labs_slm-retrieval-research/experiments/presentation_dependence",
+    "completed_at": "2026-08-17",
+    "full_receipt": {
+      "path": "docs/figures/discordance_rebase/discordance_rebase.json",
+      "sha256": "ca4e33139dcc86a5c24f1621a5937b74177750600dea4534ec5b15961e2a6b62",
+      "size_bytes": 174978
+    },
+    "report": {
+      "path": "docs/DISCORDANCE-REBASE-2026-08-17.md",
+      "sha256": "28abc49c37a0b8b551ffa0c50e884f00ccc08d1fd63d1a27031ca24e123a7750",
+      "size_bytes": 15342
+    }
+  }
+}

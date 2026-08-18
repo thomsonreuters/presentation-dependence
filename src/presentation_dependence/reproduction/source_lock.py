@@ -30,7 +30,13 @@ POPULATIONS = (
 )
 DATA_KEYS = ("run_path", "qrels_path", "topics_tsv", "qids_to_run_path")
 DATASET_PINS = {"berkeley-nest/Nectar": NECTAR_HF_REVISION}
-FIXTURE_GLOBS = ("configs/reproduction/fixtures/taupsi-qids/*.txt",)
+FIXTURE_GLOBS = (
+    "configs/reproduction/evidence/cohorts/*.txt",
+    "configs/reproduction/evidence/metric-discordance/*.json",
+    "configs/reproduction/evidence/response-width/*.json",
+    "configs/reproduction/evidence/round-robin/*.json",
+    "configs/reproduction/fixtures/taupsi-qids/*.txt",
+)
 
 
 def _mappings(value: Any) -> Iterable[Mapping[str, Any]]:
@@ -75,9 +81,8 @@ def declared_data_files(project_root: Path) -> list[str]:
             if str(row.get("access") or "") == "internal":
                 continue
             paths.update(str(row[key]) for key in DATA_KEYS if row.get(key))
-    # The frozen tau-PSI qid lists determine the published capped numbers.
-    # Materialization reaches most of them by dataset id rather than through a
-    # population declaration, so pin the tracked set by path.
+    # Frozen reporting cohorts and tau-PSI qid lists determine published
+    # reductions. They are not inference populations, so pin them by path.
     for pattern in FIXTURE_GLOBS:
         paths.update(str(path.relative_to(project_root)) for path in project_root.glob(pattern))
     return sorted(paths)

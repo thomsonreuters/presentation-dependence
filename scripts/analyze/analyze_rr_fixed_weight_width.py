@@ -33,11 +33,16 @@ import numpy as np
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
+RUNS_ROOT = ROOT
 DEFAULT_OUT = ROOT / "build" / "reproduction" / "analysis" / "rr_fixed_weight_width"
 DEFAULT_REPORT = ROOT / "build" / "reproduction" / "reporting" / "rr_fixed_weight_width"
+CORE_MULTISEED_OUT = DEFAULT_OUT / "rr_fixed_weight_width_multiseed.json"
+CORE_MULTISEED_EVIDENCE = (
+    ROOT / "configs" / "reproduction" / "evidence" / "response-width" / "rr-fixed-weight-width-multiseed.json"
+)
 NECTAR_MULTISEED_OUT = DEFAULT_OUT / "rr_fixed_weight_width_nectar_multiseed.json"
 REWARDBENCH2_MULTISEED_OUT = DEFAULT_OUT / "rr_fixed_weight_width_rewardbench2_multiseed.json"
-NECTAR_CLEAN_QIDS = ROOT / "data" / "nectar-response-quality" / "qids_dedup_clean.txt"
+NECTAR_CLEAN_QIDS = ROOT / "configs" / "reproduction" / "evidence" / "cohorts" / "nectar-clean-434.txt"
 EXPECTED_CHANNEL = "rr-lora-4b-ocl1"
 BOOTSTRAP_SEED = 0
 BOOTSTRAP_SAMPLES = 100_000
@@ -120,6 +125,54 @@ REWARDBENCH2_MULTISEED_RUNS: dict[int, SurfaceRuns] = {
     ),
 }
 
+PPE_MATH_MULTISEED_RUNS: dict[int, SurfaceRuns] = {
+    42: RUNS[2],
+    43: SurfaceRuns(
+        "ppe-math",
+        "PPE-MATH",
+        "runs/RR-ppe-math-qwen3-4b-ocl1-seed43-lora-vllm-psi",
+        "runs/RR-ppe-math-qwen3-4b-ocl1-b1deploy-seed43-vllm-psi",
+    ),
+    44: SurfaceRuns(
+        "ppe-math",
+        "PPE-MATH",
+        "runs/RR-ppe-math-qwen3-4b-ocl1-seed44-lora-vllm-psi",
+        "runs/RR-ppe-math-qwen3-4b-ocl1-b1deploy-seed44-vllm-psi",
+    ),
+}
+
+PPE_MMLU_PRO_MULTISEED_RUNS: dict[int, SurfaceRuns] = {
+    42: RUNS[3],
+    43: SurfaceRuns(
+        "ppe-mmlu-pro",
+        "PPE-MMLU-Pro",
+        "runs/RR-ppe-mmlu-pro-qwen3-4b-ocl1-seed43-lora-vllm-psi",
+        "runs/RR-ppe-mmlu-pro-qwen3-4b-ocl1-b1deploy-seed43-vllm-psi",
+    ),
+    44: SurfaceRuns(
+        "ppe-mmlu-pro",
+        "PPE-MMLU-Pro",
+        "runs/RR-ppe-mmlu-pro-qwen3-4b-ocl1-seed44-lora-vllm-psi",
+        "runs/RR-ppe-mmlu-pro-qwen3-4b-ocl1-b1deploy-seed44-vllm-psi",
+    ),
+}
+
+RMBENCH_MULTISEED_RUNS: dict[int, SurfaceRuns] = {
+    42: RUNS[4],
+    43: SurfaceRuns(
+        "rmbench",
+        "RM-Bench",
+        "runs/RR-rmbench-qwen3-4b-ocl1-seed43-lora-vllm-psi",
+        "runs/RR-rmbench-qwen3-4b-ocl1-b1deploy-seed43-vllm-psi",
+    ),
+    44: SurfaceRuns(
+        "rmbench",
+        "RM-Bench",
+        "runs/RR-rmbench-qwen3-4b-ocl1-seed44-lora-vllm-psi",
+        "runs/RR-rmbench-qwen3-4b-ocl1-b1deploy-seed44-vllm-psi",
+    ),
+}
+
 
 def _read_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as handle:
@@ -134,7 +187,7 @@ def _load_qid_set(path: Path) -> set[str]:
 
 
 def _resolve_run(spec: str) -> Path:
-    path = ROOT / spec if not Path(spec).is_absolute() else Path(spec)
+    path = RUNS_ROOT / spec if not Path(spec).is_absolute() else Path(spec)
     if (path / "metrics.json").is_file():
         return path
     if not path.is_dir():
@@ -449,17 +502,173 @@ def build_rewardbench2_multiseed() -> dict[str, Any]:
     )
 
 
+def build_ppe_math_multiseed() -> dict[str, Any]:
+    """Reduce the fixed-weight PPE-MATH cell over training seeds 42-44."""
+    return build_surface_multiseed(
+        "ppe-math",
+        "PPE-MATH",
+        PPE_MATH_MULTISEED_RUNS,
+    )
+
+
+def build_ppe_mmlu_pro_multiseed() -> dict[str, Any]:
+    """Reduce the fixed-weight PPE-MMLU-Pro cell over training seeds 42-44."""
+    return build_surface_multiseed(
+        "ppe-mmlu-pro",
+        "PPE-MMLU-Pro",
+        PPE_MMLU_PRO_MULTISEED_RUNS,
+    )
+
+
+def build_rmbench_multiseed() -> dict[str, Any]:
+    """Reduce the fixed-weight RM-Bench cell over training seeds 42-44."""
+    return build_surface_multiseed(
+        "rmbench",
+        "RM-Bench",
+        RMBENCH_MULTISEED_RUNS,
+    )
+
+
+def _compact_seed_receipt(spec: SurfaceRuns) -> dict[str, float]:
+    """Reduce Table-3 levels from aggregate artifacts without paired detail."""
+    native = _resolve_run(spec.native_run)
+    b1 = _resolve_run(spec.b1_run)
+    native_meta = _assert_checkpoint(native, expect_b=4)
+    b1_meta = _assert_checkpoint(b1, expect_b=1)
+    if native_meta["lora_channel"] != b1_meta["lora_channel"]:
+        raise ValueError(
+            f"{spec.surface}: checkpoint mismatch -- native={native_meta['lora_channel']!r} "
+            f"b1={b1_meta['lora_channel']!r}"
+        )
+    native_single = _ndcg_single_pass(native)
+    native_k10 = _ndcg_order_averaged(native, k=10)
+    b1_ndcg = _ndcg_single_pass(b1)
+    return {
+        "b1": b1_ndcg,
+        "native_single": native_single,
+        "native_k10": native_k10,
+        "c_obs": native_single - b1_ndcg,
+        "v_b": native_k10 - b1_ndcg,
+    }
+
+
+def build_core_multiseed_receipt() -> dict[str, Any]:
+    """Recompute the three core response-width surfaces from fetched runs."""
+    run_maps = {
+        "ppe-math": PPE_MATH_MULTISEED_RUNS,
+        "ppe-mmlu-pro": PPE_MMLU_PRO_MULTISEED_RUNS,
+        "rmbench": RMBENCH_MULTISEED_RUNS,
+    }
+    surfaces = {
+        surface: {str(seed): _compact_seed_receipt(spec) for seed, spec in sorted(runs.items())}
+        for surface, runs in run_maps.items()
+    }
+    signs = {
+        effect: {
+            surface: [int(np.sign(row[effect])) for row in seed_rows.values()]
+            for surface, seed_rows in surfaces.items()
+        }
+        for effect in ("c_obs", "v_b")
+    }
+    return {
+        "schema_version": 1,
+        "metric": MEASURE,
+        "seeds": [42, 43, 44],
+        "surfaces": surfaces,
+        "signs": signs,
+        "source": "live-fetched-runs",
+        "finding": (
+            "The fixed-weight width sign pattern is identical across all three "
+            "training seeds: positive on both correctness collections and "
+            "negative on RM-Bench."
+        ),
+    }
+
+
+def load_or_build_core_multiseed_receipt(
+    *,
+    require_live: bool = False,
+) -> dict[str, Any]:
+    """Prefer a live recomputation and fall back to the source-locked receipt."""
+    evidence = _read_json(CORE_MULTISEED_EVIDENCE)
+    try:
+        live = build_core_multiseed_receipt()
+    except FileNotFoundError:
+        if require_live:
+            raise
+        evidence["source"] = "frozen-source-locked-evidence"
+        return evidence
+
+    keys = ("b1", "native_single", "native_k10", "c_obs", "v_b")
+    differences = [
+        abs(float(live["surfaces"][surface][seed][key]) - float(evidence["surfaces"][surface][seed][key]))
+        for surface in evidence["surfaces"]
+        for seed in ("42", "43", "44")
+        for key in keys
+    ]
+    tolerance = float(evidence["provenance"]["live_validation_tolerance"])
+    max_difference = max(differences)
+    if max_difference > tolerance:
+        raise ValueError(
+            f"live core multiseed receipt differs from frozen evidence by "
+            f"{max_difference:.8f}, above tolerance {tolerance:.8f}"
+        )
+    live["frozen_comparison"] = {
+        "max_abs_difference": max_difference,
+        "tolerance": tolerance,
+        "status": "pass",
+        "note": "The historical RM-Bench seed-42 receipt stored four-decimal levels.",
+    }
+    live["provenance"] = evidence["provenance"]
+    return live
+
+
+def write_core_multiseed_receipt(
+    *,
+    out_path: Path = CORE_MULTISEED_OUT,
+    require_live: bool = False,
+) -> dict[str, Any]:
+    """Write the exact response-width receipt consumed by Table 3."""
+    payload = load_or_build_core_multiseed_receipt(require_live=require_live)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return payload
+
+
 def main() -> None:
     """Write single-seed and available three-seed response-width reductions."""
+    global RUNS_ROOT
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--report-dir", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument(
+        "--runs-root",
+        type=Path,
+        default=ROOT,
+        help="presentation_dependence root containing runs/; defaults to this checkout.",
+    )
     parser.add_argument(
         "--nectar-all-498",
         action="store_true",
         help="Use all 498 Nectar prompts. Default: contamination-clean 434-prompt subset.",
     )
+    parser.add_argument(
+        "--core-multiseed-only",
+        action="store_true",
+        help="Write the PPE-MATH/PPE-MMLU-Pro/RM-Bench Table-3 receipt and exit.",
+    )
+    parser.add_argument(
+        "--require-live-core",
+        action="store_true",
+        help="Require all 18 core native/B=1 run directories instead of using frozen evidence.",
+    )
     args = parser.parse_args()
+    RUNS_ROOT = args.runs_root.resolve()
+    core_multiseed = write_core_multiseed_receipt(require_live=args.require_live_core)
+    print(f"wrote {CORE_MULTISEED_OUT} ({core_multiseed['source']})")
+    if args.core_multiseed_only:
+        return
     nectar_qids = None if args.nectar_all_498 else _load_qid_set(NECTAR_CLEAN_QIDS)
     nectar_basis = "all-498" if nectar_qids is None else f"clean-{len(nectar_qids)}"
     rows = [

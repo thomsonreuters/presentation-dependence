@@ -269,6 +269,18 @@ files:
   configs/reproduction/fixtures/nectar-dedup-clean-qids.txt:
     sha256: 1c2dcbe9f5c05653830d724936444b55ccbd747a9410e8a65cf0165053ab8e81
     size_bytes: 6076
+  configs/reproduction/evidence/cohorts/nectar-clean-434.txt:
+    sha256: 1c2dcbe9f5c05653830d724936444b55ccbd747a9410e8a65cf0165053ab8e81
+    size_bytes: 6076
+  configs/reproduction/evidence/metric-discordance/quality-argmax-docid.json:
+    sha256: f27f1e1f2fa71100287d4fb21f9b6518f389d544e21a31863b0ecb702f914a60
+    size_bytes: 4943
+  configs/reproduction/evidence/response-width/rr-fixed-weight-width-multiseed.json:
+    sha256: 33dbd79393a5ec8bd85318bae900c4d5ae35423706ee4460ad85a3698c867600
+    size_bytes: 2075
+  configs/reproduction/evidence/round-robin/p04-six-arm-summary.json:
+    sha256: ab6fb9c0bdb6361833f457d6078565c8976aca714a8b56ec24935651549e0fab
+    size_bytes: 3274
   configs/reproduction/fixtures/taupsi-qids/arguana.txt:
     sha256: b09d91be9e0a730e244780a3793636e9e146eaec5bbbd0fecfae5a43c679e029
     size_bytes: 3242

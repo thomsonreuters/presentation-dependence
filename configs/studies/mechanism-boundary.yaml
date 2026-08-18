@@ -36,12 +36,23 @@ conditions:
     training_seed: 42
     placeholder: "0"
     chunk_assignment: interleaved
-    variants: [k1-sft, k10-sft]
+    variants:
+      - k1-sft
+      - k10-sft
+      - shuffled-view-augmentation
+      - debias-first
+    checkpoint_sources:
+      shuffled-view-augmentation:
+        variant: augmentation-only
+        catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
+      debias-first:
+        variant: debias-first
+        catalog: build/reproduction/passage-reranking/training-ablations/checkpoints.json
     presentation_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     sc_k_subsets: [1, 2, 3, 5, 10]
     engine_cap_overrides:
       touche2020: 8192
-    # This condition generates the k1-sft and k10-sft round-robin cells.
+    # This condition generates the four trained round-robin cells.
     # The off-shelf cell comes from direct-eval's round-robin-chunks control;
     # the OC-SFT cell comes from trained-channel-cross.
     execution:

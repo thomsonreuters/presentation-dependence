@@ -549,10 +549,11 @@ their collected program outputs under `build/reproduction/`; the removed
 reducer/renderer layer cannot be inferred from the declaration. Being declared
 is not the same as being runnable or executed. The audit's `runnable`,
 `blockers`, and `analyzer_inputs_present` fields are authoritative.
+Eleven of the thirty-one declared artifacts currently name an analyzer.
 
 Analyzers under `scripts/analyze/` read collected outputs from
 `build/reproduction/<program>/` and write tables to
-`build/reproduction/analysis/<analysis>/`. Thirteen of the nineteen scripts are
+`build/reproduction/analysis/<analysis>/`. Sixteen of the twenty-two scripts are
 registered in `appendix-programs.yaml`; the other six are operational tools for
 λ screening, geometry backfill, readout validity, variance decomposition,
 self-consistency derivation, and an HF-versus-vLLM speed probe. There is no

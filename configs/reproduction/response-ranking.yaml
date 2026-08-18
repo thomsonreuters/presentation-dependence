@@ -6,6 +6,15 @@ task:
 
 shared: configs/reproduction/shared.yaml
 
+reporting_cohorts:
+  nectar:
+    id: nectar-clean-434
+    qids_path: configs/reproduction/evidence/cohorts/nectar-clean-434.txt
+    expected_qids: 434
+    note: >-
+      Frozen paper cohort applied only by post-hoc collectors and analyzers.
+      Evaluation configs continue to run the full 498-prompt Nectar set.
+
 silver:
   id: response-ranking-silver
 

@@ -11,7 +11,7 @@ compared in that manuscript.
 
 Reproduction is post-hoc and best-attempt: re-execution should  be close to the published numbers rather than match them exactly, for the reasons in [reproduction fidelity](docs/REPRODUCE.md#reproduction-fidelity).
 
-Evaluation collections are read from `data/<slug>/`. Legal-A and Legal-B are
+Evaluation collections are read from `data/<dataset-name>/`. Legal-A and Legal-B are
 proprietary and are not distributed with this repository; they are [not needed
 to reproduce the public conclusions](../../README.md#results).
 
@@ -54,23 +54,41 @@ for high-stakes decisions about people. Upstream dataset and model terms apply
 
 ## Results
 
-Qwen3-4B, averaged over the 16 non-internal collections:
+![Figure 1 from the paper: the same candidates reordered give the same nDCG@10 but a different decision](docs/assets/paper/figure-1.png)
 
+**Figure 1: The same candidates reordered give the same nDCG@10 but a different
+decision.** (a) Each chip is one document, in the same position in both rows
+rather than by rank: solid where retained, dotted where not, outlined where they
+disagree. (b) Five trained scorers; values in Table 1.
 
-| Method               | nDCG@10 | τ-PSI |
-| -------------------- | ------- | ----- |
-| BM25 first stage     | 0.39    | -     |
-| Off-shelf base (K=1) | 0.38    | 0.29  |
-| K=1 SFT              | 0.46    | 0.20  |
-| K=10 SFT             | 0.47    | 0.14  |
-| OC-SFT (K=1)         | 0.48    | 0.09  |
+The paper's full Table 1 is shown below. It reports Qwen3-4B with ten
+random orders; trained rows are three-seed means. Passage reranking
+averages 18 collections (including the two undistributed internal collections),
+multi-document QA averages three, and response ranking averages five. Higher is
+better for nDCG and Jaccard; lower is better for τ-PSI and flip rates.
 
+| Variant                  | Rerank nDCG@10 | Rerank τ-PSI | Rerank Jacc. | QA nDCG@10 | QA τ-PSI | QA answer flip | Response nDCG@1 | Response τ-PSI | Response pair flip |
+| --------------------------| ---------------:| -------------:| -------------:| -----------:| ---------:| ---------------:| ----------------:| ---------------:| -------------------:|
+| Off the shelf            | 0.370          | 0.298        | 0.439        | 0.911      | 0.224    | 0.221          | 0.655           | 0.345          | 0.877              |
+| CapCal                   | 0.372          | 0.293        | 0.427        | 0.911      | 0.222    | 0.217          | 0.657           | 0.338          | 0.874              |
+| Round-robin              | 0.422          | 0.297        | 0.443        | 0.911      | 0.224    | 0.221          | 0.658           | 0.347          | 0.878              |
+| BSC (×10)¹               | 0.465          | 0.180        | 0.707        | 0.946      | 0.143    | 0.157          | 0.716           | 0.184          | 0.636              |
+| jina-reranker-v3         | 0.447          | 0.177        | 0.667        | 0.949      | 0.163    | 0.172          | 0.479           | 0.226          | 0.685              |
+| GPT-5.4²                 | 0.468          | —            | 0.707        | 0.972      | —        | 0.094          | 0.726           | —              | 0.489              |
+| Single-order             | 0.449          | 0.209        | 0.656        | 0.951      | 0.159    | 0.177          | 0.684           | 0.333          | 0.869              |
+| Order-averaged           | 0.455          | 0.130        | 0.743        | 0.956      | 0.124    | 0.149          | 0.693           | 0.228          | 0.724              |
+| DebiasFirst              | 0.454          | 0.128        | 0.759        | 0.955      | 0.147    | 0.164          | 0.694           | 0.228          | 0.718              |
+| Permutation augmentation | 0.455          | 0.129        | 0.760        | 0.955      | 0.148    | 0.162          | 0.696           | 0.223          | 0.707              |
+| OC-SFT                   | 0.459          | 0.083        | 0.835        | 0.961      | 0.096    | 0.125          | 0.701           | 0.201          | 0.661              |
 
-With one serving presentation (five B=20 chunk forwards over a passage top  
-100), OC-SFT approaches the base's K=10 self-consistency ensemble on quality at  
-lower τ-PSI. Across eleven dense Qwen3, Gemma 4, and Granite 4.1 bases from 1.7B  
-to 32B, seed-42 primary-18 mean trained τ-PSI is about 0.07 to 0.12 against  
-about 0.24 to 0.39 off the shelf.
+¹ BSC's instability and decision cells compare four independent ten-permutation
+ensembles; every other row compares single permutations at one tenth of the
+inference cost. ² GPT-5.4 produces many ties; the paper uses an order-independent
+tie-break and therefore omits τ-PSI.
+
+Five trained scorers within 0.010 reranking nDCG@10 span 0.656–0.835 in
+retained-set overlap. OC-SFT also has the lowest answer and response-pair flip
+rates among the trained scorers.
 
 ## How it works
 
@@ -386,8 +404,8 @@ Climate-FEVER, TREC-COVID, DBPedia, SciFact, Signal-1M, TREC-NEWS and Robust04
 out of domain; and Legal-A and Legal-B, which are not distributed.
 
 First-stage retrievers differ per benchmark, using MS MARCO-tuned BM25 for
-TREC-DL and vanilla BM25 for BEIR. Each
-`data/<slug>/` records the exact retriever in `dataset_meta.yaml`, and mixing
+TREC-DL and vanilla BM25 for BEIR. Each dataset directory records the exact
+retriever in `dataset_meta.yaml`, and mixing
 regimes moves nDCG@10 by 1 to 3 points. `[docs/DATA-SETUP.md](docs/DATA-SETUP.md)`
 has the per-dataset detail.
 
@@ -399,9 +417,9 @@ config. The checklist is in
 `[src/presentation_dependence/rerankers/README.md](src/presentation_dependence/rerankers/README.md)`.
 
 To add an evaluation dataset, fetch it with
-`scripts/data/fetch_pyserini_dataset.py`, which writes `data/<slug>/` with the
+`scripts/data/fetch_pyserini_dataset.py`, which writes `data/<dataset-name>/` with the
 run file, qrels, topics, and `dataset_meta.yaml`, then point a config's `data`
-block at that slug. A `FixtureLoader` config still needs passage text: use
+block at that dataset directory. A `FixtureLoader` config still needs passage text: use
 `scripts/data/build_fixture_pyserini.py` when a Pyserini text index exists,
 `scripts/data/build_fixture_irds.py` for the supported ir_datasets corpora, or a
 dataset-specific fixture builder when neither applies.

@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
 from presentation_dependence.reproduction.analysis_inputs import (
     VARIANT_ALIASES,
     load_per_consumer,
@@ -76,13 +77,7 @@ def render(payload: dict[str, Any]) -> str:
         lines.append("")
         return "\n".join(lines)
 
-    labels = {
-        "k1sft": "K=1 SFT",
-        "k10sft": "K=10 SFT",
-        "debiasfirst": "DebiasFirst",
-        "posaug": "Shuffled-view augmentation",
-        "ocsft": "OC-SFT",
-    }
+    labels = {arm: paper_method_label(arm) for arm in ARMS}
     lines.extend(
         [
             "| Variant | Seed 42 | Seed 43 | Seed 44 | Verdict flip mean +/- SD |",

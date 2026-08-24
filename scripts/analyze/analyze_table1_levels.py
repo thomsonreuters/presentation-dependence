@@ -14,6 +14,8 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
+
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "build" / "reproduction" / "analysis" / "table1-levels"
@@ -44,23 +46,23 @@ COLUMNS = (
 # - docs/NECTAR-JSONL-RESTORE-2026-08-17.md
 ROWS: dict[str, dict[str, Any]] = {
     "off-shelf": {
-        "label": "Off the shelf",
+        "label": paper_method_label("off-shelf"),
         "source": "canonical task collectors",
         "values": (0.370, 0.298, 0.439, 0.911, 0.224, 0.221, 0.655, 0.345, 0.877),
     },
     "capcal": {
-        "label": "CapCal",
+        "label": paper_method_label("capcal"),
         "source": "EXTERNAL-SCORERS-CONSUMERS-2026-08-14",
         "values": (0.372, 0.293, 0.427, 0.911, 0.222, 0.217, 0.657, 0.338, 0.874),
     },
     "round-robin": {
-        "label": "Round-robin",
+        "label": paper_method_label("round-robin"),
         "source": "ROUND-ROBIN-CONSUMERS-2026-08-17",
         "values": (0.422, 0.297, 0.443, 0.911, 0.224, 0.221, 0.658, 0.347, 0.878),
         "derived": {"qa_ndcg10", "qa_tau_psi", "qa_answer_flip"},
     },
     "bsc": {
-        "label": "BSC (x10)",
+        "label": f"{paper_method_label('bsc')} (×10)",
         "source": "BSC-CONSUMERS-2026-08-17",
         "values": (0.465, 0.180, 0.707, 0.946, 0.143, 0.157, 0.716, 0.184, 0.636),
         "ensemble_redraw": {
@@ -73,38 +75,38 @@ ROWS: dict[str, dict[str, Any]] = {
         },
     },
     "jina": {
-        "label": "jina-reranker-v3",
+        "label": paper_method_label("jina"),
         "source": "canonical external-reference collectors",
         "values": (0.447, 0.177, 0.667, 0.949, 0.163, 0.172, 0.479, 0.226, 0.685),
     },
     "gpt54": {
-        "label": "GPT-5.4",
+        "label": paper_method_label("gpt54"),
         "source": "GPT54-FULL-ROW and GPT54-FLIP-PAIRWISE",
         "values": (0.468, None, 0.707, 0.972, None, 0.094, 0.726, None, 0.489),
         "withheld": {"rerank_tau_psi", "qa_tau_psi", "response_tau_psi"},
     },
     "single-order": {
-        "label": "Single order",
+        "label": paper_method_label("single-order"),
         "source": "canonical task collectors",
         "values": (0.449, 0.209, 0.656, 0.951, 0.159, 0.177, 0.684, 0.333, 0.869),
     },
     "order-averaged": {
-        "label": "Order-averaged",
+        "label": paper_method_label("order-averaged"),
         "source": "canonical task collectors",
         "values": (0.455, 0.130, 0.743, 0.956, 0.124, 0.149, 0.693, 0.228, 0.724),
     },
     "debias-first": {
-        "label": "DebiasFirst",
+        "label": paper_method_label("debias-first"),
         "source": "TABLE1-INVENTORY and cross-task hand-backs",
         "values": (0.454, 0.128, 0.759, 0.955, 0.147, 0.164, 0.694, 0.228, 0.718),
     },
     "permutation-augmentation": {
-        "label": "Permutation augmentation",
+        "label": paper_method_label("permutation-augmentation"),
         "source": "TABLE1-INVENTORY and cross-task hand-backs",
         "values": (0.455, 0.129, 0.760, 0.955, 0.148, 0.162, 0.696, 0.223, 0.707),
     },
     "oc-sft": {
-        "label": "OC-SFT",
+        "label": paper_method_label("oc-sft"),
         "source": "canonical task collectors",
         "values": (0.459, 0.083, 0.835, 0.961, 0.096, 0.125, 0.701, 0.201, 0.661),
     },

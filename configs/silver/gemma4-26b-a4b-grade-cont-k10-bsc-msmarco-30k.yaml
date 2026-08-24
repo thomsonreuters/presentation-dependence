@@ -9,7 +9,7 @@
 # MoE-specific notes (vs the dense 31B teacher config this mirrors):
 #   - vLLM keeps ALL experts resident, so peak memory is higher than a dense 4B.
 #     ``gpu_memory_utilization: 0.70`` + ``extra_llm_kwargs.max_num_seqs: 4`` carry
-#     over from the proven MoE off-shelf eval configs to avoid OOM / KV churn.
+#     over from the proven MoE off-the-shelf eval configs to avoid OOM / KV churn.
 #   - ``tensor_parallel_size: 1`` per local-DP worker: the ~52 GB bf16 MoE weights
 #     fit one H100-80GB, matching the Qwen/31B large-teacher feasibility pattern
 #     (8 single-replica workers on 8x H100 80GB). VERIFY this fits before the full

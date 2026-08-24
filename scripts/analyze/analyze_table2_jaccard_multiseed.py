@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
 from presentation_dependence.reproduction.analysis_inputs import (
     load_per_consumer,
     summarize_seeded_metric,
@@ -71,13 +72,7 @@ def render_canonical(payload: dict[str, Any]) -> str:
         "| Variant | F1-tuned Jaccard | Matched-retention Jaccard |",
         "| --- | ---: | ---: |",
     ]
-    labels = {
-        "k1sft": "K=1 SFT",
-        "k10sft": "K=10 SFT",
-        "posaug": "Shuffled-view augmentation",
-        "debiasfirst": "DebiasFirst",
-        "oc_sft": "OC-SFT",
-    }
+    labels = {arm: paper_method_label(arm) for arm in ("k1sft", "k10sft", "posaug", "debiasfirst", "oc_sft")}
     for arm, label in labels.items():
         tuned = payload["across_seed"][arm]
         matched = payload["across_seed_matched_retention"][arm]

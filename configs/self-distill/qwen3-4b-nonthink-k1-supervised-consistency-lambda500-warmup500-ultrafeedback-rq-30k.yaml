@@ -1,6 +1,6 @@
 ###############################################################################
 # OC-SFT (order-consistent SFT) for UltraFeedback response
-# quality, lambda=1.0, warmup-500, 30K. supervised_consistency = K=1 SFT label
+# quality, lambda=1.0, warmup-500, 30K. OC-SFT uses a single-order label
 # loss + lambda * consistency MSE between two RESPONSE-ORDER views. Trains one
 # forward pass to match swap-ensemble consistency. lambda* selected across the grid via
 ###############################################################################

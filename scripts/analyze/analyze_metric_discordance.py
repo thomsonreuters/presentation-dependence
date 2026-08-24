@@ -9,6 +9,8 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
+
 
 ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE = ROOT / "configs" / "reproduction" / "evidence" / "metric-discordance" / "quality-argmax-docid.json"
@@ -32,6 +34,9 @@ def build_result(evidence_path: Path = EVIDENCE) -> dict[str, Any]:
     """Validate collection coverage, argmax identities, and headline gates."""
     evidence = _load(evidence_path)
     systems = tuple(map(str, evidence["protocol"]["systems"]))
+    system_labels = {system: paper_method_label(system) for system in systems}
+    if evidence.get("system_labels") != system_labels:
+        raise ValueError("metric-discordance system labels do not match canonical paper terminology")
     rows = [dict(row) for row in evidence["rows"]]
     datasets = [str(row["dataset"]) for row in rows]
     if len(datasets) != len(set(datasets)):
@@ -87,7 +92,7 @@ def build_result(evidence_path: Path = EVIDENCE) -> dict[str, Any]:
         "analysis": "quality-versus-retained-set argmax discordance",
         "status": status,
         "protocol": evidence["protocol"],
-        "system_labels": evidence["system_labels"],
+        "system_labels": system_labels,
         "ndcg_means": evidence["ndcg_means"],
         "jaccard_means": evidence["jaccard_means"],
         "rows": rows,

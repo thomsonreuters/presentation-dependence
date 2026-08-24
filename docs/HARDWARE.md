@@ -215,7 +215,7 @@ The full study, across every base, seed, ablation, and evaluation run, is about 
 
 Within one evaluation cell, the plain nDCG measurement is about 7% of the cost
 and the τ-PSI permutation sweep is the remaining 93%, roughly a 1:13 ratio.
-Budget accordingly: order-stability numbers cost about an order of magnitude
+Budget accordingly: order-instability numbers cost about an order of magnitude
 more than the ranking quality numbers reported beside them.
 
 Long evaluation runs were capped at 120 compute hours per job. That cap is a

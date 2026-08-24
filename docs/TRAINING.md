@@ -8,7 +8,7 @@ separate revision field.
 materialize the candidate fixture
   -> run the teacher
   -> validate and publish the silver JSONL
-  -> derive train, held-out, and K=1 products
+  -> derive train, held-out, and single-order (`k1`) products
   -> train the LoRA student
   -> select lambda and checkpoint
   -> direct and downstream evaluation
@@ -65,10 +65,10 @@ token, probability, scaling, and alignment behaviour is defined in
 
 For each query and candidate set:
 
-1. Create K Fisher-Yates permutations from the declared seeds.
+1. Create `T` Fisher-Yates teacher permutations from the declared seeds.
 2. Score each order through the reranker's B-document expected-grade path.
 3. Realign scores to the original document IDs.
-4. Persist each document's K-vector and its mean.
+4. Persist each document's `T`-vector and its mean.
 5. Write one per-query shard atomically.
 6. Publish the aggregate JSONL and manifest only after every query succeeds.
 
@@ -83,10 +83,11 @@ teacher:
   output_subdir: silver
 ```
 
-The MS MARCO production geometry is `K=10`, `docs_per_score_forward=20`,
-`k_input=100`, `max_doc_chars=1200`, `max_length=4096`, and presentation seeds
-`0..9`. Changing any of these changes the scientific protocol; record an
-intentional change as a new semantic config rather than an override.
+The MS MARCO production geometry is paper `T=10` (stored as
+`teacher.k_perms: 10`), `docs_per_score_forward=20`, `k_input=100`,
+`max_doc_chars=1200`, `max_length=4096`, and teacher-permutation seeds `0..9`.
+Changing any of these changes the scientific protocol; record an intentional
+change as a new semantic config rather than an override.
 
 Tracked examples are `a1-qwen3-instruct-k10-bsc-msmarco-30k.yaml`,
 `a2-qwen3-reranker-k10-bsc-msmarco-30k.yaml`, and
@@ -160,7 +161,7 @@ teacher:
 
 One prompt carries `subset_size` candidates, the pool is scored under `runs`
 shuffled presentations, and the per-candidate grades are averaged. That is the
-closed-model analogue of K=10 permutations, and `subset_size: 20` matches the
+closed-model analogue of `T=10` teacher permutations, and `subset_size: 20` matches the
 B=20 chunk size of the open-weight configs. Each `(query_id, doc_id)` gets one
 row keeping the per-presentation vector alongside the mean.
 
@@ -376,7 +377,7 @@ In a DL19 dry run the integer prompt produced about 63% grade 1, 20% grade 3,
 
 ## Prepare the student products
 
-Passage reproduction derives the held-out split and the K=1 labels
+Passage reproduction derives the held-out split and the single-order (`k1`) labels
 deterministically:
 
 ```bash

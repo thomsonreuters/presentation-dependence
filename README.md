@@ -54,25 +54,32 @@ for high-stakes decisions about people. Upstream dataset and model terms apply
 
 ## Results
 
+![Figure 1 from the paper: the same candidates reordered give the same nDCG@10 but a different decision](docs/assets/paper/figure-1.png)
+
+**Figure 1: The same candidates reordered give the same nDCG@10 but a different
+decision.** (a) Each chip is one document, in the same position in both rows
+rather than by rank: solid where retained, dotted where not, outlined where they
+disagree. (b) Five trained scorers; values in Table 1.
+
 The paper's full Table 1 is shown below. It reports Qwen3-4B with ten
-random orders; trained rows are three-seed means. Passage reranking
+random permutations; trained rows are three-seed means. Passage reranking
 averages 18 collections (including the two undistributed internal collections),
 multi-document QA averages three, and response ranking averages five. Higher is
 better for nDCG and Jaccard; lower is better for τ-PSI and flip rates.
 
-| Variant | Rerank nDCG@10 | Rerank τ-PSI | Rerank Jacc. | QA nDCG@10 | QA τ-PSI | QA answer flip | Response nDCG@1 | Response τ-PSI | Response pair flip |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Off the shelf | 0.370 | 0.298 | 0.439 | 0.911 | 0.224 | 0.221 | 0.655 | 0.345 | 0.877 |
-| CapCal | 0.372 | 0.293 | 0.427 | 0.911 | 0.222 | 0.217 | 0.657 | 0.338 | 0.874 |
-| Round-robin | 0.422 | 0.297 | 0.443 | 0.911 | 0.224 | 0.221 | 0.658 | 0.347 | 0.878 |
-| BSC (×10)¹ | 0.465 | 0.180 | 0.707 | 0.946 | 0.143 | 0.157 | 0.716 | 0.184 | 0.636 |
-| jina-reranker-v3 | 0.447 | 0.177 | 0.667 | 0.949 | 0.163 | 0.172 | 0.479 | 0.226 | 0.685 |
-| GPT-5.4² | 0.468 | — | 0.707 | 0.972 | — | 0.094 | 0.726 | — | 0.489 |
-| Single-order | 0.449 | 0.209 | 0.656 | 0.951 | 0.159 | 0.177 | 0.684 | 0.333 | 0.869 |
-| Order-averaged | 0.455 | 0.130 | 0.743 | 0.956 | 0.124 | 0.149 | 0.693 | 0.228 | 0.724 |
-| DebiasFirst | 0.454 | 0.128 | 0.759 | 0.955 | 0.147 | 0.164 | 0.694 | 0.228 | 0.718 |
-| Permutation augmentation | 0.455 | 0.129 | 0.760 | 0.955 | 0.148 | 0.162 | 0.696 | 0.223 | 0.707 |
-| OC-SFT | 0.459 | 0.083 | 0.835 | 0.961 | 0.096 | 0.125 | 0.701 | 0.201 | 0.661 |
+| Variant                  | Rerank nDCG@10 | Rerank τ-PSI | Rerank Jacc. | QA nDCG@10 | QA τ-PSI | QA answer flip | Response nDCG@1 | Response τ-PSI | Response pair flip |
+| --------------------------| ---------------:| -------------:| -------------:| -----------:| ---------:| ---------------:| ----------------:| ---------------:| -------------------:|
+| Off the shelf            | 0.370          | 0.298        | 0.439        | 0.911      | 0.224    | 0.221          | 0.655           | 0.345          | 0.877              |
+| CapCal                   | 0.372          | 0.293        | 0.427        | 0.911      | 0.222    | 0.217          | 0.657           | 0.338          | 0.874              |
+| Round-robin              | 0.422          | 0.297        | 0.443        | 0.911      | 0.224    | 0.221          | 0.658           | 0.347          | 0.878              |
+| BSC (×10)¹               | 0.465          | 0.180        | 0.707        | 0.946      | 0.143    | 0.157          | 0.716           | 0.184          | 0.636              |
+| jina-reranker-v3         | 0.447          | 0.177        | 0.667        | 0.949      | 0.163    | 0.172          | 0.479           | 0.226          | 0.685              |
+| GPT-5.4²                 | 0.468          | —            | 0.707        | 0.972      | —        | 0.094          | 0.726           | —              | 0.489              |
+| Single-order             | 0.449          | 0.209        | 0.656        | 0.951      | 0.159    | 0.177          | 0.684           | 0.333          | 0.869              |
+| Order-averaged           | 0.455          | 0.130        | 0.743        | 0.956      | 0.124    | 0.149          | 0.693           | 0.228          | 0.724              |
+| DebiasFirst              | 0.454          | 0.128        | 0.759        | 0.955      | 0.147    | 0.164          | 0.694           | 0.228          | 0.718              |
+| Permutation augmentation | 0.455          | 0.129        | 0.760        | 0.955      | 0.148    | 0.162          | 0.696           | 0.223          | 0.707              |
+| OC-SFT                   | 0.459          | 0.083        | 0.835        | 0.961      | 0.096    | 0.125          | 0.701           | 0.201          | 0.661              |
 
 ¹ BSC's instability and decision cells compare four independent ten-permutation
 ensembles; every other row compares single permutations at one tenth of the
@@ -80,7 +87,7 @@ inference cost. ² GPT-5.4 produces many ties; the paper uses an order-independe
 tie-break and therefore omits τ-PSI.
 
 Five trained scorers within 0.010 reranking nDCG@10 span 0.656–0.835 in
-retained-set overlap. OC-SFT also has the lowest answer and response-pair flip
+retained-set overlap. OC-SFT also has the lowest answer-flip and pair-flip
 rates among the trained scorers.
 
 ## How it works
@@ -107,11 +114,11 @@ The three variants differ only in the labels and whether they add the
 consistency penalty:
 
 
-| Variant  | Silver labels            | Consistency loss        | Teacher presentations/query |
-| -------- | ------------------------ | ----------------------- | --------------------------- |
-| K=1 SFT  | single order             | no                      | 1                           |
-| K=10 SFT | K=10 order-average (BSC) | no                      | 10                          |
-| OC-SFT   | single order             | yes, two shuffled views | 1                           |
+| Variant | Silver labels | Consistency loss | Teacher permutations `T` | Student views `N` |
+| --- | --- | --- | ---: | ---: |
+| Single-order distillation | one teacher order | no | 1 | 1 |
+| Order-averaged distillation | mean over teacher orders | no | 10 | 1 |
+| OC-SFT | one teacher order | yes, across shuffled views | 1 | 2 |
 
 
 OC-SFT adds `λ · mean_d (s_A(d) - s_B(d))²` over two shuffled views A and B of
@@ -123,20 +130,28 @@ hand-pick from final test results.
 
 ## Key terms
 
+Canonical paper names, internal aliases, and notation are collected in
+[`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md).
+
 - `First stage`: the retriever, BM25 here, that proposes the top-100 candidates
 a reranker reorders. A reranker cannot exceed its recall.
 - `B`: documents scored in one prompt, `B=20`, so five chunks cover the top 100.
+- `M`: random evaluation permutations used to estimate order instability and
+decision flips.
+- `T`: teacher permutations averaged into an order-averaged distillation target.
+- `N`: student views in one OC-SFT training step.
 - `K`: self-consistency passes. At K=1 the candidates are scored once in their
 given order, which is the deployment case; at K>1 scores are averaged over K
 shuffled orders.
 - `Batched self-consistency (BSC)`: the K=10 order-averaging ensemble that
 OC-SFT amortizes into one serving presentation.
 - `GenBSC` / `closed_model_generated_bsc`: BSC labels or scores from a hosted
-chat API (integer grades averaged over K shuffled orders) rather than from a
-local expected-grade logit readout. Recipe in
+chat API (integer grades averaged over shuffled orders) rather than from a
+local expected-grade logit readout. The paper calls the label-generation count
+`T` and the serving-time BSC count `K`. Recipe in
 `ClosedModelGenBscReranker` and the closed-teacher silver configs; the
 GPT-5.4-distilled student is not among the eleven adapters below.
-- `τ-PSI`: rank-level position-sensitivity index over K shuffled orders,
+- `τ-PSI`: rank-level order-instability index over M shuffled orders,
 `(1 − mean Kendall τ) / 2`. Zero is identical rankings, 0.5 is uncorrelated,
 lower is better. This is the manuscript's primary order-instability metric.
 - `Zeng PSI`: quality-bucket position-sensitivity `1 − min(s)/max(s)` on
@@ -316,6 +331,9 @@ are not new APIs; treat them as frozen spellings.
 | Token                                                    | Means                                                              | Where it still appears                                                                                          |
 | -------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | `supcon`                                                 | OC-SFT (order-consistency / supervised consistency)                | Some experiment and study IDs, comments, and analyzer stems                                                     |
+| `k1-sft` / `k1sft`                                       | Single-order distillation                                           | Config IDs, run paths, and serialized variant keys                                                              |
+| `k10-sft` / `k10sft`                                     | Order-averaged distillation                                         | Config IDs, run paths, and serialized variant keys                                                              |
+| `posaug` / `shuffled-view-augmentation`                   | Permutation augmentation                                            | Config IDs, run paths, and serialized variant keys                                                              |
 | `Path-C` / `pathc`                                       | Expected-grade readout contract (prompt + skeleton + grade logits) | Prompt template id `pathc_grade_v1`, helper names like `build_pathc_grade_user_body`, and older config comments |
 | Prefixes `R*`, `L*`, `A8*`, `a1`, `a2`, `P7`, `RR`, `SE` | Historical run-family labels                                       | Run directories and evidence mappings                                                                           |
 
@@ -425,6 +443,8 @@ new ID, and adjust the three blocks.
 - `[docs/REPRODUCE.md](docs/REPRODUCE.md)`: reproducing results, from the
 zero-dependency smoke to the full matrix and the appendix registry.
 - `[docs/SCORING.md](docs/SCORING.md)`: the expected-grade readout contract.
+- `[docs/TERMINOLOGY.md](docs/TERMINOLOGY.md)`: paper names, internal aliases,
+and protocol notation.
 - `[docs/EVAL-PROTOCOL.md](docs/EVAL-PROTOCOL.md)`: τ-PSI, selection invariants,
 and λ selection.
 - `[docs/TRAINING.md](docs/TRAINING.md)`: silver generation and student SFT.

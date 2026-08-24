@@ -129,28 +129,30 @@ success check; their exact scopes are in `[DATA-SETUP.md](DATA-SETUP.md)`.
 ## One result end to end
 
 This walkthrough measures robustness amortization: the difference between an
-off-shelf base and a trained student on the same dataset. The off-shelf base at
-K=1 has high τ-PSI. A student trained on K=10 self-consistency silver serves at
-K=1 and reduces τ-PSI without losing nDCG@10.
+off-the-shelf base and a trained student on the same dataset. The off-the-shelf
+base at serving `K=1` has high τ-PSI. An order-averaged student trained on a
+`T=10` teacher-permutation average serves at `K=1` and reduces τ-PSI without
+losing nDCG@10.
 
-It uses OG Qwen3-4B (non-thinking), an MS MARCO 30K K=10 batched-self-consistency
-teacher, and a single-pass K=1 student. The pipeline is identical up to training,
+It uses OG Qwen3-4B (non-thinking), an MS MARCO 30K batched-self-consistency
+teacher with `T=10`, and a single-pass student. The pipeline is identical up to training,
 where three recipes share the base, teacher silver, LoRA, AdamW, cosine schedule,
 DDP settings, and checkpoint policy, and differ only in the target and objective:
 
 
-| Recipe   | Config id under `configs/self-distill/`                                          | Silver target    | Objective                      |
-| -------- | -------------------------------------------------------------------------------- | ---------------- | ------------------------------ |
-| K=1 SFT  | `qwen3-4b-nonthink-sft-msmarco-30k-k1-labels`                                    | single-order K=1 | MSE                            |
-| K=10 SFT | `qwen3-4b-nonthink-sft-msmarco-30k-k10-labels`                                   | K=10 BSC average | MSE                            |
-| OC-SFT   | `qwen3-4b-nonthink-k1-supervised-consistency-lambda<code>-warmup500-msmarco-30k` | single-order K=1 | MSE plus consistency penalty λ |
+| Recipe | Config id under `configs/self-distill/` | Silver target | Objective |
+| --- | --- | --- | --- |
+| Single-order distillation | `qwen3-4b-nonthink-sft-msmarco-30k-k1-labels` | one teacher order | MSE |
+| Order-averaged distillation | `qwen3-4b-nonthink-sft-msmarco-30k-k10-labels` | mean over `T=10` teacher orders | MSE |
+| OC-SFT | `qwen3-4b-nonthink-k1-supervised-consistency-lambda<code>-warmup500-msmarco-30k` | one teacher order | MSE plus consistency penalty λ |
 
 
-K=1 SFT isolates the gain from teaching the expected-grade task and output
-format. K=10 SFT isolates the gain from amortizing the ensemble into the labels.
-OC-SFT distills the same K=1 silver and adds a penalty tying two shuffled views
-together, reaching the ensemble's stability from a single teacher pass. The
-commands below default to K=10 SFT.
+Single-order distillation isolates the gain from teaching the expected-grade
+task and output format. Order-averaged distillation isolates the gain from
+moving the teacher-permutation average into the labels. OC-SFT distills the same
+single-order silver and adds a penalty tying `N=2` shuffled views together. The
+commands below default to order-averaged distillation. Internal filenames retain
+their historical `k1` and `k10` tokens.
 
 ### Stage 1: build the training candidates
 
@@ -165,7 +167,7 @@ ir_datasets (`msmarco-passage/train`) and download on first run.
 
 ### Stage 2: generate silver labels
 
-The teacher scores each query under K=10 shuffled permutations using the
+The teacher scores each query under `T=10` shuffled permutations using the
 expected-grade readout on vLLM, then averages them into continuous `[0,3]`
 labels. The config is
 `[configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml](../configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml)`
@@ -240,7 +242,8 @@ script prints three rows: `bm25_baseline`, `silver`, and `oracle_nist`.
 
 The student config does not read `silver/silver_labels.jsonl`. It reads the
 filenames named in `student.silver_labels_path` and `eval_silver_labels_path`:
-the K=10 split for K=10 SFT, and the derived K=1 split for K=1 SFT and OC-SFT.
+the `k10` split for order-averaged distillation, and the derived `k1` split for
+single-order distillation and OC-SFT.
 
 Place the teacher output under the name the split step expects, then split it
 into 29.5K train and 500 held-out shards. The held-out qids are a deterministic
@@ -255,7 +258,8 @@ uv run python scripts/data/prepare_heldout_eval_cohort.py \
     --n 500
 ```
 
-For K=1 SFT and OC-SFT only, derive the K=1 labels from the K=10 vector on both
+For single-order distillation and OC-SFT only, derive the one-order labels from
+the ten-order vector on both
 shards. With `--k-out 1` the script renames `_k10` to `_k1_seed0`, matching those
 configs:
 
@@ -351,14 +355,15 @@ test -f "runs/$ID/$TRIAL/student/training_summary.json"
 
 ### Stage 4: evaluate both arms
 
-Evaluate the off-shelf base with no adapter and the trained student with the
+Evaluate the off-the-shelf base with no adapter and the trained student with the
 Stage-3 adapter, on the same dataset. Each writes `metrics.json` for nDCG, MAP,
 and MRR, and `psi/psi_metrics.json` for τ-PSI, Kendall τ, and ΔnDCG.
 
 Select the checkpoint first, since Stage 3 emits several. The training loop
-retains checkpoints ranked by held-out `qrels_ndcg_cut_10`; K=10 SFT selects step
-1200 in the recorded run. Plain SFT takes the highest-ranked retained checkpoint,
-and OC-SFT applies `scripts/select_lambda.py` across the λ grid.
+retains checkpoints ranked by held-out `qrels_ndcg_cut_10`; order-averaged
+distillation selects step 1200 in the recorded run. Single-order distillation
+takes the highest-ranked retained checkpoint, and OC-SFT applies
+`scripts/select_lambda.py` across the λ grid.
 
 ```bash
 uv run python scripts/study.py passage-reranking training collect \
@@ -377,8 +382,8 @@ uv run python scripts/run_psi.py -e "$BASE"
 uv run python scripts/run_psi.py -e "$STUDENT"
 ```
 
-On DL19 the selected OG Qwen3-4B K=10 SFT student reaches nDCG@10 near 0.73 with
-τ-PSI near 0.12, against an off-shelf base with similar or lower nDCG and higher
+On DL19 the selected OG Qwen3-4B order-averaged student reaches nDCG@10 near 0.73 with
+τ-PSI near 0.12, against an off-the-shelf base with similar or lower nDCG and higher
 τ-PSI.
 
 ### Stage 5: record the result
@@ -690,7 +695,7 @@ runs/<ID>/<timestamp>/
 aggregate robustness artifact, including protocol metadata and τ-PSI@B geometry
 fields. A teacher run writes `runs/self-distill/<ID>/<timestamp>/silver/` with
 `manifest.json` and `silver_labels.jsonl`, one continuous label per query and
-document pair plus the raw K-shot vector behind it.
+document pair plus the raw teacher-permutation vector behind it.
 
 Generated output is rooted at `build/reproduction/`, with one directory per task
 and stage, `studies/<study>/<condition>/`, and

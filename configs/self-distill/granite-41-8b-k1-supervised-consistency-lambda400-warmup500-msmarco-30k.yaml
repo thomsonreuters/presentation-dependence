@@ -5,7 +5,7 @@
 #   - Supervised anchor: granite41 K=1 (8B anchor) seed-0 labels
 #   - Consistency term: two independently permuted B=20 views, aligned by doc_id
 #   - Lambda warmup: linear 0.0 -> 4 over first 500 optimizer steps
-#   - Matched to granite41-3b-k1-supcon-warmup / gemma4-e2b-k1-supcon-warmup family and plain 8B K=1 SFT recipe
+#   - Matched to the Granite/Gemma OC-SFT family and the plain 8B single-order recipe
 ###############################################################################
 
 id: granite-41-8b-k1-supervised-consistency-lambda400-warmup500-msmarco-30k

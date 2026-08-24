@@ -1,5 +1,5 @@
 ###############################################################################
-# CapCal over the off-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
+# CapCal over the off-the-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
 #
 # External baseline: Lv+2026 content-free probability calibration, wrapped around
 # the same grade scorer the trained arms use so the calibration is the only

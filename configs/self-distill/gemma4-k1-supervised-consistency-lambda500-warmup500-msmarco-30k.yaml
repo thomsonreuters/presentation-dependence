@@ -6,7 +6,7 @@
 #   - Consistency term: two independently permuted B=20 views, aligned by doc_id
 #   - Lambda warmup: linear 0.0 -> 5.0 over first 500 optimizer steps
 #   - Data budget: full 29,500 train queries, one full epoch
-#   - Start: off-shelf google/gemma-4-E4B-it, not continued from any LoRA
+#   - Start: off-the-shelf google/gemma-4-E4B-it, not continued from any LoRA
 ###############################################################################
 
 id: gemma4-k1-supervised-consistency-lambda500-warmup500-msmarco-30k

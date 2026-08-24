@@ -209,7 +209,7 @@ def _load_checkpoints() -> dict[str, str]:
             f"Missing checkpoint catalog: {CHECKPOINT_CATALOG}\n"
             "The k1sft and ocsft arms need the adapters the training stage selects. Run\n"
             "  uv run python scripts/study.py passage-reranking training collect\n"
-            "first, or pass --base-only to generate the off-shelf arm alone."
+            "first, or pass --base-only to generate the off-the-shelf arm alone."
         )
     rows = json.loads(CHECKPOINT_CATALOG.read_text(encoding="utf-8")).get("checkpoints") or []
     by_variant = {
@@ -242,7 +242,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--base-only",
         action="store_true",
-        help="generate only the off-shelf arm, so no checkpoint catalog is needed",
+        help="generate only the off-the-shelf arm, so no checkpoint catalog is needed",
     )
     return parser.parse_args(argv)
 

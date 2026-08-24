@@ -89,7 +89,7 @@ into the prompt — the official template repeats ``{query}`` twice (prefix
 duplicates as a phantom identifier the model can copy-quote in its output.
 ``rank_llm``'s ``singleturn_listwise_inference_handler.generate_prompt``
 calls ``query = self._replace_number(query)`` before templating; we do the
-same in :func:`_build_user_prompt`. Diagnosed against the off-shelf
+same in :func:`_build_user_prompt`. Diagnosed against the off-the-shelf
 RankZephyr BEIR ArguAna run (gap
 of ~0.18 nDCG@10 vs. published, while every other measured BEIR task —
 0/N queries with ``[N]`` patterns — was within ~0.04).
@@ -346,7 +346,7 @@ def _build_user_prompt(query_text: str, window_docs: list[str]) -> str:
     queries** carry constructions like ``[1]``, ``[7]``, ``[13]`` — leak
     spurious identifier tokens into the prompt twice (prefix + suffix),
     confusing the model's listwise output and degrading the rerank toward
-    identity. The failure was measured on the off-shelf RankZephyr
+    identity. The failure was measured on the off-the-shelf RankZephyr
     BEIR ArguAna run.
     """
     safe_query = _replace_bracket_numbers(query_text or "")

@@ -2,7 +2,7 @@
 
 Evaluates a reranker (`presentation_dependence.rerankers`) against a
 first-stage run. Produces per-query scores, ranking-quality metrics (nDCG),
-and order-stability metrics (PSI / τ-PSI) with their channel decompositions.
+and order-instability metrics (PSI / τ-PSI) with their channel decompositions.
 Execution code reads `runs/`; reporting reducers read `build/reproduction/`.
 
 ## Job orchestration
@@ -21,7 +21,7 @@ Execution code reads `runs/`; reporting reducers read `build/reproduction/`.
 - [`dataset_catalog.py`](dataset_catalog.py): loads dataset populations for
   config generators and studies.
 
-## PSI (permutation / presentation sensitivity)
+## Order instability and presentation dependence
 
 - [`psi.py`](psi.py): core metrics from aligned rankings and scores
   (`evaluate_psi`, `zeng_psi`), including the Δ-nDCG position readout.

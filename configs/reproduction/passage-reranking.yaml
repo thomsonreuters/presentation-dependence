@@ -171,7 +171,7 @@ training:
               alpha: 0.5
               ema_decay: 0.999
       - id: kl-to-base
-        purpose: test anchoring to the off-shelf scorer
+        purpose: test anchoring to the off-the-shelf scorer
         runnable: true
         seeds: [42]
         template: configs/self-distill/qwen3-4b-nonthink-sft-msmarco-30k-k1-labels.yaml

@@ -108,7 +108,7 @@ official pointwise reference. Use `scoring_mode: setwise_prompt` or
 `setwise_grade_prompt` + `docs_per_score_forward: B` for shared-context
 batched-PW pre-RL paths.
 - `Qwen3InstructGradeReranker`: expected-grade Qwen3 scorer used by the primary
-  off-shelf and OC-SFT paths; supports HF and vLLM backends and LoRA adapters.
+  off-the-shelf and OC-SFT paths; supports HF and vLLM backends and LoRA adapters.
 - `Gemma4GradeReranker`: Gemma-4 expected-grade scorer; backend/image support
   differs from Qwen and some LoRA combinations require merged weights.
 - `RankZephyrReranker`: `castorini/rank_zephyr_7b_v1_full`. Generative
@@ -547,7 +547,7 @@ Constraints + behavior:
   the previous collection's value on the reused reranker instead of the model default; also enforced by `assert_shared_model`.)
 - **`bundle.shared_base: true` (Case B, vLLM only):** relaxes the above so members
   may also differ on `reranker.lora_path`: a single base is loaded **once** and
-  serves the off-shelf base (members with no `lora_path`) plus N LoRA adapters,
+  serves the off-the-shelf base (members with no `lora_path`) plus N LoRA adapters,
   switching the active adapter per collection (`set_active_adapter`). The base loads
   with the **union** of member adapters (`enable_lora`, `max_loras=N`, a
   `LoRARequest` per adapter); base family/size/class/engine config must still match
@@ -555,7 +555,7 @@ Constraints + behavior:
   adapter must mount at a **distinct channel**: the generator names it
   `lora-<run-id>`. Shared-base channel unions are emitted by the tracked study
   materializers; there is no standalone `plan_eval.py` launcher in this release.
-  Use it to collapse e.g. {off-shelf + OC-SFT}×collections from 2 jobs into 1. Distinct
+  Use it to collapse e.g. {off the shelf + OC-SFT}×collections from 2 jobs into 1. Distinct
   *base* models still cannot share a bundle.
 - **Per-collection output:** each collection writes a standard `runs/<member-id>/<ts>/`
   tree (`metrics.json` + optional `psi/`), so one bundle produces **all** the

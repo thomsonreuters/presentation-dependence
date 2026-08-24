@@ -110,7 +110,7 @@ eval:
 
 execution:
   fixture_channel: msmarco-train-selfdistill-seed42
-  # 8x A100 40GB; matches the 4B K=1/K=10 SFT students. 4B at
+  # 8x A100 40GB; matches the 4B single-order/order-averaged students. 4B at
   # sfb=8/chunk=20 single-forward peaks ~26 GB, so a 24GB A10G profile is
   # insufficient at the matched-hparams geometry.
   distributed: ddp

@@ -273,8 +273,8 @@ files:
     sha256: 1c2dcbe9f5c05653830d724936444b55ccbd747a9410e8a65cf0165053ab8e81
     size_bytes: 6076
   configs/reproduction/evidence/metric-discordance/quality-argmax-docid.json:
-    sha256: f27f1e1f2fa71100287d4fb21f9b6518f389d544e21a31863b0ecb702f914a60
-    size_bytes: 4943
+    sha256: f7d97b6db5c472ae51a7994bbd24974f84896402fa9fcf138f9d1ebe9a3e1b47
+    size_bytes: 4954
   configs/reproduction/evidence/response-width/rr-fixed-weight-width-multiseed.json:
     sha256: 33dbd79393a5ec8bd85318bae900c4d5ae35423706ee4460ad85a3698c867600
     size_bytes: 2075

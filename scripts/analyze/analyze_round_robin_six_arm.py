@@ -14,6 +14,8 @@ import statistics
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
+
 
 ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE = ROOT / "configs/reproduction/evidence/round-robin/p04-six-arm-summary.json"
@@ -172,7 +174,7 @@ def render_markdown(result: dict[str, Any]) -> str:
     ]
     for row in result["rows"]:
         lines.append(
-            f"| {row['variant']} | "
+            f"| {paper_method_label(row['variant'])} | "
             f"{row['contiguous']['ndcg_cut_10']:.4f} | "
             f"{row['round_robin']['ndcg_cut_10']:.4f} | "
             f"{row['delta']['ndcg_cut_10']:+.4f} | "
@@ -186,7 +188,7 @@ def render_markdown(result: dict[str, Any]) -> str:
             "",
             f"Maximum absolute τ-PSI shift: **{gates['max_abs_tau_psi_shift']:.4f}** "
             f"(gate ≤ {gates['max_abs_tau_psi_shift_allowed']:.3f}).",
-            f"Trained-over-base nDCG@10 gain: contiguous "
+            f"Trained-over-off-the-shelf nDCG@10 gain: contiguous "
             f"**{gates['contiguous_trained_gain']:+.4f}**, round-robin "
             f"**{gates['round_robin_trained_gain']:+.4f}**.",
             "",

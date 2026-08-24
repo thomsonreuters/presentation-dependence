@@ -16,6 +16,8 @@ from typing import Any
 
 import numpy as np
 
+from presentation_dependence.analysis.terminology import paper_method_label
+
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNS_ROOT = ROOT / "runs"
@@ -73,7 +75,7 @@ EXPECTED_N: dict[str, int] = {
     "legal-b": 100,
 }
 
-LABELS = {"base": "Off-shelf", "k1sft": "K=1 SFT", "ocsft": "OC-SFT"}
+LABELS = {arm: paper_method_label(arm) for arm in ARMS}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -328,11 +330,11 @@ def _markdown(datasets: tuple[str, ...], payload: dict[str, Any]) -> str:
 
     lines.extend(["", "## Paired macro contrasts (replace)", ""])
     for metric, label in (
-        ("pool_psi", "Base minus OC-SFT pool-PSI"),
-        ("top10_flip", "Base minus OC-SFT top-10 flip probability"),
-        ("pool_psi", "K=1 SFT minus OC-SFT pool-PSI"),
+        ("pool_psi", "Off the shelf minus OC-SFT pool-PSI"),
+        ("top10_flip", "Off the shelf minus OC-SFT top-10 flip probability"),
+        ("pool_psi", "Single-order minus OC-SFT pool-PSI"),
     ):
-        contrast = "base_minus_ocsft" if label.startswith("Base") else "k1sft_minus_ocsft"
+        contrast = "base_minus_ocsft" if label.startswith("Off the shelf") else "k1sft_minus_ocsft"
         comp = _find_comparison(
             payload["comparisons"],
             perturbation="replace",
@@ -367,10 +369,10 @@ def _markdown(datasets: tuple[str, ...], payload: dict[str, Any]) -> str:
             "",
             "## Interpretation",
             "",
-            f"- Fixed order does not make the off-shelf scorer stable: pool-PSI is {base:.4f} "
+            f"- Fixed order does not make the off-the-shelf scorer stable: pool-PSI is {base:.4f} "
             f"and the retained top-10 changes on {100 * macro['base']['top10_flip_rate']:.1f}% of queries.",
             f"- OC-SFT lowers macro pool-PSI by {100 * (1 - oc / base):.1f}% "
-            f"({base:.4f} to {oc:.4f}); K=1 SFT barely moves it.",
+            f"({base:.4f} to {oc:.4f}); single-order distillation barely moves it.",
             "- Replace and drop results track closely (see the drop-only control above), "
             "so the result is not driven by the ragged final chunk.",
             "- Signed retained-set nDCG changes stay near zero while ranking and top-10 membership move, "

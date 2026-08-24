@@ -9,7 +9,10 @@ Short IDs are resolved only from this directory. Explicit YAML paths remain
 supported. `scripts/run_silver_generation.py` is the canonical local consumer,
 and validates the selected variant before constructing either backend.
 
-## Open-weight K-shot BSC
+## Open-weight order-averaged teacher labels
+
+The paper denotes the number of teacher permutations by `T`. The implementation
+retains the historical `k_shot_bsc` protocol and `k_perms` field names.
 
 Discriminator: `teacher.protocol: k_shot_bsc`.
 

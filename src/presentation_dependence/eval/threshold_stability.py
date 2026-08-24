@@ -19,7 +19,7 @@ The metric families are:
 3. Operating-point quality: precision, recall, F1, and retention in the
    canonical presentation.
 4. Matched-retention control: metrics after tuning ``tau`` to a shared mean
-   retention target, usually the F1-tuned retention of K=1 SFT. This separates a
+   retention target, usually the F1-tuned retention of single-order distillation. This separates a
    change in set size from a change in set stability.
 5. Calibration variance: per-document score variance across permutations, used
    as the T4 calibration axis.

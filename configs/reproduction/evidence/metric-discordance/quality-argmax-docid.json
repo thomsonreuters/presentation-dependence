@@ -16,7 +16,7 @@
     "k10sft": "Order-averaged",
     "posaug": "Permutation augmentation",
     "debiasfirst": "DebiasFirst",
-    "k1sft": "Single order",
+    "k1sft": "Single-order",
     "jina": "jina-reranker-v3"
   },
   "ndcg_means": {

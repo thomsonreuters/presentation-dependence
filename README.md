@@ -54,32 +54,25 @@ for high-stakes decisions about people. Upstream dataset and model terms apply
 
 ## Results
 
-![Figure 1 from the paper: the same candidates reordered give the same nDCG@10 but a different decision](docs/assets/paper/figure-1.png)
-
-**Figure 1: The same candidates reordered give the same nDCG@10 but a different
-decision.** (a) Each chip is one document, in the same position in both rows
-rather than by rank: solid where retained, dotted where not, outlined where they
-disagree. (b) Five trained scorers; values in Table 1.
-
 The paper's full Table 1 is shown below. It reports Qwen3-4B with ten
 random orders; trained rows are three-seed means. Passage reranking
 averages 18 collections (including the two undistributed internal collections),
 multi-document QA averages three, and response ranking averages five. Higher is
 better for nDCG and Jaccard; lower is better for τ-PSI and flip rates.
 
-| Variant                  | Rerank nDCG@10 | Rerank τ-PSI | Rerank Jacc. | QA nDCG@10 | QA τ-PSI | QA answer flip | Response nDCG@1 | Response τ-PSI | Response pair flip |
-| --------------------------| ---------------:| -------------:| -------------:| -----------:| ---------:| ---------------:| ----------------:| ---------------:| -------------------:|
-| Off the shelf            | 0.370          | 0.298        | 0.439        | 0.911      | 0.224    | 0.221          | 0.655           | 0.345          | 0.877              |
-| CapCal                   | 0.372          | 0.293        | 0.427        | 0.911      | 0.222    | 0.217          | 0.657           | 0.338          | 0.874              |
-| Round-robin              | 0.422          | 0.297        | 0.443        | 0.911      | 0.224    | 0.221          | 0.658           | 0.347          | 0.878              |
-| BSC (×10)¹               | 0.465          | 0.180        | 0.707        | 0.946      | 0.143    | 0.157          | 0.716           | 0.184          | 0.636              |
-| jina-reranker-v3         | 0.447          | 0.177        | 0.667        | 0.949      | 0.163    | 0.172          | 0.479           | 0.226          | 0.685              |
-| GPT-5.4²                 | 0.468          | —            | 0.707        | 0.972      | —        | 0.094          | 0.726           | —              | 0.489              |
-| Single-order             | 0.449          | 0.209        | 0.656        | 0.951      | 0.159    | 0.177          | 0.684           | 0.333          | 0.869              |
-| Order-averaged           | 0.455          | 0.130        | 0.743        | 0.956      | 0.124    | 0.149          | 0.693           | 0.228          | 0.724              |
-| DebiasFirst              | 0.454          | 0.128        | 0.759        | 0.955      | 0.147    | 0.164          | 0.694           | 0.228          | 0.718              |
-| Permutation augmentation | 0.455          | 0.129        | 0.760        | 0.955      | 0.148    | 0.162          | 0.696           | 0.223          | 0.707              |
-| OC-SFT                   | 0.459          | 0.083        | 0.835        | 0.961      | 0.096    | 0.125          | 0.701           | 0.201          | 0.661              |
+| Variant | Rerank nDCG@10 | Rerank τ-PSI | Rerank Jacc. | QA nDCG@10 | QA τ-PSI | QA answer flip | Response nDCG@1 | Response τ-PSI | Response pair flip |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Off the shelf | 0.370 | 0.298 | 0.439 | 0.911 | 0.224 | 0.221 | 0.655 | 0.345 | 0.877 |
+| CapCal | 0.372 | 0.293 | 0.427 | 0.911 | 0.222 | 0.217 | 0.657 | 0.338 | 0.874 |
+| Round-robin | 0.422 | 0.297 | 0.443 | 0.911 | 0.224 | 0.221 | 0.658 | 0.347 | 0.878 |
+| BSC (×10)¹ | 0.465 | 0.180 | 0.707 | 0.946 | 0.143 | 0.157 | 0.716 | 0.184 | 0.636 |
+| jina-reranker-v3 | 0.447 | 0.177 | 0.667 | 0.949 | 0.163 | 0.172 | 0.479 | 0.226 | 0.685 |
+| GPT-5.4² | 0.468 | — | 0.707 | 0.972 | — | 0.094 | 0.726 | — | 0.489 |
+| Single-order | 0.449 | 0.209 | 0.656 | 0.951 | 0.159 | 0.177 | 0.684 | 0.333 | 0.869 |
+| Order-averaged | 0.455 | 0.130 | 0.743 | 0.956 | 0.124 | 0.149 | 0.693 | 0.228 | 0.724 |
+| DebiasFirst | 0.454 | 0.128 | 0.759 | 0.955 | 0.147 | 0.164 | 0.694 | 0.228 | 0.718 |
+| Permutation augmentation | 0.455 | 0.129 | 0.760 | 0.955 | 0.148 | 0.162 | 0.696 | 0.223 | 0.707 |
+| OC-SFT | 0.459 | 0.083 | 0.835 | 0.961 | 0.096 | 0.125 | 0.701 | 0.201 | 0.661 |
 
 ¹ BSC's instability and decision cells compare four independent ten-permutation
 ensembles; every other row compares single permutations at one tenth of the

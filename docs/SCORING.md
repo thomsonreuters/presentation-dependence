@@ -219,7 +219,7 @@ parameters when the readout semantics remain unchanged.
 
 ## What does not use this readout
 
-The hosted closed-model path in `[TRAINING.md](TRAINING.md#hosted-teachers)`
+The hosted closed-model path in [TRAINING.md](TRAINING.md#hosted-teachers)
 decodes integer grades rather than reading logits at fixed positions, so it does
 not implement this readout. Its results are labelled with a different protocol
 for that reason.

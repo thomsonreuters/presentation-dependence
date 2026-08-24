@@ -18,7 +18,7 @@ by:
 - Java 21 and `JAVA_HOME` for Pyserini downloads.
 
 Per-dataset terms are tabulated in
-`[../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)`. Confirm that your
+[../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). Confirm that your
 planned use is permitted before downloading or processing third-party data.
 
 Verify the local prerequisites:
@@ -369,10 +369,10 @@ Each takes `--help`, and each writes only to paths you name on the command line;
 
 ## Related
 
-- `[MODELS.md](MODELS.md)`: model and reference examples.
-- `[TROUBLESHOOTING.md](TROUBLESHOOTING.md)`: diagnosis and acceptance checks.
-- `[REPRODUCE.md](REPRODUCE.md#one-result-end-to-end)`: single-result
+- [MODELS.md](MODELS.md): model and reference examples.
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md): diagnosis and acceptance checks.
+- [REPRODUCE.md](REPRODUCE.md#one-result-end-to-end): single-result
 walkthrough.
-- `[REPRODUCE.md](REPRODUCE.md#the-full-task-matrix)`: reproduction stages after
+- [REPRODUCE.md](REPRODUCE.md#the-full-task-matrix): reproduction stages after
 data setup.
 

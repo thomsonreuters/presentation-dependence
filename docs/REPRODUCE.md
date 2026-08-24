@@ -118,13 +118,13 @@ qrels paths declared by
 `configs/reproduction/populations/reranking-primary-18.yaml`.
 Collection terms are listed in
 [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md#datasets).
-`[DATA-SETUP.md](DATA-SETUP.md)` covers the other two tasks.
+[DATA-SETUP.md](DATA-SETUP.md) covers the other two tasks.
 
 `setup_reproduction_data.py validate` is a full-population gate and therefore
 still reports every missing gated, manual, and internal row after the default
 automated run. `source_lock.py verify` excludes Legal-A/B but still requires all
 other public, gated, and manual files. Use neither as an automated-subset
-success check; their exact scopes are in `[DATA-SETUP.md](DATA-SETUP.md)`.
+success check; their exact scopes are in [DATA-SETUP.md](DATA-SETUP.md).
 
 ## One result end to end
 
@@ -170,7 +170,7 @@ ir_datasets (`msmarco-passage/train`) and download on first run.
 The teacher scores each query under `T=10` shuffled permutations using the
 expected-grade readout on vLLM, then averages them into continuous `[0,3]`
 labels. The config is
-`[configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml](../configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml)`
+[configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml](../configs/silver/qwen3-4b-nonthink-k10-bsc-msmarco-30k.yaml)
 (`class: Qwen3InstructGradeReranker`, `model_name: Qwen/Qwen3-4B`,
 `enable_thinking: false`, `inference_engine: vllm`, `k_perms: 10`,
 `cross_query_batch: 4`).
@@ -295,7 +295,7 @@ objective:
 
 Do not hand-pick λ. It is selected per model on the held-out split by
 `scripts/select_lambda.py` under the rules in
-`[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md)`. To reproduce one result, train the
+[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md). To reproduce one result, train the
 selected λ config directly, or train the λ ∈ {0.5, 1, 2, 3, 4, 5} sweep and
 select afterwards.
 
@@ -432,7 +432,7 @@ The current public pointwise-control materializers cover the declared Qwen3-4B
 task pipelines. They do not cover every additional paper replication, including
 the Gemma-E4B response comparison and the extra 1.7B/32B response checks. The
 Nectar setup is likewise not the manuscript's deduplicated 434-prompt cohort; see
-`[DATA-SETUP.md](DATA-SETUP.md#response-ranking)`. Do not describe those cells
+[DATA-SETUP.md](DATA-SETUP.md#response-ranking). Do not describe those cells
 as clean-clone reproducible from this pipeline.
 
 Reference scope is also task-specific. Jina rows retained in the QA/response
@@ -700,13 +700,13 @@ document pair plus the raw teacher-permutation vector behind it.
 Generated output is rooted at `build/reproduction/`, with one directory per task
 and stage, `studies/<study>/<condition>/`, and
 `evidence/source-bindings/<task>/<stage>.json`.
-`[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md)` documents the pool-perturbation and
+[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md) documents the pool-perturbation and
 recovery layouts.
 
 ## Runtime expectations
 
 Planning estimates from the recorded OG Qwen3-4B runs, on the hardware described
-in `[HARDWARE.md](HARDWARE.md)`.
+in [HARDWARE.md](HARDWARE.md).
 
 
 | Stage                                      | Wall-clock                                                                    |

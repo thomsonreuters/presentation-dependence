@@ -47,7 +47,7 @@ key".
 **An import works locally but fails in the container.** Check that the extra is
 installed in the image, that `scripts/train/requirements.txt` carries the
 dependency, and that the base image's CUDA matches the vLLM pin. The CUDA
-mismatch is the usual cause; `[HARDWARE.md](HARDWARE.md)` has the compatibility
+mismatch is the usual cause; [HARDWARE.md](HARDWARE.md) has the compatibility
 matrix. Run `uv run poe smoke` before rebuilding: it exercises the same import
 graph on CPU in about a minute.
 
@@ -113,12 +113,12 @@ snapshot before retrying.
 **HF and vLLM disagree.** Check grade-token IDs, prompt whitespace,
 chat-template kwargs, dtype, revision, and readout mode. Expected-grade logit
 readout is not equivalent to free-form grade generation; see
-`[SCORING.md](SCORING.md)`.
+[SCORING.md](SCORING.md).
 
 **An adapter cannot be found.** Confirm the checkpoint catalog row
 `(variant, training_seed)`, the selected step, `reranker.lora_path`, and
 `max_lora_rank`. Do not reach for the latest checkpoint directory;
-`[MODELS.md](MODELS.md#trained-students)` covers loading.
+[MODELS.md](MODELS.md#trained-students) covers loading.
 
 **A bundle fails shared-model validation.** Split its members by model signature
 or adapter requirement. Do not weaken `assert_shared_model`.
@@ -154,7 +154,7 @@ type, K, seeds, and geometry identical.
 model revision, the candidate pool or fixture hash, qid filtering, the
 checkpoint catalog row, serving width and perturbation, and the reduction input
 under `build/reproduction/`. Some divergence is expected;
-`[REPRODUCE.md](REPRODUCE.md#reproduction-fidelity)` lists the known sources.
+[REPRODUCE.md](REPRODUCE.md#reproduction-fidelity) lists the known sources.
 
 ## Collection
 
@@ -177,7 +177,7 @@ replacement, and re-record the hash in the same change.
 **λ or checkpoint selection is missing.** OC-SFT needs the declared held-out
 rule. Run `scripts/select_lambda.py` and collect
 `training/checkpoints.json` before direct evaluation, per
-`[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md)`.
+[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md).
 
 ## Recovery rules
 

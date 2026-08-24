@@ -16,8 +16,8 @@ materialize the candidate fixture
 
 Teacher configs live under `configs/silver/` and student configs under
 `configs/self-distill/`; their field schemas are
-`[configs/silver/_schema.md](../configs/silver/_schema.md)` and
-`[configs/self-distill/_schema.md](../configs/self-distill/_schema.md)`. Both
+[configs/silver/_schema.md](../configs/silver/_schema.md) and
+[configs/self-distill/_schema.md](../configs/self-distill/_schema.md). Both
 run through the same two entry points:
 
 ```text
@@ -40,7 +40,7 @@ uv run python -m scripts.data.setup_msmarco_self_distill --query-count 30000
 
 The MS MARCO teacher fixture is `data/msmarco-train-selfdistill-seed42/`, and it
 must contain the declared qid file, topics, qrels, first-stage run, and fixture.
-`[DATA-SETUP.md](DATA-SETUP.md)` builds it.
+[DATA-SETUP.md](DATA-SETUP.md) builds it.
 
 `--full` does not install vLLM. For a tracked teacher that declares
 `inference_engine: vllm`, add `--extra vllm` to its `uv run` command. Full
@@ -108,7 +108,7 @@ The engines under
 `src/presentation_dependence/self_distill/engines/` lazy-import vLLM, keep HF and vLLM model
 ownership mutually exclusive, and set `VLLM_WORKER_MULTIPROC_METHOD=spawn`
 before the import to avoid CUDA fork failures. Model families do not necessarily
-share a viable image; see `[HARDWARE.md](HARDWARE.md)` for the CUDA and vLLM
+share a viable image; see [HARDWARE.md](HARDWARE.md) for the CUDA and vLLM
 compatibility matrix. Measure before changing a default:
 
 ```bash
@@ -457,7 +457,7 @@ student:
 ```
 
 Select lambda on the held-out split under the rule in
-`[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md)`, never from final test quality. Position
+[EVAL-PROTOCOL.md](EVAL-PROTOCOL.md), never from final test quality. Position
 augmentation and DebiasFirst controls are also available as declared objectives.
 
 Control memory through tracked config values rather than ad-hoc overrides:
@@ -474,7 +474,7 @@ Single-node DDP runs one process per GPU and shards student examples by rank,
 with rank 0 as the only writer. It is requested by `execution.distributed: ddp`
 and takes effect whenever more than one GPU is visible; the runner re-execs
 itself under torchrun, so there is nothing to launch by hand. See
-`[HARDWARE.md](HARDWARE.md#using-more-than-one-gpu)`. Gradient accumulation may
+[HARDWARE.md](HARDWARE.md#using-more-than-one-gpu). Gradient accumulation may
 use `no_sync` between synchronization steps, and resume requires a compatible
 model, optimizer, data, objective, and geometry.
 
@@ -516,7 +516,7 @@ uv run python scripts/study.py <task> direct-eval execute --dry-run
 Selection applies the declared held-out metric and cadence, the task's lambda
 rule first for OC-SFT, and the declared tie-break, then writes the checkpoint
 catalog that direct evaluation materializes from.
-`[MODELS.md](MODELS.md#trained-students)` covers evaluating the selected adapter, and
+[MODELS.md](MODELS.md#trained-students) covers evaluating the selected adapter, and
 `scripts/record_result.py` records the run you select into
 `docs/results_index.yaml`, which ships empty.
 
@@ -543,7 +543,7 @@ checkpoints/<generated-student-id>/<trial>/student/
 └── latest_checkpoint.json
 ```
 
-`[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md)` covers the shared artifact rules.
+[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md) covers the shared artifact rules.
 
 ## Common failures
 
@@ -558,5 +558,5 @@ as complete. An adapter and base mismatch shows up as differing base revision,
 LoRA target modules, rank, tokenizer, or architecture. vLLM may reject an
 adapter on architecture or rank grounds, or require merged weights.
 
-`[TROUBLESHOOTING.md](TROUBLESHOOTING.md)` has a few recovery procedures.
+[TROUBLESHOOTING.md](TROUBLESHOOTING.md) has a few recovery procedures.
 

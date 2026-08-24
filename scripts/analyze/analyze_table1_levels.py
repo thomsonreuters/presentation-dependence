@@ -80,19 +80,18 @@ ROWS: dict[str, dict[str, Any]] = {
     "gpt54": {
         "label": "GPT-5.4",
         "source": "GPT54-FULL-ROW and GPT54-FLIP-PAIRWISE",
-        "values": (0.468, None, 0.707, 0.972, None, 0.094, None, None, None),
-        "withheld": {"rerank_tau_psi", "qa_tau_psi"},
-        "unmeasured": {"response_ndcg1", "response_tau_psi", "response_pair_flip"},
+        "values": (0.468, None, 0.707, 0.972, None, 0.094, 0.726, None, 0.489),
+        "withheld": {"rerank_tau_psi", "qa_tau_psi", "response_tau_psi"},
     },
     "single-order": {
         "label": "Single order",
         "source": "canonical task collectors",
-        "values": (0.449, 0.209, 0.656, 0.951, 0.161, 0.177, 0.684, 0.333, 0.869),
+        "values": (0.449, 0.209, 0.656, 0.951, 0.159, 0.177, 0.684, 0.333, 0.869),
     },
     "order-averaged": {
         "label": "Order-averaged",
         "source": "canonical task collectors",
-        "values": (0.455, 0.130, 0.743, 0.956, 0.125, 0.149, 0.693, 0.228, 0.724),
+        "values": (0.455, 0.130, 0.743, 0.956, 0.124, 0.149, 0.693, 0.228, 0.724),
     },
     "debias-first": {
         "label": "DebiasFirst",
@@ -102,7 +101,7 @@ ROWS: dict[str, dict[str, Any]] = {
     "permutation-augmentation": {
         "label": "Permutation augmentation",
         "source": "TABLE1-INVENTORY and cross-task hand-backs",
-        "values": (0.455, 0.129, 0.760, 0.955, 0.149, 0.162, 0.696, 0.223, 0.707),
+        "values": (0.455, 0.129, 0.760, 0.955, 0.148, 0.162, 0.696, 0.223, 0.707),
     },
     "oc-sft": {
         "label": "OC-SFT",
@@ -271,9 +270,9 @@ def build_result() -> dict[str, Any]:
             "rows": 11,
             "columns": 9,
             "slots": 99,
-            "numeric_cells": 94,
-            "withheld_cells": 2,
-            "unmeasured_cells": 3,
+            "numeric_cells": 96,
+            "withheld_cells": 3,
+            "unmeasured_cells": 0,
             "all_cells_classified": True,
             "cross_checks": 14,
             "cross_checks_pass": True,

@@ -72,7 +72,7 @@ For supported expected-grade wrappers, select the backend with
 unsupported readout/backend combinations fail during config loading. A vLLM
 wrapper does not also load the HF model on the same device. Teacher batching and
 resume semantics are in
-`[TRAINING.md](TRAINING.md#open-weight-teachers)`.
+[TRAINING.md](TRAINING.md#open-weight-teachers).
 
 Before changing a default backend, verify the frozen prompt/readout on the target
 image with `scripts/analyze/probe_vllm_speedup.py`. Keep the CUDA stack,
@@ -88,7 +88,7 @@ Wrapper expansion beyond the shipped set of wrappers is not an operator contract
 | `MxbaiPointwise`             | order-free baseline                             | HF              | no                                  | `configs/experiments/example-passage-mxbai-large-v2.yaml`              |
 | `Qwen3InstructGradeReranker` | expected-grade / OC-SFT                         | HF, vLLM        | yes                                 | `configs/experiments/example-passage-b20-psi.yaml`                     |
 | `Granite41GradeReranker`     | expected-grade family                           | HF, vLLM        | yes                                 | `configs/experiments/example-passage-granite-b20-psi.yaml`             |
-| `Gemma4GradeReranker`        | expected-grade MoE/dense                        | HF, vLLM        | merge for some vLLM paths           | `[MODELS.md](MODELS.md#trained-students)`                              |
+| `Gemma4GradeReranker`        | expected-grade MoE/dense                        | HF, vLLM        | merge for some vLLM paths           | [MODELS.md](MODELS.md#trained-students)                              |
 | `Qwen3Reranker`              | pointwise reference; specialized-base control   | HF, vLLM        | paper trains it; recipe not shipped | `configs/silver/a2-qwen3-reranker-k10-bsc-msmarco-30k.yaml`            |
 | `JinaListwiseReranker`       | scoring-listwise reference                      | HF              | no                                  | `configs/experiments/example-passage-jina-v3-b20.yaml`                 |
 | `RankZephyrReranker`         | generative listwise reference                   | HF              | no                                  | `configs/experiments/example-passage-rankzephyr-sliding-window.yaml`   |
@@ -219,7 +219,7 @@ pass describe one run; omitting it puts them in two timestamped directories.
 
 Requires the DL19 fixture, model access, and a suitable GPU for practical
 throughput. Build the fixture after Pyserini setup; the command is in
-`[DATA-SETUP.md](DATA-SETUP.md)`. It takes explicit `--topics` / `--run` /
+[DATA-SETUP.md](DATA-SETUP.md). It takes explicit `--topics` / `--run` /
 `--index` flags rather than `-e`, because this config is a `FixtureLoader` one
 and so names no first stage to read them from.
 
@@ -326,7 +326,7 @@ reranker:
 
 An adapter must not change tokenizer or prompt identity unless the training
 contract declares it, and expected-grade logit readout must not become
-generated-grade decoding. `[SCORING.md](SCORING.md)` is the contract.
+generated-grade decoding. [SCORING.md](SCORING.md) is the contract.
 
 A bundle may serve several adapters over one base. Member configs must pass
 `assert_shared_model` on base model, revision, tokenizer, engine, and reranker
@@ -350,7 +350,7 @@ For 30B/32B or large MoE checkpoints:
 2. ensure the model fits one visible device under a tracked TP=1 config;
 3. avoid re-downloading the base for every run.
 
-The release does not ship a validated TP>1 profile. See `[HARDWARE.md](HARDWARE.md)` for the distinction  
+The release does not ship a validated TP>1 profile. See [HARDWARE.md](HARDWARE.md) for the distinction
 between replication and tensor parallelism.
 
 ## Gemma-4 adapters
@@ -396,8 +396,8 @@ not train models.
 
 Closed models are scored through an OpenAI-compatible chat endpoint.
 Required credentials and resume/finalize behavior are documented in
-`[TRAINING.md](TRAINING.md)` and
-`[TROUBLESHOOTING.md](TROUBLESHOOTING.md)`.
+[TRAINING.md](TRAINING.md) and
+[TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
 ## Validate a new model
 
@@ -426,6 +426,6 @@ two exercise the actual wrapper and may require model access and a GPU.
 ## Scoring readout
 
 The Qwen3/Granite/Gemma batched-pointwise scorers use the expected-grade readout
-defined in `[SCORING.md](SCORING.md)`. Pointwise cross-encoders, reward models,
+defined in [SCORING.md](SCORING.md). Pointwise cross-encoders, reward models,
 PairRM, Jina, and RankZephyr use their own published interfaces. Loading an
 expected-grade checkpoint with a different readout produces different scores.

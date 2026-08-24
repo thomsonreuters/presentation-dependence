@@ -13,7 +13,7 @@ Reproduction is post-hoc and best-attempt: re-execution should  be close to the 
 
 Evaluation collections are read from `data/<dataset-name>/`. Legal-A and Legal-B are
 proprietary and are not distributed with this repository; they are [not needed
-to reproduce the public conclusions](../../README.md#results).
+to reproduce the public conclusions](#results).
 
 ## Scope
 
@@ -29,8 +29,8 @@ numbers. Equal nDCG does not imply stable decisions; if you care about retained
 sets, reader answers, or preference picks, measure τ-PSI as well. Scores are
 graded relevance estimates, not factuality or legal judgments. Do not use this
 for high-stakes decisions about people. Upstream dataset and model terms apply
-(`[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)`); security issues go through
-`[SECURITY.md](SECURITY.md)`.
+([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)); security issues go through
+[SECURITY.md](SECURITY.md).
 
 ## Contents
 
@@ -101,7 +101,7 @@ grades, a fixed answer skeleton pins the position of every grade token, so one
 forward pass reads the probability over the four grade tokens at each slot and
 takes the expected grade `E[g] = Σ g·P(g)` as the score. One pass yields all `B`
 scores, and since nothing is generated there is nothing to mis-parse.
-`[docs/SCORING.md](docs/SCORING.md)` is the exact contract. Legacy
+[docs/SCORING.md](docs/SCORING.md) is the exact contract. Legacy
 `Path-C` / `pathc` identifiers are explained under
 [Legacy identifiers](#legacy-identifiers).
 
@@ -125,7 +125,7 @@ OC-SFT adds `λ · mean_d (s_A(d) - s_B(d))²` over two shuffled views A and B o
 the same chunk, driving the order-dependent part of the score toward zero from
 single-order labels. Passage reranking selects `λ` on held-out MS MARCO; QA uses
 a disjoint held-out HotpotQA split; the reported response-ranking λ is set
-a priori per scale. See `[docs/EVAL-PROTOCOL.md](docs/EVAL-PROTOCOL.md)`; do not
+a priori per scale. See [docs/EVAL-PROTOCOL.md](docs/EVAL-PROTOCOL.md); do not
 hand-pick from final test results.
 
 ## Key terms
@@ -187,7 +187,7 @@ uv run --no-sync poe ci       # network-free gate after setup has completed
 CUDA-only; add `--extra vllm` to the `uv run` command that needs it. The local
 Python 3.11 extra is the Qwen-compatible vLLM 0.10.2 stack. Gemma-4 serving uses
 the separate Python 3.13/CUDA 13 container described in
-`[docs/HARDWARE.md](docs/HARDWARE.md)`.
+[docs/HARDWARE.md](docs/HARDWARE.md).
 Setup registers a user Jupyter kernel by default; pass `--no-kernel` on a
 headless or shared machine.
 
@@ -200,7 +200,7 @@ export SLM_NUM_GPUS=8              # only to override the detected GPU count
 `.env.example` is a key-name template. Never commit populated credentials.
 
 Jobs autodetect their GPUs and run on device 0 unless told otherwise;
-`[docs/HARDWARE.md](docs/HARDWARE.md#using-more-than-one-gpu)` covers device
+[docs/HARDWARE.md](docs/HARDWARE.md#using-more-than-one-gpu) covers device
 selection and the three ways to use more than one.
 
 ## Quick start
@@ -276,10 +276,10 @@ comparable.
 Pinning `--run-dir` is what keeps the three phases together. Each command
 otherwise mints its own `runs/<ID>/<timestamp>/`, so `metrics.json` and
 `psi/psi_metrics.json` would describe the same config from two directories.
-`[docs/RUN-ARTIFACTS.md](docs/RUN-ARTIFACTS.md)` describes the resulting
+[docs/RUN-ARTIFACTS.md](docs/RUN-ARTIFACTS.md) describes the resulting
 layout.
 
-`[docs/REPRODUCE.md](docs/REPRODUCE.md)` carries the full walkthrough, from the
+[docs/REPRODUCE.md](docs/REPRODUCE.md) carries the full walkthrough, from the
 zero-dependency smoke and first real-data check to the complete task matrix.
 
 ## Repository map
@@ -372,12 +372,12 @@ result frozen into each run's `resolved_config.yaml`. Keep
 `configs/experiments/` flat and keep IDs stable, since run directories and the
 results index key off them.
 
-Full schema: `[configs/experiments/_schema.md](configs/experiments/_schema.md)`.
+Full schema: [configs/experiments/_schema.md](configs/experiments/_schema.md).
 Search configs with `uv run python scripts/list_experiment_configs.py`.
 
 Experiment configs are per-job. The pipeline definitions that generate them, one
 per task, live in `configs/reproduction/` and are documented in
-`[configs/reproduction/_schema.md](configs/reproduction/_schema.md)`.
+[configs/reproduction/_schema.md](configs/reproduction/_schema.md).
 
 ## Models and rerankers
 
@@ -401,15 +401,15 @@ paradigm.
 | `IdentityReranker`                              | smoke                            | returns the first-stage order                                                  |
 
 
-`[docs/MODELS.md](docs/MODELS.md)` covers backends and revisions. Model and
+[docs/MODELS.md](docs/MODELS.md) covers backends and revisions. Model and
 dataset terms are recorded in
-`[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)`.
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Evaluation datasets
 
 Training uses MS MARCO. Every collection except TREC-DL is evaluated zero-shot.
 The 18 are declared in
-`[configs/reproduction/populations/reranking-primary-18.yaml](configs/reproduction/populations/reranking-primary-18.yaml)`:
+[configs/reproduction/populations/reranking-primary-18.yaml](configs/reproduction/populations/reranking-primary-18.yaml):
 DL19 through DL23 in domain; NFCorpus, FiQA, Touche-2020, ArguAna,
 Climate-FEVER, TREC-COVID, DBPedia, SciFact, Signal-1M, TREC-NEWS and Robust04
 out of domain; and Legal-A and Legal-B, which are not distributed.
@@ -417,7 +417,7 @@ out of domain; and Legal-A and Legal-B, which are not distributed.
 First-stage retrievers differ per benchmark, using MS MARCO-tuned BM25 for
 TREC-DL and vanilla BM25 for BEIR. Each dataset directory records the exact
 retriever in `dataset_meta.yaml`, and mixing
-regimes moves nDCG@10 by 1 to 3 points. `[docs/DATA-SETUP.md](docs/DATA-SETUP.md)`
+regimes moves nDCG@10 by 1 to 3 points. [docs/DATA-SETUP.md](docs/DATA-SETUP.md)
 has the per-dataset detail.
 
 ## Extending the pipeline
@@ -425,7 +425,7 @@ has the per-dataset detail.
 To add a reranker, add a file under `src/presentation_dependence/rerankers/` subclassing
 `Reranker`, add one line to `registry.py`, and reference the class from a
 config. The checklist is in
-`[src/presentation_dependence/rerankers/README.md](src/presentation_dependence/rerankers/README.md)`.
+[src/presentation_dependence/rerankers/README.md](src/presentation_dependence/rerankers/README.md).
 
 To add an evaluation dataset, fetch it with
 `scripts/data/fetch_pyserini_dataset.py`, which writes `data/<dataset-name>/` with the
@@ -440,23 +440,23 @@ new ID, and adjust the three blocks.
 
 ## Documentation
 
-- `[docs/REPRODUCE.md](docs/REPRODUCE.md)`: reproducing results, from the
+- [docs/REPRODUCE.md](docs/REPRODUCE.md): reproducing results, from the
 zero-dependency smoke to the full matrix and the appendix registry.
-- `[docs/SCORING.md](docs/SCORING.md)`: the expected-grade readout contract.
-- `[docs/TERMINOLOGY.md](docs/TERMINOLOGY.md)`: paper names, internal aliases,
+- [docs/SCORING.md](docs/SCORING.md): the expected-grade readout contract.
+- [docs/TERMINOLOGY.md](docs/TERMINOLOGY.md): paper names, internal aliases,
 and protocol notation.
-- `[docs/EVAL-PROTOCOL.md](docs/EVAL-PROTOCOL.md)`: τ-PSI, selection invariants,
+- [docs/EVAL-PROTOCOL.md](docs/EVAL-PROTOCOL.md): τ-PSI, selection invariants,
 and λ selection.
-- `[docs/TRAINING.md](docs/TRAINING.md)`: silver generation and student SFT.
-- `[docs/DATA-SETUP.md](docs/DATA-SETUP.md)`: materializing the collections.
-- `[docs/MODELS.md](docs/MODELS.md)`: model families, backends, and licences.
-- `[docs/MODELS.md](docs/MODELS.md#trained-students)`: evaluating a selected adapter.
-- `[docs/HARDWARE.md](docs/HARDWARE.md)`: containers, GPU sizing, and cost.
-- `[docs/RUN-ARTIFACTS.md](docs/RUN-ARTIFACTS.md)`: on-disk run layout.
-- `[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)`: diagnosis and recovery.
-- `[SECURITY.md](SECURITY.md)`: private reporting and release security boundary.
+- [docs/TRAINING.md](docs/TRAINING.md): silver generation and student SFT.
+- [docs/DATA-SETUP.md](docs/DATA-SETUP.md): materializing the collections.
+- [docs/MODELS.md](docs/MODELS.md): model families, backends, and licences.
+- [docs/MODELS.md](docs/MODELS.md#trained-students): evaluating a selected adapter.
+- [docs/HARDWARE.md](docs/HARDWARE.md): containers, GPU sizing, and cost.
+- [docs/RUN-ARTIFACTS.md](docs/RUN-ARTIFACTS.md): on-disk run layout.
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md): diagnosis and recovery.
+- [SECURITY.md](SECURITY.md): private reporting and release security boundary.
 
-`[configs/reproduction/appendix.yaml](configs/reproduction/appendix.yaml)`
+[configs/reproduction/appendix.yaml](configs/reproduction/appendix.yaml)
 maps the artifact families currently represented in the release to their
 programs and, where one exists, an analyzer. It is not yet a one-to-one registry
 of all 31 numbered tables and 10 numbered figures in the manuscript. Treat
@@ -474,13 +474,13 @@ rg -A4 'table-specialized-quality' configs/reproduction/appendix.yaml
 ## Development checks
 
 Report vulnerabilities privately as described in  
-`[SECURITY.md](SECURITY.md)`.
+[SECURITY.md](SECURITY.md).
 
 ## License and citation
 
-Outbound licence: `[LICENSE](LICENSE)`. Third-party attributions and terms:
-`[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)`. Citation metadata:
-`[CITATION.cff](CITATION.cff)`.
+Outbound licence: [LICENSE](LICENSE). Third-party attributions and terms:
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Citation metadata:
+[CITATION.cff](CITATION.cff).
 
 Paper: *Equal ranking quality, different decisions: presentation dependence in
 batched scoring*. During anonymous review no preprint URL or DOI is asserted.

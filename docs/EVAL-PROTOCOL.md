@@ -167,7 +167,7 @@ variants.
 ## Recording a run
 
 When a training run finishes, maintained records follow
-`[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md#recording-and-querying-selected-runs)` and use the selected checkpoint:
+[RUN-ARTIFACTS.md](RUN-ARTIFACTS.md#recording-and-querying-selected-runs) and use the selected checkpoint:
 
 - `runs/<ID>/<timestamp>/metrics.json` reports selected-checkpoint metrics.
 - `psi/psi_metrics.json` reports PSI on the same selected checkpoint.

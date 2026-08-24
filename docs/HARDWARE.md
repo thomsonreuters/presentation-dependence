@@ -4,7 +4,7 @@ Training and vLLM inference that match the reported CUDA stack need NVIDIA
 CUDA. Offline smoke, data setup, reducers, and structural checks do not. The
 zero-dependency smoke (`uv run --no-sync poe smoke` /
 `configs/experiments/_smoke-fixture.yaml`) in
-`[REPRODUCE.md](REPRODUCE.md#zero-dependency-smoke)` needs no accelerator, data,
+[REPRODUCE.md](REPRODUCE.md#zero-dependency-smoke) needs no accelerator, data,
 Java, or network; compatible Hugging Face rerankers can run small CPU/MPS
 development checks. Everything below assumes you control the machine, images,
 and mounts.
@@ -126,7 +126,7 @@ A100-40GB for the 4B–8B and small Gemma/Granite students, and A100-80GB for th
 14B/32B/30B-class students. These are historical configurations, not portable
 capacity guarantees. Qwen/Granite recipes set `flash_attention_2`, but
 `flash-attn` is not locked here: install it for CUDA if you want FA2, or
-override to `sdpa` (`[TRAINING.md](TRAINING.md)`).
+override to `sdpa` ([TRAINING.md](TRAINING.md)).
 
 A dated internal benchmark observed substantially lower vLLM evaluation
 throughput on its A100 training pool than on its L40S pool. That comparison is
@@ -152,7 +152,7 @@ training.
 
 MPS is available only to compatible Hugging Face inference paths. The
 zero-dependency smoke in
-`[REPRODUCE.md](REPRODUCE.md#zero-dependency-smoke)` uses the identity
+[REPRODUCE.md](REPRODUCE.md#zero-dependency-smoke) uses the identity
 reranker on a synthetic fixture and does not load a model, so it validates
 plumbing rather than MPS inference. Tracked paper configs often pin
 `dtype: bfloat16`; for the broadest CPU/MPS compatibility, override
@@ -167,7 +167,7 @@ Which mechanism applies is decided by the kind of job, not by a global setting:
 | --------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Student SFT                 | `execution.distributed: ddp`             | Re-execs under single-node torchrun, one worker process per GPU, sharding training examples by rank. Rank 0 is the only writer.                                   |
 | Teacher / silver generation | `teacher.local_data_parallel_workers: N` | Spawns N workers, each pinned to one GPU with a full model replica, splitting qids round-robin and merging the outputs back into one run.                         |
-| Independent sweep cells     | `execution.max_parallel`, or `--jobs`    | Runs several unrelated cells at once. Only safe when they do not contend for the same device: see `[../configs/sweeps/_schema.md](../configs/sweeps/_schema.md)`. |
+| Independent sweep cells     | `execution.max_parallel`, or `--jobs`    | Runs several unrelated cells at once. Only safe when they do not contend for the same device: see [../configs/sweeps/_schema.md](../configs/sweeps/_schema.md). |
 
 
 Tracked configs do not use tensor parallelism across devices. Every tracked

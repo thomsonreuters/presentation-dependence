@@ -46,7 +46,7 @@ conditions:
     training_seed: 42
     serving_width: 1
     variants:
-      k10-sft: K=10 SFT
+      k10-sft: Order-averaged
 
   context-decomposition:
     task: passage-reranking

@@ -1,7 +1,8 @@
 # Evaluation and checkpoint-selection protocol
 
 Select checkpoints and lambda values for trained recipes. Applies to
-K=10 SFT, the K-label and label-count sweeps, OC-SFT, defensive baselines,
+order-averaged distillation, the teacher-order and label-count sweeps, OC-SFT,
+defensive baselines,
 multi-seed verification, and cross-family runs.
 
 ## Selection invariants
@@ -60,8 +61,9 @@ specifies a different rule.
 
 ## One-standard-error lambda and checkpoint selection
 
-Plain SFT selects the highest-ranked held-out checkpoint within one training
-config. Passage-reranking and multi-document-QA OC-SFT additionally select
+Single-order and order-averaged distillation select the highest-ranked held-out
+checkpoint within one training config. Passage-reranking and multi-document-QA
+OC-SFT additionally select
 across the declared lambda grid with `scripts/select_lambda.py`.
 
 The selector checks candidate completeness, converged regions, collapse,

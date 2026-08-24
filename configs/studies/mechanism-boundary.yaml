@@ -53,7 +53,7 @@ conditions:
     engine_cap_overrides:
       touche2020: 8192
     # This condition generates the four trained round-robin cells.
-    # The off-shelf cell comes from direct-eval's round-robin-chunks control;
+    # The off-the-shelf cell comes from direct-eval's round-robin-chunks control;
     # the OC-SFT cell comes from trained-channel-cross.
     execution:
       max_parallel: 1
@@ -83,8 +83,8 @@ conditions:
     training_seed: 42
     placeholder: "1"
     variants:
-      k1-sft: K=1 SFT
-      k10-sft: K=10 SFT
+      k1-sft: Single-order
+      k10-sft: Order-averaged
       oc-sft: OC-SFT
 
 materializers:

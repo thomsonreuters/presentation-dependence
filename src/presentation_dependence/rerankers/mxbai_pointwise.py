@@ -26,7 +26,7 @@ Optional:
   revision: str       # HF commit SHA / branch. Pin before publishing a
                       # number; otherwise a silent repo update moves it.
   max_doc_chars: int  # pre-truncate passage text (chars) before scoring.
-                      # 0 = disabled (legacy off-shelf). Set per surface
+                      # 0 = disabled (legacy off-the-shelf). Set per surface
                       # (500 BEIR/legal, 1200 MS MARCO DL) for fair vs ours.
 
 Apache-2.0 source and modification notice:

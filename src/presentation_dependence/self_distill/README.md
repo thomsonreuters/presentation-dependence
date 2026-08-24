@@ -1,8 +1,8 @@
 # `self_distill/`
 
 Self-distillation for batched-pointwise relevance grading. An open-weight
-teacher writes K-shot BSC silver labels (expected grade over shuffled
-presentations); a student is trained with LoRA on those labels. The default
+teacher writes order-averaged silver labels (expected grade over `T` shuffled
+teacher permutations); a student is trained with LoRA on those labels. The default
 student recipe is OC-SFT (`objective.type: supervised_consistency`): MSE on the
 teacher labels plus a two-view consistency penalty.
 
@@ -19,8 +19,9 @@ Hosted/API teachers also use `configs/silver/` but run through
 
 ## Teacher and readout
 
-- [`teacher.py`](teacher.py): `KShotBSCTeacher`. For each query: K Fisher-Yates
-  permutations (default seeds `0..K-1`, same scheme as `eval/psi_manager.py`),
+- [`teacher.py`](teacher.py): `KShotBSCTeacher`. For each query: `T`
+  Fisher-Yates teacher permutations (stored under the historical `k_perms` key;
+  default seeds `0..T-1`, same scheme as `eval/psi_manager.py`),
   score each presentation, map scores back to original doc order, average per
   doc, write `silver/silver_labels.jsonl` plus `silver/manifest.json` under
   `runs/self-distill/<id>/<timestamp>/`. Implements only `protocol: k_shot_bsc`;
@@ -59,7 +60,7 @@ Hosted/API teachers also use `configs/silver/` but run through
   its inverse, so the over-represented early slots stop dominating. The
   functions are pure, and the estimate is written to
   `ips_slot_propensity.json` in the run directory. With uniform weights the
-  objective reduces exactly to the shuffled-view augmentation arm.
+  objective reduces exactly to the permutation-augmentation arm.
 - [`selection.py`](selection.py): checkpoint and OC-SFT λ selection rules
   (`select_heldout_lambda`, `best_checkpoint`, `select_amortization_matching`).
   `scripts/select_lambda.py` is the operator stage, and it runs

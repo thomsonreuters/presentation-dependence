@@ -129,7 +129,7 @@ class Reranker(ABC):
         ``set_active_adapter`` when it supports multi-adapter serving (the vLLM
         logit-skeleton engine does). Shared-base eval bundles
         (``bundle.run_bundle(shared_base=True)``) call this per surface so one
-        base model load can serve the off-shelf base plus N adapters.
+        base model load can serve the off-the-shelf base plus N adapters.
 
         Raises if a non-base adapter is requested but the engine can't switch
         adapters (e.g. an HF engine, a merged-checkpoint model, or an API

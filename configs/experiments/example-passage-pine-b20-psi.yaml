@@ -1,5 +1,5 @@
 ###############################################################################
-# PINE over the off-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
+# PINE over the off-the-shelf Qwen3-4B grade scorer on DL19, with full tau-PSI.
 #
 # External baseline: Wang+2025 position-invariant attention, routed through the
 # dedicated HF/eager path in rerankers/pine.py. Stock vLLM cannot serve the

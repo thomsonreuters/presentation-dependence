@@ -1139,7 +1139,7 @@ def materialize_placeholder_controls(
             {
                 "id": sweep_id,
                 "description": (
-                    f"Grade:{informativeness['placeholders'][label]} off-shelf random-only placeholder control."
+                    f"Grade:{informativeness['placeholders'][label]} off-the-shelf random-only placeholder control."
                 ),
                 "execution": {"max_parallel": int(execution["max_parallel"])},
                 "jobs": jobs,

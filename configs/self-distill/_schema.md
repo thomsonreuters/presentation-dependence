@@ -24,8 +24,11 @@ directories key off it. Names read left to right as base model, label regime,
 objective, and training dataset:
 
 - Base: `qwen3-4b-nonthink`, `gemma4`, `granite-41-8b`.
-- Labels: `k1` (one presentation) or `k10` (order-averaged over ten).
-- Objective: `sft` for plain regression, `supervised-consistency-lambda<code>-warmup<steps>` for OC-SFT, or a named ablation such as `debias-first` or `pos-aug-only`.
+- Labels: `k1` for single-order distillation or `k10` for order-averaged
+  distillation over `T=10` teacher permutations.
+- Objective: `sft` for score regression,
+  `supervised-consistency-lambda<code>-warmup<steps>` for OC-SFT, or a named
+  ablation such as `debias-first` or `pos-aug-only` (permutation augmentation).
 - Dataset: `msmarco-30k`, `hotpotqa-support-30k`, `ultrafeedback-rq-30k`.
 
 Prefer adding a new YAML over mutating a tracked one.
@@ -141,7 +144,7 @@ collector-compatible convention is
 
 `evaluation` runs the in-training quality probe: `max_queries`,
 `every_n_steps`, `at_start`, `at_end`. Its optional `psi` block
-(`enabled`, `max_queries`, `seeds`) adds the order-stability proxy on a smaller
+(`enabled`, `max_queries`, `seeds`) adds the order-instability proxy on a smaller
 subset. These are diagnostics for watching a run, not the reported numbers; the
 paper's figures come from the evaluation stage in
 [`../reproduction/_schema.md`](../reproduction/_schema.md).

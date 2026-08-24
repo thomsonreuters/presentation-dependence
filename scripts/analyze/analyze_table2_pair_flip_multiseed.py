@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reduce canonical Table 2 preference-pair flip rows."""
+"""Reduce canonical Table 2 pair-flip rows."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from presentation_dependence.analysis.terminology import paper_method_label
 from presentation_dependence.reproduction.analysis_inputs import (
     load_per_consumer,
     summarize_seeded_metric,
@@ -119,7 +120,7 @@ def analyze_canonical(path: Path) -> dict[str, Any]:
         if row.get("variant") == "off-shelf" and row.get("dataset") in datasets
     ]
     return {
-        "analysis": "Table 2 preference-pair flip, five-collection mean",
+        "analysis": "Table 2 pair flip, five-collection mean",
         "status": "complete",
         "protocol": {
             "source": str(path),
@@ -151,13 +152,7 @@ def render(payload: dict[str, Any]) -> str:
     ]
     off = payload["off_shelf"]["five_collection_mean"]
     lines.append(f"| Off the shelf | - | - | - | {off:.4f} |")
-    labels = {
-        "k1_sft": "K=1 SFT",
-        "k10_sft": "K=10 SFT",
-        "position_augmentation": "Shuffled-view augmentation",
-        "debiasfirst": "DebiasFirst",
-        "oc_sft": "OC-SFT",
-    }
+    labels = {arm: paper_method_label(arm) for arm in TRAINED_ARMS}
     for arm in TRAINED_ARMS:
         seeds = payload["five_collection_by_seed"][arm]
         summary = payload["across_seed"][arm]
@@ -171,7 +166,8 @@ def render(payload: dict[str, Any]) -> str:
             "",
             "## Per-collection seed-42 check",
             "",
-            "| Collection | Off shelf | K=1 SFT | K=10 SFT | Augmentation | DebiasFirst | OC-SFT |",
+            "| Collection | Off the shelf | Single-order | Order-averaged | "
+            "Permutation augmentation | DebiasFirst | OC-SFT |",
             "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
@@ -191,7 +187,7 @@ def render(payload: dict[str, Any]) -> str:
             "",
             "## Per-collection three-seed values",
             "",
-            "| Collection | K=1 SFT | K=10 SFT | Augmentation | DebiasFirst | OC-SFT |",
+            "| Collection | Single-order | Order-averaged | Permutation augmentation | DebiasFirst | OC-SFT |",
             "| --- | ---: | ---: | ---: | ---: | ---: |",
         ]
     )

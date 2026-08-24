@@ -123,8 +123,9 @@ runs/<ID>/<timestamp>/
 
 `psi/psi_metrics.json` is the aggregate robustness artifact. It includes the
 aggregate PSI metrics, protocol metadata, and τ-PSI@B geometry fields.
-For publication, require the expected qid set and exactly K random presentations
-per qid. A query with an empty passage list or no permutations is skipped, and an
+For publication, require the expected qid set and exactly `M` random evaluation
+permutations per qid (stored under the historical `K_permutations` field). A
+query with an empty passage list or no permutations is skipped, and an
 individual permutation that produces no output is skipped, without any of them
 entering `failed_qids`, so none of these fail the run. Its `coverage` block
 records them:
@@ -191,7 +192,8 @@ runs/self-distill/<ID>/<timestamp>/
 ```
 
 `silver/silver_labels.jsonl` is the teacher-side training artifact: one
-continuous silver label per `(query, document)` pair, plus the raw K-shot score
+continuous silver label per `(query, document)` pair, plus the raw
+teacher-permutation score
 vector used to compute it.
 
 During a run, `silver/per_qid/<qid>.jsonl` holds the per-query resume shards

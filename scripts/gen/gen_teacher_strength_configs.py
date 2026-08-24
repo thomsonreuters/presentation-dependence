@@ -14,7 +14,7 @@ The study runs in phases, one per invocation of ``--phase``:
 ``tier1-wave2``
     The facet-2 teachers deferred from wave 1, once those brackets have resolved.
 ``tier2-facet1-sft``
-    K=1 against K=10 SFT for four teachers into Qwen3-4B.
+    Single-order against order-averaged distillation for four teachers into Qwen3-4B.
 ``tier2-facet2-sft``
     The same contrast into Gemma-E4B and Granite-8B, testing whether it holds
     across model families.
@@ -93,7 +93,7 @@ TEACHER_SILVER_STEM = {
 SILVER_TRAIN_RE = re.compile(r"silver_labels_[A-Za-z0-9_]+_k1_seed0_train_29500\.jsonl")
 SILVER_HELDOUT_RE = re.compile(r"silver_labels_[A-Za-z0-9_]+_k1_seed0_heldout_500\.jsonl")
 
-# --- Tier-2 Facet-1: SFT contrast (K=1 + K=10 SFT)
+# --- Tier-2 Facet-1: single-order versus order-averaged distillation
 TIER2_F1_TEACHERS = ["qwen3_1p7b", "qwen3_32b", "gemma4_31b", "granite41_8b"]
 SFT_TEMPLATE = {  # student -> {recipe: self-distill SFT template id}
     "qwen3_4b": {
@@ -166,12 +166,12 @@ def _emit_tier2_facet1_sft(args) -> None:
             if args.write:
                 cfg_path.write_text(text)
     sweep_lines = [
-        f"# Teacher-strength tier 2, facet 1 ({len(jobs)} cells): K=1 and K=10 SFT for four",
+        f"# Teacher-strength tier 2, facet 1 ({len(jobs)} cells): single-order and order-averaged for four",
         "# teachers into Qwen3-4B. Plain regression, no lambda.",
         f"id: {TIER2_F1_ANCHOR}",
         "description: >-",
-        "  Teacher-strength tier 2, facet 1: the order-averaged K=10 SFT tracer against the",
-        "  K=1 SFT contrast, four teachers into Qwen3-4B. Checkpoint is the held-out nDCG",
+        "  Teacher-strength tier 2, facet 1: order-averaged distillation against the",
+        "  single-order contrast, four teachers into Qwen3-4B. Checkpoint is the held-out nDCG",
         "  argmax at eval.",
         "execution:",
         "  max_parallel: 1",
@@ -208,7 +208,7 @@ def _write_sft_sweep(jobs: list[str], anchor: str, title: str, desc: str, max_pa
 
 
 def _emit_facet2_sft(args) -> None:
-    """Tier-2 facet 2: the K=1 and K=10 SFT pair for each facet-2 teacher into Gemma-E4B and Granite-8B."""
+    """Generate the single-order and order-averaged pair for each facet-2 teacher."""
     jobs, skipped = [], []
     print(f"{'action':8} {'config id'}")
     for student, teachers in FACET2.items():
@@ -233,7 +233,7 @@ def _emit_facet2_sft(args) -> None:
     _write_sft_sweep(
         jobs,
         FACET2_SFT_ANCHOR,
-        f"Teacher-strength tier 2, facet 2 ({len(jobs)} cells): K=1 and K=10 SFT for a weak,\n"
+        f"Teacher-strength tier 2, facet 2 ({len(jobs)} cells): single-order and order-averaged for a weak,\n"
         "a strong open 30B, and a frontier teacher into Gemma-E4B and Granite-8B.\n"
         "Run after the tier-2 facet-1 cells. Gemma-E4B students need their adapter merged\n"
         "before eval; see docs/MODELS.md.",
@@ -250,7 +250,7 @@ def _emit_facet2_sft(args) -> None:
 
 
 def _emit_density_fill_sft(args) -> None:
-    """Tier-3: the K=1 and K=10 SFT pair for the six remaining facet-1 teachers into Qwen3-4B."""
+    """Generate the two paper distillation baselines for the remaining teachers."""
     jobs = []
     print(f"{'action':8} {'config id'}")
     for teacher in DENSITY_FILL_TEACHERS:
@@ -271,7 +271,7 @@ def _emit_density_fill_sft(args) -> None:
     _write_sft_sweep(
         jobs,
         DENSITY_FILL_ANCHOR,
-        f"Teacher-strength tier 3 ({len(jobs)} cells): K=1 and K=10 SFT for the six\n"
+        f"Teacher-strength tier 3 ({len(jobs)} cells): single-order and order-averaged for the six\n"
         "remaining facet-1 teachers into Qwen3-4B, completing the grid. Confirmatory:\n"
         "it adds density, not a new claim, so it is the first phase to cut.",
         "Teacher-strength tier 3: the SFT pair for the six remaining facet-1 teachers\n"

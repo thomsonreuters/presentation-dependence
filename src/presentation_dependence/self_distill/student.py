@@ -1973,7 +1973,7 @@ def backward_kl_to_base_loss_for_chunks_single_forward(
     temperature: float,
     backward_scale: float,
 ) -> dict[str, float]:
-    """Backpropagate K=1 SFT plus KL(student || frozen base) over grade logits."""
+    """Backpropagate single-order distillation plus KL to the frozen base."""
     import torch
 
     if not chunks:
@@ -2116,7 +2116,7 @@ def backward_mean_teacher_loss_for_chunks_single_forward(
     alpha: float,
     backward_scale: float,
 ) -> dict[str, float]:
-    """Backpropagate K=1 SFT plus EMA-teacher prediction consistency."""
+    """Backpropagate single-order distillation plus EMA-teacher consistency."""
     import torch
 
     if not chunks:

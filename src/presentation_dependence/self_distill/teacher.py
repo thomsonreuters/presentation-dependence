@@ -315,7 +315,7 @@ class KShotBSCTeacher:
 
         # Surface teacher_model_id for the silver manifest and record schema.
         # LoRA-backed iterative silver must name the adapter as well as the
-        # base model; otherwise v1 silver looks identical to off-shelf v0.
+        # base model; otherwise v1 silver looks identical to off-the-shelf v0.
         self.teacher_model_id = teacher_model_id_from_config(self.config)
         self.logger.info(
             "KShotBSCTeacher exp_id=%s K=%d teacher=%s prompt_template_id=%s grade_max=%d",

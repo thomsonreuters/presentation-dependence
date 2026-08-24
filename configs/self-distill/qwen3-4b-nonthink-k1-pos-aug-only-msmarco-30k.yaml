@@ -1,7 +1,7 @@
 ###############################################################################
-# Shuffled-view augmentation ("augmentation only") for OG Qwen3-4B (non-thinking).
+# Permutation augmentation ("augmentation only") for OG Qwen3-4B (non-thinking).
 #
-# Matched to `qwen3-4b-nonthink-sft-msmarco-30k-k1-labels` (K=1 SFT) EXCEPT
+# Matched to the single-order config `qwen3-4b-nonthink-sft-msmarco-30k-k1-labels` EXCEPT
 # `data.permutation_augmentation`, so the only difference is the augmentation.
 ###############################################################################
 
@@ -108,7 +108,7 @@ eval:
 
 execution:
   fixture_channel: msmarco-train-selfdistill-seed42
-  # Matches the K=1 SFT sibling: two views double the per-step forwards but not
+  # Matches the single-order sibling: two views double the per-step forwards but not
   # the peak activation footprint, which is per-chunk.
   distributed: ddp
 

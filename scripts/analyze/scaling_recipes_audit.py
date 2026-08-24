@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Per-dataset scaling grid for base / K=1 SFT / K=10 SFT / OC-SFT, from runs/.
+"""Per-dataset scaling grid for off-the-shelf / single-order / order-averaged / OC-SFT.
 
 Emits the 18-dataset (Table T2) per-dataset nDCG@10 / tau-PSI@B=20 grid for the four
 recipes, for all 11 cross-family scaling students.
@@ -10,8 +10,8 @@ classification, legacy remaps, ablation skip-list) via import, and its
 ``discover`` to read the canonical checkpoint stem per
 (family, size, recipe). Because the ladder eval and the extension eval of the
 same checkpoint use different job stems, we UNION across stems at the canonical
-training step (and lambda for OC-SFT); ``base`` (off-shelf) has no step so we
-union all off-shelf runs for the model.
+training step (and lambda for OC-SFT); ``base`` (off the shelf) has no step so we
+union all off-the-shelf runs for the model.
 
 Gemma-31B is excluded by ``parse_run`` (EXCLUDE_SIZE_TOKENS) so it is harvested
 with explicit stems. Ladder-9 columns are overlaid from ``rows.json`` (base,
@@ -31,6 +31,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from presentation_dependence.analysis import amortization as azl
+from presentation_dependence.analysis.terminology import paper_method_label
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -113,7 +114,7 @@ LABEL = {
     ("granite", "30b"): "Granite-30B",
 }
 RECIPES = ["base", "k1sft", "k10sft", "oc_sft"]
-RECIPE_LABEL = {"base": "off-shelf", "k1sft": "K=1 SFT", "k10sft": "K=10 SFT", "oc_sft": "OC-SFT"}
+RECIPE_LABEL = {recipe: paper_method_label(recipe) for recipe in RECIPES}
 
 STEP_RE = re.compile(r"step(\d+)")
 LAM_RE = re.compile(r"-l(\d+)\b")
@@ -193,7 +194,7 @@ def canonical_checkpoints() -> dict[tuple[str, str, str], dict]:
         }
     for model, selection in recorded_oc_sft_selection().items():
         out[(model[0], model[1], "oc_sft")] = dict(selection)
-    # Gemma-E4B K=1 SFT only exists as a merged ckpt (sftk1-merged-step1600),
+    # Gemma-E4B single-order checkpoint only exists as a merged ckpt (sftk1-merged-step1600),
     # which discover() over the 9 ladder surfaces never resolved.
     out.setdefault(("gemma4", "e4b", "k1sft"), {"step": 1600, "lam": None})
     return out
@@ -546,7 +547,7 @@ def write_doc(data) -> None:
     L.append("")
     L.append("nDCG@10 / τ-PSI. The only mean available for every model × recipe.")
     L.append("")
-    L.append("| Model | off-shelf | K=1 SFT | K=10 SFT | OC-SFT |")
+    L.append("| Model | Off the shelf | Single-order | Order-averaged | OC-SFT |")
     L.append("| --- | --- | --- | --- | --- |")
     for mk in MODELS:
         cols = []
@@ -595,8 +596,8 @@ def write_doc(data) -> None:
     L.append("")
     L.append(
         "- **T-NEWS + Robust04 τ-PSI**: computed (BM25) for **Qwen3-4B** (all recipes "
-        "with cells) and **Gemma-E4B K=1 SFT** (merged s1600, `trec2-gemma4-e4b-sftk1`). "
-        "For Qwen3-32B / Gemma-E2B/E4B (K=10 SFT + OC-SFT) / Gemma-31B / Granite-3B/8B/30B "
+        "with cells) and **Gemma-E4B single-order** (merged s1600, `trec2-gemma4-e4b-sftk1`). "
+        "For Qwen3-32B / Gemma-E2B/E4B (order-averaged + OC-SFT) / Gemma-31B / Granite-3B/8B/30B "
         "the T-NEWS/Robust04 evals are quality-only (nDCG present, the B=20 PSI harness was "
         "not run). No self-distill run at all for Qwen3-1.7B/8B/14B on these two. (Note: "
         "under a **BGE dense** first stage — the Stage-1 experiment — T-NEWS/Robust04 τ-PSI "

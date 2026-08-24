@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Full within-document score-variance decomposition at the OG Qwen3-4B anchor.
 
-Default: OG Qwen3-4B Instruct off-shelf expected-grade readout (``Qwen/Qwen3-4B``).
+Default: OG Qwen3-4B Instruct off-the-shelf expected-grade readout (``Qwen/Qwen3-4B``).
 
 The observational residual after document + slot + chunk fixed effects is the
 companion-identity channel entangled with within-chunk order. There is no fourth
@@ -43,7 +43,7 @@ DOC_PATH = OUT_DIR / "variance_decomposition.md"
 PRIOR_CELLS_JSON = ANALYSIS_ROOT / "set_sensitivity" / "set_sensitivity_cells.json"
 
 # (label, dataset, role). Ten of the eighteen reranking surfaces, split by whether
-# relevance is relational or topical, at the OG Qwen3-4B Instruct off-shelf
+# relevance is relational or topical, at the OG Qwen3-4B Instruct off-the-shelf
 # expected-grade readout (the paper's 4B anchor).
 DEFAULT_SURFACES: list[tuple[str, str, str]] = [
     ("ArguAna", "arguana", "relational"),
@@ -195,7 +195,7 @@ def write_doc(path: Path, rows: list[dict[str, Any]], skipped: list[str]) -> Non
     L.append("")
     L.append(
         "Objective **E1**: report slot, chunk-index, and companion-channel shares of "
-        "off-shelf per-document score variance at the **OG Qwen3-4B** expected-grade readout anchor "
+        "off-the-shelf per-document score variance at the **OG Qwen3-4B** expected-grade readout anchor "
         "(``Qwen/Qwen3-4B``, nonthink), including ArguAna, FiQA, and NFCorpus. "
         "Zero-GPU re-analysis of stored "
         "``aligned_scores.json`` via ``scripts/analyze/analyze_variance_decomposition.py`` / "
@@ -227,7 +227,7 @@ def write_doc(path: Path, rows: list[dict[str, Any]], skipped: list[str]) -> Non
         "``total_var``."
     )
     L.append("")
-    L.append("## Results (OG Qwen3-4B off-shelf expected-grade readout)")
+    L.append("## Results (OG Qwen3-4B off-the-shelf expected-grade readout)")
     L.append("")
     L.append("| Dataset | q | slot % | chunk % | companion % | total_var | slot var | chunk var | companion var |")
     L.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")

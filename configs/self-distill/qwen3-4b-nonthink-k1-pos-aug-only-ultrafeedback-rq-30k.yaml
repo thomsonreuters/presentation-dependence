@@ -1,5 +1,5 @@
 ###############################################################################
-# Shuffled-view augmentation for Qwen3-4B response-quality scoring.
+# Permutation augmentation for Qwen3-4B response-quality scoring.
 #
 # Matched to the K=1-label response SFT recipe except that each epoch trains on
 # two independently shuffled B=4 views, both supervised on the same silver

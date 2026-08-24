@@ -30,11 +30,12 @@ downstream (QA / verdict);  utils  is shared infrastructure.
   Shared config classifier for two teacher kinds (open-weight vs. hosted/closed),
   plus pointwise prompt templates and parsers.
 - [`self_distill/`](self_distill/README.md): self-distillation for
-  batched-pointwise grading: open-weight teacher writes K-shot BSC silver, a LoRA
-  student is trained with the OC-SFT recipe (`supervised_consistency`). Includes
+  batched-pointwise grading: an open-weight teacher writes order-averaged silver,
+  and a LoRA student is trained with the OC-SFT recipe
+  (`supervised_consistency`). Includes
   the inference [`engines/`](self_distill/engines/README.md) (HF / vLLM).
 - [`eval/`](eval/README.md): evaluation primitives: per-query scores,
-  ranking-quality metrics (nDCG), and order-stability metrics (PSI / τ-PSI) with
+  ranking-quality metrics (nDCG), and order-instability metrics (PSI / τ-PSI) with
   their channel decompositions. Reads `runs/`.
 - [`reader/`](reader/README.md): frozen downstream readers that consume a
   scorer's rankings (multi-document QA and verdict bridges).

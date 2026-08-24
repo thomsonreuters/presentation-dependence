@@ -7,7 +7,7 @@ Given a first-stage TREC run + qrels, computes, per (surface x first stage) cell
 * ``recall@k`` of the first stage: the candidate ceiling a reranker can
   reach (a reranker cannot recover gold the first stage dropped).
 * the gold-rank histogram in the top-k: where gold sits before reranking.
-  If off-shelf base tau-PSI stays substantial even when gold is already
+  If off-the-shelf base tau-PSI stays substantial even when gold is already
   pre-clustered near the top under a dense first stage, the order-instability
   is attributable to the scorer rather than to BM25 candidate ordering.
 

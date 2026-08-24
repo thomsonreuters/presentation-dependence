@@ -102,7 +102,7 @@ Wrapper expansion beyond the shipped set of wrappers is not an operator contract
 Each reference reranker has a standalone example config, and is also declared as
 a reference arm inside its task pipeline for the full matrix.
 
-The manuscript additionally trains K=10 SFT and OC-SFT from
+The manuscript additionally trains order-averaged distillation and OC-SFT from
 `Qwen3-Reranker-4B` as a specialized-base control. This release retains the
 teacher config but not the corresponding student-training recipe, so those
 trained control rows are not materializable from the current public pipeline.

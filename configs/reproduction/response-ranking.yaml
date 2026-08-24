@@ -314,7 +314,7 @@ downstream_eval:
 
   variants:
     trained: [k1-sft, k10-sft, shuffled-view-augmentation, debias-first, oc-sft]
-    # Only off-shelf/trained rows belong to paper pair-flip aggregation.
+    # Only off-the-shelf/trained rows belong to paper pair-flip aggregation.
     # Jina is repository-only; Skywork/PairRM are direct-quality references.
     references:
       - off-shelf

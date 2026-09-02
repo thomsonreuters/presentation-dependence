@@ -27,7 +27,7 @@ type: software
 authors:
   - name: "TODO: pending de-anonymization"
 repository-code: "TODO: public repository URL"
-license: "TODO: pending the licence decision"
+license: "Apache-2.0"
 version: "TODO: set at publication"
 date-released: "TODO: YYYY-MM-DD"
 keywords:

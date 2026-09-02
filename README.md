@@ -478,7 +478,8 @@ Report vulnerabilities privately as described in
 
 ## License and citation
 
-Outbound licence: [LICENSE](LICENSE). Third-party attributions and terms:
+Outbound licence: Apache License 2.0 ([LICENSE](LICENSE)). Third-party
+attributions and terms:
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Citation metadata:
 [CITATION.cff](CITATION.cff).
 

@@ -3,8 +3,7 @@ name = "presentation_dependence"
 version = "0.1.0"
 description = "Order-consistency SFT and evaluation for batched-pointwise LLM rerankers."
 readme = "README.md"
-# TODO(release): set before publication, once the licence is chosen.
-# license = "Apache-2.0"
+license = "Apache-2.0"
 requires-python = ">=3.11,<3.12"
 authors = [
     # TODO(release): author list, pending de-anonymization.
